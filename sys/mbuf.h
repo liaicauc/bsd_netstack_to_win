@@ -1,3 +1,4 @@
+
 /*-
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -40,7 +41,7 @@
 #include <sys/queue.h>
 #ifdef _KERNEL
 #include <sys/systm.h>
-#include <vm/uma.h>
+//#include <vm/uma.h>
 #ifdef WITNESS
 #include <sys/lock.h>
 #endif
@@ -99,7 +100,8 @@ struct mbuf;
 #define	MHLEN		((int)(MSIZE - MPKTHSIZE))
 #define	MINCLSIZE	(MHLEN + 1)
 
-#ifdef _KERNEL
+//#ifdef _KERNEL
+
 /*-
  * Macro for type conversion: convert mbuf pointer to data pointer of correct
  * type:
@@ -118,7 +120,7 @@ struct mb_args {
 	int	flags;	/* Flags for mbuf being allocated */
 	short	type;	/* Type of mbuf being allocated */
 };
-#endif /* _KERNEL */
+//#endif /* _KERNEL */
 
 /*
  * Packet tag structure (see below for details).

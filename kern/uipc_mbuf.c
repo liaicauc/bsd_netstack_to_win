@@ -457,7 +457,7 @@ m_prepend(struct mbuf *m, int len, int how)
  * Note that the copy is read-only, because clusters are not copied,
  * only their reference counts are incremented.
  */
-
+#ifdef _KERNEL
 struct mbuf *
 m_copym(struct mbuf *m, int off0, int len, int wait)
 {
@@ -521,7 +521,9 @@ nospace:
 	m_freem(top);
 	return (NULL);
 }
-#if 0
+#endif
+
+
 /*
  * Copy an entire packet, including header (which must be present).
  * An optimization of the common case `m_copym(m, 0, M_COPYALL, how)'.
@@ -900,6 +902,7 @@ m_copyup(struct mbuf *n, int len, int dstoff)
 	m_freem(n);
 	return (NULL);
 }
+
 
 /*
  * Partition an mbuf chain in two pieces, returning the tail --
@@ -1518,6 +1521,7 @@ nospace:
 
 #endif
 
+#ifdef _KERNEL
 /*
  * Copy the contents of uio into a properly sized mbuf chain.
  */
@@ -1601,7 +1605,7 @@ m_mbuftouio(struct uio *uio, const struct mbuf *m, int len)
 
 	return (0);
 }
-
+#endif
 /*
  * Create a writable copy of the mbuf chain.  While doing this
  * we compact the chain with a goal of producing a chain with
@@ -1878,4 +1882,3 @@ SYSCTL_PROC(_kern_ipc, OID_AUTO, mbufprofileclr, CTLTYPE_INT|CTLFLAG_RW,
 	    NULL, 0, mbprof_clr_handler, "I", "clear mbuf profiling statistics");
 #endif
 
-#endif

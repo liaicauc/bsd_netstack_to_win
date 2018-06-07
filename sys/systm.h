@@ -257,9 +257,11 @@ void	hexdump(const void *ptr, int length, const char *hdr, int flags);
 #define	HD_OMIT_HEX	(1 << 17)
 #define	HD_OMIT_CHARS	(1 << 18)
 
-#define ovbcopy(f, t, l) bcopy((f), (t), (l))
-void	bcopy(const void * _Nonnull from, void * _Nonnull to, size_t len);
-#define bcopy(from, to, len) __builtin_memmove((to), (from), (len))
+//#define ovbcopy(f, t, l) bcopy((f), (t), (l))
+//void	bcopy(const void * _Nonnull from, void * _Nonnull to, size_t len);
+//#define bcopy(from, to, len) __builtin_memmove((to), (from), (len))
+void (bcopy)(const void *src0, void *dst0, size_t length);
+
 void	bzero(void * _Nonnull buf, size_t len);
 #define bzero(buf, len) __builtin_memset((buf), 0, (len))
 void	explicit_bzero(void * _Nonnull, size_t);
@@ -268,10 +270,12 @@ int	bcmp(const void *b1, const void *b2, size_t len);
 
 void	*memset(void * _Nonnull buf, int c, size_t len);
 #define memset(buf, c, len) __builtin_memset((buf), (c), (len))
-void	*memcpy(void * _Nonnull to, const void * _Nonnull from, size_t len);
-#define memcpy(to, from, len) __builtin_memcpy((to), (from), (len))
+//void	*memcpy(void * _Nonnull to, const void * _Nonnull from, size_t len);
+//#define memcpy(to, from, len) __builtin_memcpy((to), (from), (len))
+extern void *memcpy(void *dst0, const void *src0, size_t length);
+
 void	*memmove(void * _Nonnull dest, const void * _Nonnull src, size_t n);
-#define memmove(dest, src, n) __builtin_memmove((dest), (src), (n))
+#define memmove(dest, src, n) bcopy((src), (dest), (n))
 int	memcmp(const void *b1, const void *b2, size_t len);
 #define memcmp(b1, b2, len) __builtin_memcmp((b1), (b2), (len))
 

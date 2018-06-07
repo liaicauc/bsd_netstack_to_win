@@ -286,7 +286,9 @@ typedef	struct vm_page	*vm_page_t;
 #define	false	0
 #define	true	1
 #if __STDC_VERSION__ < 199901L && __GNUC__ < 3 && !defined(__INTEL_COMPILER)
-typedef	int	_Bool;
+//typedef	int	_Bool;
+#define	_Bool int;
+typedef int bool;
 #endif
 typedef	_Bool	bool;
 #endif /* !__bool_true_false_are_defined && !__cplusplus */

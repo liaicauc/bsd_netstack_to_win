@@ -34,7 +34,7 @@
 #ifndef _MACHINE_MD_VAR_H_
 #define	_MACHINE_MD_VAR_H_
 
-#include <x86/x86_var.h>
+#include <x86/include/x86_var.h>
 
 extern	u_int	cyrix_did;
 #if defined(I586_CPU) && !defined(NO_F00F_HACK)
