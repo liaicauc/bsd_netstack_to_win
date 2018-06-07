@@ -1,0 +1,25 @@
+﻿  uipc_mbuf.c
+d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\sys\mbuf.h(35): error C2059: syntax error: 'constant'
+d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(208): warning C4013: '__builtin_memmove' undefined; assuming extern returning int
+d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(234): warning C4013: 'M_ASSERTPKTHDR' undefined; assuming extern returning int
+d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(236): warning C4013: 'm_tag_delete_chain' undefined; assuming extern returning int
+d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(238): warning C4013: '__builtin_memset' undefined; assuming extern returning int
+d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(286): warning C4013: 'M_START' undefined; assuming extern returning int
+d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(286): warning C4047: '=': 'caddr_t' differs in levels of indirection from 'int'
+d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(287): warning C4013: 'M_SIZE' undefined; assuming extern returning int
+d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(298): warning C4013: 'm_freem' undefined; assuming extern returning int
+d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(299): warning C4312: 'type cast': conversion from 'unsigned int' to 'mbuf *' of greater size
+d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(412): warning C4013: 'MBUF_CHECKSLEEP' undefined; assuming extern returning int
+d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(422): warning C4013: 'm_tag_copy_chain' undefined; assuming extern returning int
+d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(436): warning C4013: 'm_gethdr' undefined; assuming extern returning int
+d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(436): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
+d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(438): warning C4013: 'm_get' undefined; assuming extern returning int
+d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(438): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
+d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(448): warning C4013: 'M_ALIGN' undefined; assuming extern returning int
+d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(490): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
+d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(492): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
+d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(499): error C2065: 'M_COPYALL': undeclared identifier
+d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(511): warning C4013: 'mtod' undefined; assuming extern returning int
+d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(511): error C2275: 'caddr_t': illegal use of this type as an expression
+  d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\sys\types.h(76): note: see declaration of 'caddr_t'
+d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(512): error C2065: 'M_COPYALL': undeclared identifier

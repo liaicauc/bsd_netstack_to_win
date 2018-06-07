@@ -1,0 +1,2114 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="NewFilter1">
+      <UniqueIdentifier>{dc58f282-e071-49bd-af47-aeb39b7410ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NewFilter2">
+      <UniqueIdentifier>{695b50ae-48ce-4c68-a0b1-0b22c429fa4b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="kern\imgact_aout.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\imgact_binmisc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\imgact_elf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\imgact_elf32.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\imgact_elf64.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\imgact_gzip.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\imgact_shell.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\inflate.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\init_main.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\init_sysent.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_acct.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_alq.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_clock.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_clocksource.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_condvar.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_conf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_cons.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_context.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_cpu.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_cpuset.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_ctf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_descrip.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_dtrace.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_dump.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_environment.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_et.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_event.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_exec.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_exit.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_fail.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_ffclock.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_fork.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_hhook.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_idle.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_intr.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_jail.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_khelp.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_kthread.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_ktr.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_ktrace.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_linker.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_lock.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_lockf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_lockstat.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_loginclass.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_malloc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_mbuf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_mib.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_module.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_mtxpool.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_mutex.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_ntptime.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_osd.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_physio.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_pmc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_poll.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_priv.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_proc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_procctl.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_prot.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_racct.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_rangelock.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_rctl.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_resource.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_rmlock.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_rwlock.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_sdt.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_sema.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_sendfile.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_sharedpage.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_shutdown.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_sig.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_switch.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_sx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_synch.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_syscalls.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_sysctl.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_tc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_thr.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_thread.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_time.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_timeout.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_tslog.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_umtx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_uuid.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\kern_xxx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\ksched.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\link_elf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\link_elf_obj.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\md4c.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\md5c.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\p1003_1b.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\posix4_mib.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\sched_4bsd.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\sched_ule.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\stack_protector.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_acl_nfs4.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_acl_posix1e.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_autoconf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_blist.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_bufring.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_bus.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_bus_dma.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_busdma_bufalloc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_capability.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_clock.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_compressor.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_counter.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_devmap.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_devstat.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_disk.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_dummy_vdso_tc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_epoch.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_eventhandler.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_fattime.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_firmware.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_gtaskqueue.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_hash.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_hints.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_intr.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_kdb.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_kobj.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_lock.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_log.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_mchain.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_module.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_msgbuf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_param.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_pcpu.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_pctrie.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_pidctrl.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_power.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_prf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_prof.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_rman.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_rtc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_sbuf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_scanf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_sfbuf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_sglist.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_sleepqueue.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_smp.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_stack.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_syscall.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_taskqueue.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_terminal.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_trap.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_turnstile.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_uio.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_unit.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_vmem.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\subr_witness.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\sys_capability.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\sys_generic.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\sys_getrandom.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\sys_pipe.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\sys_procdesc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\sys_process.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\sys_socket.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\syscalls.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\systrace_args.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\sysv_ipc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\sysv_msg.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\sysv_sem.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\sysv_shm.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\tty.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\tty_compat.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\tty_info.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\tty_inq.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\tty_outq.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\tty_pts.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\tty_tty.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\tty_ttydisc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\uipc_accf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\uipc_debug.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\uipc_domain.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\uipc_mbuf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\uipc_mbuf2.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\uipc_mbufhash.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\uipc_mqueue.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\uipc_sem.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\uipc_shm.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\uipc_sockbuf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\uipc_socket.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\uipc_syscalls.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\uipc_usrreq.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\vfs_acl.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\vfs_aio.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\vfs_bio.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\vfs_cache.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\vfs_cluster.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\vfs_default.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\vfs_export.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\vfs_extattr.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\vfs_hash.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\vfs_init.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\vfs_lookup.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\vfs_mount.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\vfs_mountroot.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\vfs_subr.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\vfs_syscalls.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\vfs_vnops.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\cc\cc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\cc\cc_cdg.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\cc\cc_chd.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\cc\cc_cubic.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\cc\cc_dctcp.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\cc\cc_hd.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\cc\cc_htcp.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\cc\cc_newreno.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\cc\cc_vegas.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\khelp\h_ertt.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\libalias\alias.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\libalias\alias_cuseeme.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\libalias\alias_db.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\libalias\alias_dummy.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\libalias\alias_ftp.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\libalias\alias_irc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\libalias\alias_mod.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\libalias\alias_nbt.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\libalias\alias_pptp.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\libalias\alias_proxy.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\libalias\alias_sctp.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\libalias\alias_skinny.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\libalias\alias_smedia.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\libalias\alias_util.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\netdump\netdump_client.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\tcp_stacks\fastpath.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\accf_data.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\accf_dns.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\accf_http.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\if_ether.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\igmp.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\in.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\in_cksum.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\in_debug.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\in_fib.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\in_gif.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\in_jail.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\in_kdtrace.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\in_mcast.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\in_pcb.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\in_pcbgroup.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\in_prot.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\in_proto.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\in_rmx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\in_rss.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\ip_carp.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\ip_divert.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\ip_ecn.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\ip_encap.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\ip_fastfwd.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\ip_gre.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\ip_icmp.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\ip_id.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\ip_input.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\ip_mroute.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\ip_options.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\ip_output.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\ip_reass.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\raw_ip.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\sctp_asconf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\sctp_auth.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\sctp_bsd_addr.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\sctp_cc_functions.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\sctp_crc32.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\sctp_indata.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\sctp_input.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\sctp_output.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\sctp_pcb.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\sctp_peeloff.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\sctp_ss_functions.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\sctp_syscalls.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\sctp_sysctl.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\sctp_timer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\sctp_usrreq.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\sctputil.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\siftr.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\tcp_debug.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\tcp_fastopen.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\tcp_hostcache.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\tcp_hpts.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\tcp_input.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\tcp_log_buf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\tcp_lro.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\tcp_offload.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\tcp_output.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\tcp_pcap.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\tcp_reass.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\tcp_sack.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\tcp_subr.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\tcp_syncache.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\tcp_timer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\tcp_timewait.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\tcp_usrreq.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\toecore.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\udp_usrreq.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="kern\Make.tags.inc">
+      <Filter>Header Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="netinet\cc\cc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\cc\cc_cubic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\cc\cc_module.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\cc\cc_newreno.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\khelp\h_ertt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\libalias\alias.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\libalias\alias_local.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\libalias\alias_mod.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\libalias\alias_sctp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\netdump\netdump.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\icmp_var.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\icmp6.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\if_ether.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\igmp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\igmp_var.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\in.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\in_fib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\in_kdtrace.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\in_pcb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\in_rss.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\in_systm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\in_var.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\ip.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\ip_carp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\ip_divert.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\ip_dummynet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\ip_ecn.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\ip_encap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\ip_fw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\ip_icmp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\ip_mroute.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\ip_options.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\ip_var.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\ip6.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\pim.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\pim_var.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\sctp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\sctp_asconf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\sctp_auth.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\sctp_bsd_addr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\sctp_constants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\sctp_crc32.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\sctp_dtrace_declare.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\sctp_dtrace_define.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\sctp_header.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\sctp_indata.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\sctp_input.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\sctp_lock_bsd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\sctp_os.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\sctp_os_bsd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\sctp_output.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\sctp_pcb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\sctp_peeloff.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\sctp_structs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\sctp_sysctl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\sctp_timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\sctp_uio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\sctp_var.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\sctputil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\tcp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\tcp_debug.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\tcp_fastopen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\tcp_fsm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\tcp_hostcache.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\tcp_hpts.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\tcp_log_buf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\tcp_lro.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\tcp_offload.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\tcp_pcap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\tcp_seq.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\tcp_syncache.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\tcp_timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\tcp_var.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\tcpip.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\toecore.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\udp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\udp_var.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netinet\udplite.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\disk\apm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\disk\bsd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\disk\gpt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\disk\mbr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\disk\vtoc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\_bitset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\_bus_dma.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\_callout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\_cpuset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\_domainset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\_ffcounter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\_iovec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\_kstack_cache.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\_lock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\_lockmgr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\_mutex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\_null.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\_pctrie.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\_pthreadtypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\_rmlock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\_rwlock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\_semaphore.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\_sigset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\_sockaddr_storage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\_stack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\_stdarg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\_stdint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\_sx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\_task.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\_termios.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\_timespec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\_timeval.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\_types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\_ucontext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\_uio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\_umtx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\_unrhdr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\aac_ioctl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\acct.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\acl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\agpio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\aio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\alq.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\apm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\assym.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\ata.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\atomic_common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\auxv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\bio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\bitset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\bitstring.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\blist.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\boot.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\buf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\buf_ring.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\bufobj.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\bus.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\bus_dma.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\bus_dma_internal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\busdma_bufalloc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\callout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\capability.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\caprights.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\capsicum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\cdefs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\cdio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\cdrio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\cfictl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\chio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\ck.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\clock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\cnv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\compressor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\condvar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\conf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\cons.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\consio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\copyright.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\counter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\cpu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\cpuctl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\cpuset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\ctype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\devicestat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\devmap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\dir.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\dirent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\disk.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\disk_zone.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\disklabel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\diskmbr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\dkstat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\dnv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\domain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\domainset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\dtrace_bsd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\dvdio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\efi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\efiio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\elf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\elf_common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\elf_generic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\elf32.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\elf64.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\endian.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\epoch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\errno.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\eui64.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\event.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\eventhandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\eventvar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\exec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\extattr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\fail.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\fbio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\fcntl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\fdcio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\file.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\filedesc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\filio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\firmware.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\fnv_hash.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\gmon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\gpio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\gpt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\gtaskqueue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\hash.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\hhook.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\iconv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\imgact.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\imgact_aout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\imgact_binmisc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\imgact_elf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\inflate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\interrupt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\intr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\ioccom.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\ioctl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\ioctl_compat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\iov.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\iov_schema.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\ipc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\ipmi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\jail.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\joystick.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\kbio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\kdb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\kenv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\kern_prefetch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\kernel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\kerneldump.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\khelp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\kobj.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\ksem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\kthread.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\ktr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\ktr_class.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\ktrace.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\libkern.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\limits.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\link_aout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\link_elf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\linker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\linker_set.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\lock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\lock_profile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\lockf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\lockmgr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\lockstat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\loginclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\mac.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\malloc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\mbuf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\mchain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\md4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\md5.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\mdioctl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\memdesc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\memrange.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\mman.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\module.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\module_khelp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\mount.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\mouse.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\mpt_ioctl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\mqueue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\msg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\msgbuf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\mtio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\mutex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\namei.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\nlist_aout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\numa.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\nv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\osd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\param.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\pciio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\pcpu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\pctrie.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\pidctrl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\pioctl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\pipe.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\pmc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\pmckern.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\pmclog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\poll.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\posix4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\power.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\priority.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\priv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\proc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\procctl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\procdesc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\procfs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\protosw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\ptio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\ptrace.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\queue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\racct.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\random.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\rangelock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\rctl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\reboot.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\refcount.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\regression.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\resourcevar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\rman.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\rmlock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\rtprio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\runq.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\rwlock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\sbuf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\sched.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\sdt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\select.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\selinfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\sem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\sema.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\seq.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\serial.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\sf_buf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\sglist.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\shm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\sigio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\signal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\signalvar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\sleepqueue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\slicer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\smp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\snoop.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\sockbuf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\socket.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\socketvar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\sockio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\sockopt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\soundcard.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\spigenio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\stack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\stat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\statvfs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\stdatomic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\stddef.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\stdint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\sun_disklabel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\sx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\syscall.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\syscallsubr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\sysctl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\sysent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\syslimits.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\syslog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\sysproto.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\systm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\taskqueue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\terminal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\termios.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\thr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\tiio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\time.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\timeb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\timeet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\timeffc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\timepps.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\timers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\times.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\timespec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\timetc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\timex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\tree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\tslog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\tty.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\ttycom.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\ttydefaults.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\ttydevsw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\ttydisc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\ttyhook.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\ttyqueue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\turnstile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\ucontext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\ucred.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\uio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\umtx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\un.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\unistd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\unpcb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\user.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\utsname.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\uuid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\vdso.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\vmem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\vmmeter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\vnode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\vtoc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\wait.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\watchdog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\zlib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\zutil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

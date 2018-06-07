@@ -1,0 +1,820 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{24E6280C-A44F-49A7-B862-E9AA296D8EFB}</ProjectGuid>
+    <RootNamespace>bsd_stack</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>./</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>__LP64__;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>./</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>__LP64__;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="kern\imgact_aout.c" />
+    <ClCompile Include="kern\imgact_binmisc.c" />
+    <ClCompile Include="kern\imgact_elf.c" />
+    <ClCompile Include="kern\imgact_elf32.c" />
+    <ClCompile Include="kern\imgact_elf64.c" />
+    <ClCompile Include="kern\imgact_gzip.c" />
+    <ClCompile Include="kern\imgact_shell.c" />
+    <ClCompile Include="kern\inflate.c" />
+    <ClCompile Include="kern\init_main.c" />
+    <ClCompile Include="kern\init_sysent.c" />
+    <ClCompile Include="kern\kern_acct.c" />
+    <ClCompile Include="kern\kern_alq.c" />
+    <ClCompile Include="kern\kern_clock.c" />
+    <ClCompile Include="kern\kern_clocksource.c" />
+    <ClCompile Include="kern\kern_condvar.c" />
+    <ClCompile Include="kern\kern_conf.c" />
+    <ClCompile Include="kern\kern_cons.c" />
+    <ClCompile Include="kern\kern_context.c" />
+    <ClCompile Include="kern\kern_cpu.c" />
+    <ClCompile Include="kern\kern_cpuset.c" />
+    <ClCompile Include="kern\kern_ctf.c" />
+    <ClCompile Include="kern\kern_descrip.c" />
+    <ClCompile Include="kern\kern_dtrace.c" />
+    <ClCompile Include="kern\kern_dump.c" />
+    <ClCompile Include="kern\kern_environment.c" />
+    <ClCompile Include="kern\kern_et.c" />
+    <ClCompile Include="kern\kern_event.c" />
+    <ClCompile Include="kern\kern_exec.c" />
+    <ClCompile Include="kern\kern_exit.c" />
+    <ClCompile Include="kern\kern_fail.c" />
+    <ClCompile Include="kern\kern_ffclock.c" />
+    <ClCompile Include="kern\kern_fork.c" />
+    <ClCompile Include="kern\kern_hhook.c" />
+    <ClCompile Include="kern\kern_idle.c" />
+    <ClCompile Include="kern\kern_intr.c" />
+    <ClCompile Include="kern\kern_jail.c" />
+    <ClCompile Include="kern\kern_khelp.c" />
+    <ClCompile Include="kern\kern_kthread.c" />
+    <ClCompile Include="kern\kern_ktr.c" />
+    <ClCompile Include="kern\kern_ktrace.c" />
+    <ClCompile Include="kern\kern_linker.c" />
+    <ClCompile Include="kern\kern_lock.c" />
+    <ClCompile Include="kern\kern_lockf.c" />
+    <ClCompile Include="kern\kern_lockstat.c" />
+    <ClCompile Include="kern\kern_loginclass.c" />
+    <ClCompile Include="kern\kern_malloc.c" />
+    <ClCompile Include="kern\kern_mbuf.c" />
+    <ClCompile Include="kern\kern_mib.c" />
+    <ClCompile Include="kern\kern_module.c" />
+    <ClCompile Include="kern\kern_mtxpool.c" />
+    <ClCompile Include="kern\kern_mutex.c" />
+    <ClCompile Include="kern\kern_ntptime.c" />
+    <ClCompile Include="kern\kern_osd.c" />
+    <ClCompile Include="kern\kern_physio.c" />
+    <ClCompile Include="kern\kern_pmc.c" />
+    <ClCompile Include="kern\kern_poll.c" />
+    <ClCompile Include="kern\kern_priv.c" />
+    <ClCompile Include="kern\kern_proc.c" />
+    <ClCompile Include="kern\kern_procctl.c" />
+    <ClCompile Include="kern\kern_prot.c" />
+    <ClCompile Include="kern\kern_racct.c" />
+    <ClCompile Include="kern\kern_rangelock.c" />
+    <ClCompile Include="kern\kern_rctl.c" />
+    <ClCompile Include="kern\kern_resource.c" />
+    <ClCompile Include="kern\kern_rmlock.c" />
+    <ClCompile Include="kern\kern_rwlock.c" />
+    <ClCompile Include="kern\kern_sdt.c" />
+    <ClCompile Include="kern\kern_sema.c" />
+    <ClCompile Include="kern\kern_sendfile.c" />
+    <ClCompile Include="kern\kern_sharedpage.c" />
+    <ClCompile Include="kern\kern_shutdown.c" />
+    <ClCompile Include="kern\kern_sig.c" />
+    <ClCompile Include="kern\kern_switch.c" />
+    <ClCompile Include="kern\kern_sx.c" />
+    <ClCompile Include="kern\kern_synch.c" />
+    <ClCompile Include="kern\kern_syscalls.c" />
+    <ClCompile Include="kern\kern_sysctl.c" />
+    <ClCompile Include="kern\kern_tc.c" />
+    <ClCompile Include="kern\kern_thr.c" />
+    <ClCompile Include="kern\kern_thread.c" />
+    <ClCompile Include="kern\kern_time.c" />
+    <ClCompile Include="kern\kern_timeout.c" />
+    <ClCompile Include="kern\kern_tslog.c" />
+    <ClCompile Include="kern\kern_umtx.c" />
+    <ClCompile Include="kern\kern_uuid.c" />
+    <ClCompile Include="kern\kern_xxx.c" />
+    <ClCompile Include="kern\ksched.c" />
+    <ClCompile Include="kern\link_elf.c" />
+    <ClCompile Include="kern\link_elf_obj.c" />
+    <ClCompile Include="kern\md4c.c" />
+    <ClCompile Include="kern\md5c.c" />
+    <ClCompile Include="kern\p1003_1b.c" />
+    <ClCompile Include="kern\posix4_mib.c" />
+    <ClCompile Include="kern\sched_4bsd.c" />
+    <ClCompile Include="kern\sched_ule.c" />
+    <ClCompile Include="kern\stack_protector.c" />
+    <ClCompile Include="kern\subr_acl_nfs4.c" />
+    <ClCompile Include="kern\subr_acl_posix1e.c" />
+    <ClCompile Include="kern\subr_autoconf.c" />
+    <ClCompile Include="kern\subr_blist.c" />
+    <ClCompile Include="kern\subr_bufring.c" />
+    <ClCompile Include="kern\subr_bus.c" />
+    <ClCompile Include="kern\subr_busdma_bufalloc.c" />
+    <ClCompile Include="kern\subr_bus_dma.c" />
+    <ClCompile Include="kern\subr_capability.c" />
+    <ClCompile Include="kern\subr_clock.c" />
+    <ClCompile Include="kern\subr_compressor.c" />
+    <ClCompile Include="kern\subr_counter.c" />
+    <ClCompile Include="kern\subr_devmap.c" />
+    <ClCompile Include="kern\subr_devstat.c" />
+    <ClCompile Include="kern\subr_disk.c" />
+    <ClCompile Include="kern\subr_dummy_vdso_tc.c" />
+    <ClCompile Include="kern\subr_epoch.c" />
+    <ClCompile Include="kern\subr_eventhandler.c" />
+    <ClCompile Include="kern\subr_fattime.c" />
+    <ClCompile Include="kern\subr_firmware.c" />
+    <ClCompile Include="kern\subr_gtaskqueue.c" />
+    <ClCompile Include="kern\subr_hash.c" />
+    <ClCompile Include="kern\subr_hints.c" />
+    <ClCompile Include="kern\subr_intr.c" />
+    <ClCompile Include="kern\subr_kdb.c" />
+    <ClCompile Include="kern\subr_kobj.c" />
+    <ClCompile Include="kern\subr_lock.c" />
+    <ClCompile Include="kern\subr_log.c" />
+    <ClCompile Include="kern\subr_mchain.c" />
+    <ClCompile Include="kern\subr_module.c" />
+    <ClCompile Include="kern\subr_msgbuf.c" />
+    <ClCompile Include="kern\subr_param.c" />
+    <ClCompile Include="kern\subr_pcpu.c" />
+    <ClCompile Include="kern\subr_pctrie.c" />
+    <ClCompile Include="kern\subr_pidctrl.c" />
+    <ClCompile Include="kern\subr_power.c" />
+    <ClCompile Include="kern\subr_prf.c" />
+    <ClCompile Include="kern\subr_prof.c" />
+    <ClCompile Include="kern\subr_rman.c" />
+    <ClCompile Include="kern\subr_rtc.c" />
+    <ClCompile Include="kern\subr_sbuf.c" />
+    <ClCompile Include="kern\subr_scanf.c" />
+    <ClCompile Include="kern\subr_sfbuf.c" />
+    <ClCompile Include="kern\subr_sglist.c" />
+    <ClCompile Include="kern\subr_sleepqueue.c" />
+    <ClCompile Include="kern\subr_smp.c" />
+    <ClCompile Include="kern\subr_stack.c" />
+    <ClCompile Include="kern\subr_syscall.c" />
+    <ClCompile Include="kern\subr_taskqueue.c" />
+    <ClCompile Include="kern\subr_terminal.c" />
+    <ClCompile Include="kern\subr_trap.c" />
+    <ClCompile Include="kern\subr_turnstile.c" />
+    <ClCompile Include="kern\subr_uio.c" />
+    <ClCompile Include="kern\subr_unit.c" />
+    <ClCompile Include="kern\subr_vmem.c" />
+    <ClCompile Include="kern\subr_witness.c" />
+    <ClCompile Include="kern\syscalls.c" />
+    <ClCompile Include="kern\systrace_args.c" />
+    <ClCompile Include="kern\sysv_ipc.c" />
+    <ClCompile Include="kern\sysv_msg.c" />
+    <ClCompile Include="kern\sysv_sem.c" />
+    <ClCompile Include="kern\sysv_shm.c" />
+    <ClCompile Include="kern\sys_capability.c" />
+    <ClCompile Include="kern\sys_generic.c" />
+    <ClCompile Include="kern\sys_getrandom.c" />
+    <ClCompile Include="kern\sys_pipe.c" />
+    <ClCompile Include="kern\sys_procdesc.c" />
+    <ClCompile Include="kern\sys_process.c" />
+    <ClCompile Include="kern\sys_socket.c" />
+    <ClCompile Include="kern\tty.c" />
+    <ClCompile Include="kern\tty_compat.c" />
+    <ClCompile Include="kern\tty_info.c" />
+    <ClCompile Include="kern\tty_inq.c" />
+    <ClCompile Include="kern\tty_outq.c" />
+    <ClCompile Include="kern\tty_pts.c" />
+    <ClCompile Include="kern\tty_tty.c" />
+    <ClCompile Include="kern\tty_ttydisc.c" />
+    <ClCompile Include="kern\uipc_accf.c" />
+    <ClCompile Include="kern\uipc_debug.c" />
+    <ClCompile Include="kern\uipc_domain.c" />
+    <ClCompile Include="kern\uipc_mbuf.c" />
+    <ClCompile Include="kern\uipc_mbuf2.c" />
+    <ClCompile Include="kern\uipc_mbufhash.c" />
+    <ClCompile Include="kern\uipc_mqueue.c" />
+    <ClCompile Include="kern\uipc_sem.c" />
+    <ClCompile Include="kern\uipc_shm.c" />
+    <ClCompile Include="kern\uipc_sockbuf.c" />
+    <ClCompile Include="kern\uipc_socket.c" />
+    <ClCompile Include="kern\uipc_syscalls.c" />
+    <ClCompile Include="kern\uipc_usrreq.c" />
+    <ClCompile Include="kern\vfs_acl.c" />
+    <ClCompile Include="kern\vfs_aio.c" />
+    <ClCompile Include="kern\vfs_bio.c" />
+    <ClCompile Include="kern\vfs_cache.c" />
+    <ClCompile Include="kern\vfs_cluster.c" />
+    <ClCompile Include="kern\vfs_default.c" />
+    <ClCompile Include="kern\vfs_export.c" />
+    <ClCompile Include="kern\vfs_extattr.c" />
+    <ClCompile Include="kern\vfs_hash.c" />
+    <ClCompile Include="kern\vfs_init.c" />
+    <ClCompile Include="kern\vfs_lookup.c" />
+    <ClCompile Include="kern\vfs_mount.c" />
+    <ClCompile Include="kern\vfs_mountroot.c" />
+    <ClCompile Include="kern\vfs_subr.c" />
+    <ClCompile Include="kern\vfs_syscalls.c" />
+    <ClCompile Include="kern\vfs_vnops.c" />
+    <ClCompile Include="netinet\accf_data.c" />
+    <ClCompile Include="netinet\accf_dns.c" />
+    <ClCompile Include="netinet\accf_http.c" />
+    <ClCompile Include="netinet\cc\cc.c" />
+    <ClCompile Include="netinet\cc\cc_cdg.c" />
+    <ClCompile Include="netinet\cc\cc_chd.c" />
+    <ClCompile Include="netinet\cc\cc_cubic.c" />
+    <ClCompile Include="netinet\cc\cc_dctcp.c" />
+    <ClCompile Include="netinet\cc\cc_hd.c" />
+    <ClCompile Include="netinet\cc\cc_htcp.c" />
+    <ClCompile Include="netinet\cc\cc_newreno.c" />
+    <ClCompile Include="netinet\cc\cc_vegas.c" />
+    <ClCompile Include="netinet\if_ether.c" />
+    <ClCompile Include="netinet\igmp.c" />
+    <ClCompile Include="netinet\in.c" />
+    <ClCompile Include="netinet\in_cksum.c" />
+    <ClCompile Include="netinet\in_debug.c" />
+    <ClCompile Include="netinet\in_fib.c" />
+    <ClCompile Include="netinet\in_gif.c" />
+    <ClCompile Include="netinet\in_jail.c" />
+    <ClCompile Include="netinet\in_kdtrace.c" />
+    <ClCompile Include="netinet\in_mcast.c" />
+    <ClCompile Include="netinet\in_pcb.c" />
+    <ClCompile Include="netinet\in_pcbgroup.c" />
+    <ClCompile Include="netinet\in_prot.c" />
+    <ClCompile Include="netinet\in_proto.c" />
+    <ClCompile Include="netinet\in_rmx.c" />
+    <ClCompile Include="netinet\in_rss.c" />
+    <ClCompile Include="netinet\ip_carp.c" />
+    <ClCompile Include="netinet\ip_divert.c" />
+    <ClCompile Include="netinet\ip_ecn.c" />
+    <ClCompile Include="netinet\ip_encap.c" />
+    <ClCompile Include="netinet\ip_fastfwd.c" />
+    <ClCompile Include="netinet\ip_gre.c" />
+    <ClCompile Include="netinet\ip_icmp.c" />
+    <ClCompile Include="netinet\ip_id.c" />
+    <ClCompile Include="netinet\ip_input.c" />
+    <ClCompile Include="netinet\ip_mroute.c" />
+    <ClCompile Include="netinet\ip_options.c" />
+    <ClCompile Include="netinet\ip_output.c" />
+    <ClCompile Include="netinet\ip_reass.c" />
+    <ClCompile Include="netinet\khelp\h_ertt.c" />
+    <ClCompile Include="netinet\libalias\alias.c" />
+    <ClCompile Include="netinet\libalias\alias_cuseeme.c" />
+    <ClCompile Include="netinet\libalias\alias_db.c" />
+    <ClCompile Include="netinet\libalias\alias_dummy.c" />
+    <ClCompile Include="netinet\libalias\alias_ftp.c" />
+    <ClCompile Include="netinet\libalias\alias_irc.c" />
+    <ClCompile Include="netinet\libalias\alias_mod.c" />
+    <ClCompile Include="netinet\libalias\alias_nbt.c" />
+    <ClCompile Include="netinet\libalias\alias_pptp.c" />
+    <ClCompile Include="netinet\libalias\alias_proxy.c" />
+    <ClCompile Include="netinet\libalias\alias_sctp.c" />
+    <ClCompile Include="netinet\libalias\alias_skinny.c" />
+    <ClCompile Include="netinet\libalias\alias_smedia.c" />
+    <ClCompile Include="netinet\libalias\alias_util.c" />
+    <ClCompile Include="netinet\netdump\netdump_client.c" />
+    <ClCompile Include="netinet\raw_ip.c" />
+    <ClCompile Include="netinet\sctputil.c" />
+    <ClCompile Include="netinet\sctp_asconf.c" />
+    <ClCompile Include="netinet\sctp_auth.c" />
+    <ClCompile Include="netinet\sctp_bsd_addr.c" />
+    <ClCompile Include="netinet\sctp_cc_functions.c" />
+    <ClCompile Include="netinet\sctp_crc32.c" />
+    <ClCompile Include="netinet\sctp_indata.c" />
+    <ClCompile Include="netinet\sctp_input.c" />
+    <ClCompile Include="netinet\sctp_output.c" />
+    <ClCompile Include="netinet\sctp_pcb.c" />
+    <ClCompile Include="netinet\sctp_peeloff.c" />
+    <ClCompile Include="netinet\sctp_ss_functions.c" />
+    <ClCompile Include="netinet\sctp_syscalls.c" />
+    <ClCompile Include="netinet\sctp_sysctl.c" />
+    <ClCompile Include="netinet\sctp_timer.c" />
+    <ClCompile Include="netinet\sctp_usrreq.c" />
+    <ClCompile Include="netinet\siftr.c" />
+    <ClCompile Include="netinet\tcp_debug.c" />
+    <ClCompile Include="netinet\tcp_fastopen.c" />
+    <ClCompile Include="netinet\tcp_hostcache.c" />
+    <ClCompile Include="netinet\tcp_hpts.c" />
+    <ClCompile Include="netinet\tcp_input.c" />
+    <ClCompile Include="netinet\tcp_log_buf.c" />
+    <ClCompile Include="netinet\tcp_lro.c" />
+    <ClCompile Include="netinet\tcp_offload.c" />
+    <ClCompile Include="netinet\tcp_output.c" />
+    <ClCompile Include="netinet\tcp_pcap.c" />
+    <ClCompile Include="netinet\tcp_reass.c" />
+    <ClCompile Include="netinet\tcp_sack.c" />
+    <ClCompile Include="netinet\tcp_stacks\fastpath.c" />
+    <ClCompile Include="netinet\tcp_subr.c" />
+    <ClCompile Include="netinet\tcp_syncache.c" />
+    <ClCompile Include="netinet\tcp_timer.c" />
+    <ClCompile Include="netinet\tcp_timewait.c" />
+    <ClCompile Include="netinet\tcp_usrreq.c" />
+    <ClCompile Include="netinet\toecore.c" />
+    <ClCompile Include="netinet\udp_usrreq.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="kern\Make.tags.inc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="netinet\cc\cc.h" />
+    <ClInclude Include="netinet\cc\cc_cubic.h" />
+    <ClInclude Include="netinet\cc\cc_module.h" />
+    <ClInclude Include="netinet\cc\cc_newreno.h" />
+    <ClInclude Include="netinet\icmp6.h" />
+    <ClInclude Include="netinet\icmp_var.h" />
+    <ClInclude Include="netinet\if_ether.h" />
+    <ClInclude Include="netinet\igmp.h" />
+    <ClInclude Include="netinet\igmp_var.h" />
+    <ClInclude Include="netinet\in.h" />
+    <ClInclude Include="netinet\in_fib.h" />
+    <ClInclude Include="netinet\in_kdtrace.h" />
+    <ClInclude Include="netinet\in_pcb.h" />
+    <ClInclude Include="netinet\in_rss.h" />
+    <ClInclude Include="netinet\in_systm.h" />
+    <ClInclude Include="netinet\in_var.h" />
+    <ClInclude Include="netinet\ip.h" />
+    <ClInclude Include="netinet\ip6.h" />
+    <ClInclude Include="netinet\ip_carp.h" />
+    <ClInclude Include="netinet\ip_divert.h" />
+    <ClInclude Include="netinet\ip_dummynet.h" />
+    <ClInclude Include="netinet\ip_ecn.h" />
+    <ClInclude Include="netinet\ip_encap.h" />
+    <ClInclude Include="netinet\ip_fw.h" />
+    <ClInclude Include="netinet\ip_icmp.h" />
+    <ClInclude Include="netinet\ip_mroute.h" />
+    <ClInclude Include="netinet\ip_options.h" />
+    <ClInclude Include="netinet\ip_var.h" />
+    <ClInclude Include="netinet\khelp\h_ertt.h" />
+    <ClInclude Include="netinet\libalias\alias.h" />
+    <ClInclude Include="netinet\libalias\alias_local.h" />
+    <ClInclude Include="netinet\libalias\alias_mod.h" />
+    <ClInclude Include="netinet\libalias\alias_sctp.h" />
+    <ClInclude Include="netinet\netdump\netdump.h" />
+    <ClInclude Include="netinet\pim.h" />
+    <ClInclude Include="netinet\pim_var.h" />
+    <ClInclude Include="netinet\sctp.h" />
+    <ClInclude Include="netinet\sctputil.h" />
+    <ClInclude Include="netinet\sctp_asconf.h" />
+    <ClInclude Include="netinet\sctp_auth.h" />
+    <ClInclude Include="netinet\sctp_bsd_addr.h" />
+    <ClInclude Include="netinet\sctp_constants.h" />
+    <ClInclude Include="netinet\sctp_crc32.h" />
+    <ClInclude Include="netinet\sctp_dtrace_declare.h" />
+    <ClInclude Include="netinet\sctp_dtrace_define.h" />
+    <ClInclude Include="netinet\sctp_header.h" />
+    <ClInclude Include="netinet\sctp_indata.h" />
+    <ClInclude Include="netinet\sctp_input.h" />
+    <ClInclude Include="netinet\sctp_lock_bsd.h" />
+    <ClInclude Include="netinet\sctp_os.h" />
+    <ClInclude Include="netinet\sctp_os_bsd.h" />
+    <ClInclude Include="netinet\sctp_output.h" />
+    <ClInclude Include="netinet\sctp_pcb.h" />
+    <ClInclude Include="netinet\sctp_peeloff.h" />
+    <ClInclude Include="netinet\sctp_structs.h" />
+    <ClInclude Include="netinet\sctp_sysctl.h" />
+    <ClInclude Include="netinet\sctp_timer.h" />
+    <ClInclude Include="netinet\sctp_uio.h" />
+    <ClInclude Include="netinet\sctp_var.h" />
+    <ClInclude Include="netinet\tcp.h" />
+    <ClInclude Include="netinet\tcpip.h" />
+    <ClInclude Include="netinet\tcp_debug.h" />
+    <ClInclude Include="netinet\tcp_fastopen.h" />
+    <ClInclude Include="netinet\tcp_fsm.h" />
+    <ClInclude Include="netinet\tcp_hostcache.h" />
+    <ClInclude Include="netinet\tcp_hpts.h" />
+    <ClInclude Include="netinet\tcp_log_buf.h" />
+    <ClInclude Include="netinet\tcp_lro.h" />
+    <ClInclude Include="netinet\tcp_offload.h" />
+    <ClInclude Include="netinet\tcp_pcap.h" />
+    <ClInclude Include="netinet\tcp_seq.h" />
+    <ClInclude Include="netinet\tcp_syncache.h" />
+    <ClInclude Include="netinet\tcp_timer.h" />
+    <ClInclude Include="netinet\tcp_var.h" />
+    <ClInclude Include="netinet\toecore.h" />
+    <ClInclude Include="netinet\udp.h" />
+    <ClInclude Include="netinet\udplite.h" />
+    <ClInclude Include="netinet\udp_var.h" />
+    <ClInclude Include="sys\aac_ioctl.h" />
+    <ClInclude Include="sys\acct.h" />
+    <ClInclude Include="sys\acl.h" />
+    <ClInclude Include="sys\agpio.h" />
+    <ClInclude Include="sys\aio.h" />
+    <ClInclude Include="sys\alq.h" />
+    <ClInclude Include="sys\apm.h" />
+    <ClInclude Include="sys\assym.h" />
+    <ClInclude Include="sys\ata.h" />
+    <ClInclude Include="sys\atomic_common.h" />
+    <ClInclude Include="sys\auxv.h" />
+    <ClInclude Include="sys\bio.h" />
+    <ClInclude Include="sys\bitset.h" />
+    <ClInclude Include="sys\bitstring.h" />
+    <ClInclude Include="sys\blist.h" />
+    <ClInclude Include="sys\boot.h" />
+    <ClInclude Include="sys\buf.h" />
+    <ClInclude Include="sys\bufobj.h" />
+    <ClInclude Include="sys\buf_ring.h" />
+    <ClInclude Include="sys\bus.h" />
+    <ClInclude Include="sys\busdma_bufalloc.h" />
+    <ClInclude Include="sys\bus_dma.h" />
+    <ClInclude Include="sys\bus_dma_internal.h" />
+    <ClInclude Include="sys\callout.h" />
+    <ClInclude Include="sys\capability.h" />
+    <ClInclude Include="sys\caprights.h" />
+    <ClInclude Include="sys\capsicum.h" />
+    <ClInclude Include="sys\cdefs.h" />
+    <ClInclude Include="sys\cdio.h" />
+    <ClInclude Include="sys\cdrio.h" />
+    <ClInclude Include="sys\cfictl.h" />
+    <ClInclude Include="sys\chio.h" />
+    <ClInclude Include="sys\ck.h" />
+    <ClInclude Include="sys\clock.h" />
+    <ClInclude Include="sys\cnv.h" />
+    <ClInclude Include="sys\compressor.h" />
+    <ClInclude Include="sys\condvar.h" />
+    <ClInclude Include="sys\conf.h" />
+    <ClInclude Include="sys\cons.h" />
+    <ClInclude Include="sys\consio.h" />
+    <ClInclude Include="sys\copyright.h" />
+    <ClInclude Include="sys\counter.h" />
+    <ClInclude Include="sys\cpu.h" />
+    <ClInclude Include="sys\cpuctl.h" />
+    <ClInclude Include="sys\cpuset.h" />
+    <ClInclude Include="sys\ctype.h" />
+    <ClInclude Include="sys\devicestat.h" />
+    <ClInclude Include="sys\devmap.h" />
+    <ClInclude Include="sys\dir.h" />
+    <ClInclude Include="sys\dirent.h" />
+    <ClInclude Include="sys\disk.h" />
+    <ClInclude Include="sys\disklabel.h" />
+    <ClInclude Include="sys\diskmbr.h" />
+    <ClInclude Include="sys\disk\apm.h" />
+    <ClInclude Include="sys\disk\bsd.h" />
+    <ClInclude Include="sys\disk\gpt.h" />
+    <ClInclude Include="sys\disk\mbr.h" />
+    <ClInclude Include="sys\disk\vtoc.h" />
+    <ClInclude Include="sys\disk_zone.h" />
+    <ClInclude Include="sys\dkstat.h" />
+    <ClInclude Include="sys\dnv.h" />
+    <ClInclude Include="sys\domain.h" />
+    <ClInclude Include="sys\domainset.h" />
+    <ClInclude Include="sys\dtrace_bsd.h" />
+    <ClInclude Include="sys\dvdio.h" />
+    <ClInclude Include="sys\efi.h" />
+    <ClInclude Include="sys\efiio.h" />
+    <ClInclude Include="sys\elf.h" />
+    <ClInclude Include="sys\elf32.h" />
+    <ClInclude Include="sys\elf64.h" />
+    <ClInclude Include="sys\elf_common.h" />
+    <ClInclude Include="sys\elf_generic.h" />
+    <ClInclude Include="sys\endian.h" />
+    <ClInclude Include="sys\epoch.h" />
+    <ClInclude Include="sys\errno.h" />
+    <ClInclude Include="sys\eui64.h" />
+    <ClInclude Include="sys\event.h" />
+    <ClInclude Include="sys\eventhandler.h" />
+    <ClInclude Include="sys\eventvar.h" />
+    <ClInclude Include="sys\exec.h" />
+    <ClInclude Include="sys\extattr.h" />
+    <ClInclude Include="sys\fail.h" />
+    <ClInclude Include="sys\fbio.h" />
+    <ClInclude Include="sys\fcntl.h" />
+    <ClInclude Include="sys\fdcio.h" />
+    <ClInclude Include="sys\file.h" />
+    <ClInclude Include="sys\filedesc.h" />
+    <ClInclude Include="sys\filio.h" />
+    <ClInclude Include="sys\firmware.h" />
+    <ClInclude Include="sys\fnv_hash.h" />
+    <ClInclude Include="sys\gmon.h" />
+    <ClInclude Include="sys\gpio.h" />
+    <ClInclude Include="sys\gpt.h" />
+    <ClInclude Include="sys\gtaskqueue.h" />
+    <ClInclude Include="sys\hash.h" />
+    <ClInclude Include="sys\hhook.h" />
+    <ClInclude Include="sys\iconv.h" />
+    <ClInclude Include="sys\imgact.h" />
+    <ClInclude Include="sys\imgact_aout.h" />
+    <ClInclude Include="sys\imgact_binmisc.h" />
+    <ClInclude Include="sys\imgact_elf.h" />
+    <ClInclude Include="sys\inflate.h" />
+    <ClInclude Include="sys\interrupt.h" />
+    <ClInclude Include="sys\intr.h" />
+    <ClInclude Include="sys\ioccom.h" />
+    <ClInclude Include="sys\ioctl.h" />
+    <ClInclude Include="sys\ioctl_compat.h" />
+    <ClInclude Include="sys\iov.h" />
+    <ClInclude Include="sys\iov_schema.h" />
+    <ClInclude Include="sys\ipc.h" />
+    <ClInclude Include="sys\ipmi.h" />
+    <ClInclude Include="sys\jail.h" />
+    <ClInclude Include="sys\joystick.h" />
+    <ClInclude Include="sys\kbio.h" />
+    <ClInclude Include="sys\kdb.h" />
+    <ClInclude Include="sys\kenv.h" />
+    <ClInclude Include="sys\kernel.h" />
+    <ClInclude Include="sys\kerneldump.h" />
+    <ClInclude Include="sys\kern_prefetch.h" />
+    <ClInclude Include="sys\khelp.h" />
+    <ClInclude Include="sys\kobj.h" />
+    <ClInclude Include="sys\ksem.h" />
+    <ClInclude Include="sys\kthread.h" />
+    <ClInclude Include="sys\ktr.h" />
+    <ClInclude Include="sys\ktrace.h" />
+    <ClInclude Include="sys\ktr_class.h" />
+    <ClInclude Include="sys\libkern.h" />
+    <ClInclude Include="sys\limits.h" />
+    <ClInclude Include="sys\linker.h" />
+    <ClInclude Include="sys\linker_set.h" />
+    <ClInclude Include="sys\link_aout.h" />
+    <ClInclude Include="sys\link_elf.h" />
+    <ClInclude Include="sys\lock.h" />
+    <ClInclude Include="sys\lockf.h" />
+    <ClInclude Include="sys\lockmgr.h" />
+    <ClInclude Include="sys\lockstat.h" />
+    <ClInclude Include="sys\lock_profile.h" />
+    <ClInclude Include="sys\loginclass.h" />
+    <ClInclude Include="sys\mac.h" />
+    <ClInclude Include="sys\malloc.h" />
+    <ClInclude Include="sys\mbuf.h" />
+    <ClInclude Include="sys\mchain.h" />
+    <ClInclude Include="sys\md4.h" />
+    <ClInclude Include="sys\md5.h" />
+    <ClInclude Include="sys\mdioctl.h" />
+    <ClInclude Include="sys\memdesc.h" />
+    <ClInclude Include="sys\memrange.h" />
+    <ClInclude Include="sys\mman.h" />
+    <ClInclude Include="sys\module.h" />
+    <ClInclude Include="sys\module_khelp.h" />
+    <ClInclude Include="sys\mount.h" />
+    <ClInclude Include="sys\mouse.h" />
+    <ClInclude Include="sys\mpt_ioctl.h" />
+    <ClInclude Include="sys\mqueue.h" />
+    <ClInclude Include="sys\msg.h" />
+    <ClInclude Include="sys\msgbuf.h" />
+    <ClInclude Include="sys\mtio.h" />
+    <ClInclude Include="sys\mutex.h" />
+    <ClInclude Include="sys\namei.h" />
+    <ClInclude Include="sys\nlist_aout.h" />
+    <ClInclude Include="sys\numa.h" />
+    <ClInclude Include="sys\nv.h" />
+    <ClInclude Include="sys\osd.h" />
+    <ClInclude Include="sys\param.h" />
+    <ClInclude Include="sys\pciio.h" />
+    <ClInclude Include="sys\pcpu.h" />
+    <ClInclude Include="sys\pctrie.h" />
+    <ClInclude Include="sys\pidctrl.h" />
+    <ClInclude Include="sys\pioctl.h" />
+    <ClInclude Include="sys\pipe.h" />
+    <ClInclude Include="sys\pmc.h" />
+    <ClInclude Include="sys\pmckern.h" />
+    <ClInclude Include="sys\pmclog.h" />
+    <ClInclude Include="sys\poll.h" />
+    <ClInclude Include="sys\posix4.h" />
+    <ClInclude Include="sys\power.h" />
+    <ClInclude Include="sys\priority.h" />
+    <ClInclude Include="sys\priv.h" />
+    <ClInclude Include="sys\proc.h" />
+    <ClInclude Include="sys\procctl.h" />
+    <ClInclude Include="sys\procdesc.h" />
+    <ClInclude Include="sys\procfs.h" />
+    <ClInclude Include="sys\protosw.h" />
+    <ClInclude Include="sys\ptio.h" />
+    <ClInclude Include="sys\ptrace.h" />
+    <ClInclude Include="sys\queue.h" />
+    <ClInclude Include="sys\racct.h" />
+    <ClInclude Include="sys\random.h" />
+    <ClInclude Include="sys\rangelock.h" />
+    <ClInclude Include="sys\rctl.h" />
+    <ClInclude Include="sys\reboot.h" />
+    <ClInclude Include="sys\refcount.h" />
+    <ClInclude Include="sys\regression.h" />
+    <ClInclude Include="sys\resource.h" />
+    <ClInclude Include="sys\resourcevar.h" />
+    <ClInclude Include="sys\rman.h" />
+    <ClInclude Include="sys\rmlock.h" />
+    <ClInclude Include="sys\rtprio.h" />
+    <ClInclude Include="sys\runq.h" />
+    <ClInclude Include="sys\rwlock.h" />
+    <ClInclude Include="sys\sbuf.h" />
+    <ClInclude Include="sys\sched.h" />
+    <ClInclude Include="sys\sdt.h" />
+    <ClInclude Include="sys\select.h" />
+    <ClInclude Include="sys\selinfo.h" />
+    <ClInclude Include="sys\sem.h" />
+    <ClInclude Include="sys\sema.h" />
+    <ClInclude Include="sys\seq.h" />
+    <ClInclude Include="sys\serial.h" />
+    <ClInclude Include="sys\sf_buf.h" />
+    <ClInclude Include="sys\sglist.h" />
+    <ClInclude Include="sys\shm.h" />
+    <ClInclude Include="sys\sigio.h" />
+    <ClInclude Include="sys\signal.h" />
+    <ClInclude Include="sys\signalvar.h" />
+    <ClInclude Include="sys\sleepqueue.h" />
+    <ClInclude Include="sys\slicer.h" />
+    <ClInclude Include="sys\smp.h" />
+    <ClInclude Include="sys\snoop.h" />
+    <ClInclude Include="sys\sockbuf.h" />
+    <ClInclude Include="sys\socket.h" />
+    <ClInclude Include="sys\socketvar.h" />
+    <ClInclude Include="sys\sockio.h" />
+    <ClInclude Include="sys\sockopt.h" />
+    <ClInclude Include="sys\soundcard.h" />
+    <ClInclude Include="sys\spigenio.h" />
+    <ClInclude Include="sys\stack.h" />
+    <ClInclude Include="sys\stat.h" />
+    <ClInclude Include="sys\statvfs.h" />
+    <ClInclude Include="sys\stdatomic.h" />
+    <ClInclude Include="sys\stddef.h" />
+    <ClInclude Include="sys\stdint.h" />
+    <ClInclude Include="sys\sun_disklabel.h" />
+    <ClInclude Include="sys\sx.h" />
+    <ClInclude Include="sys\syscall.h" />
+    <ClInclude Include="sys\syscallsubr.h" />
+    <ClInclude Include="sys\sysctl.h" />
+    <ClInclude Include="sys\sysent.h" />
+    <ClInclude Include="sys\syslimits.h" />
+    <ClInclude Include="sys\syslog.h" />
+    <ClInclude Include="sys\sysproto.h" />
+    <ClInclude Include="sys\systm.h" />
+    <ClInclude Include="sys\taskqueue.h" />
+    <ClInclude Include="sys\terminal.h" />
+    <ClInclude Include="sys\termios.h" />
+    <ClInclude Include="sys\thr.h" />
+    <ClInclude Include="sys\tiio.h" />
+    <ClInclude Include="sys\time.h" />
+    <ClInclude Include="sys\timeb.h" />
+    <ClInclude Include="sys\timeet.h" />
+    <ClInclude Include="sys\timeffc.h" />
+    <ClInclude Include="sys\timepps.h" />
+    <ClInclude Include="sys\timers.h" />
+    <ClInclude Include="sys\times.h" />
+    <ClInclude Include="sys\timespec.h" />
+    <ClInclude Include="sys\timetc.h" />
+    <ClInclude Include="sys\timex.h" />
+    <ClInclude Include="sys\tree.h" />
+    <ClInclude Include="sys\tslog.h" />
+    <ClInclude Include="sys\tty.h" />
+    <ClInclude Include="sys\ttycom.h" />
+    <ClInclude Include="sys\ttydefaults.h" />
+    <ClInclude Include="sys\ttydevsw.h" />
+    <ClInclude Include="sys\ttydisc.h" />
+    <ClInclude Include="sys\ttyhook.h" />
+    <ClInclude Include="sys\ttyqueue.h" />
+    <ClInclude Include="sys\turnstile.h" />
+    <ClInclude Include="sys\types.h" />
+    <ClInclude Include="sys\ucontext.h" />
+    <ClInclude Include="sys\ucred.h" />
+    <ClInclude Include="sys\uio.h" />
+    <ClInclude Include="sys\umtx.h" />
+    <ClInclude Include="sys\un.h" />
+    <ClInclude Include="sys\unistd.h" />
+    <ClInclude Include="sys\unpcb.h" />
+    <ClInclude Include="sys\user.h" />
+    <ClInclude Include="sys\utsname.h" />
+    <ClInclude Include="sys\uuid.h" />
+    <ClInclude Include="sys\vdso.h" />
+    <ClInclude Include="sys\vmem.h" />
+    <ClInclude Include="sys\vmmeter.h" />
+    <ClInclude Include="sys\vnode.h" />
+    <ClInclude Include="sys\vtoc.h" />
+    <ClInclude Include="sys\wait.h" />
+    <ClInclude Include="sys\watchdog.h" />
+    <ClInclude Include="sys\zlib.h" />
+    <ClInclude Include="sys\zutil.h" />
+    <ClInclude Include="sys\_bitset.h" />
+    <ClInclude Include="sys\_bus_dma.h" />
+    <ClInclude Include="sys\_callout.h" />
+    <ClInclude Include="sys\_cpuset.h" />
+    <ClInclude Include="sys\_domainset.h" />
+    <ClInclude Include="sys\_ffcounter.h" />
+    <ClInclude Include="sys\_iovec.h" />
+    <ClInclude Include="sys\_kstack_cache.h" />
+    <ClInclude Include="sys\_lock.h" />
+    <ClInclude Include="sys\_lockmgr.h" />
+    <ClInclude Include="sys\_mutex.h" />
+    <ClInclude Include="sys\_null.h" />
+    <ClInclude Include="sys\_pctrie.h" />
+    <ClInclude Include="sys\_pthreadtypes.h" />
+    <ClInclude Include="sys\_rmlock.h" />
+    <ClInclude Include="sys\_rwlock.h" />
+    <ClInclude Include="sys\_semaphore.h" />
+    <ClInclude Include="sys\_sigset.h" />
+    <ClInclude Include="sys\_sockaddr_storage.h" />
+    <ClInclude Include="sys\_stack.h" />
+    <ClInclude Include="sys\_stdarg.h" />
+    <ClInclude Include="sys\_stdint.h" />
+    <ClInclude Include="sys\_sx.h" />
+    <ClInclude Include="sys\_task.h" />
+    <ClInclude Include="sys\_termios.h" />
+    <ClInclude Include="sys\_timespec.h" />
+    <ClInclude Include="sys\_timeval.h" />
+    <ClInclude Include="sys\_types.h" />
+    <ClInclude Include="sys\_ucontext.h" />
+    <ClInclude Include="sys\_uio.h" />
+    <ClInclude Include="sys\_umtx.h" />
+    <ClInclude Include="sys\_unrhdr.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
