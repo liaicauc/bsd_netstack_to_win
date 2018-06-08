@@ -1,6 +1,4 @@
-/*-
- * SPDX-License-Identifier: BSD-3-Clause
- *
+/*
  * Copyright (c) 1989, 1993
  *	The Regents of the University of California.  All rights reserved.
  *
@@ -17,7 +15,11 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the University nor the names of its contributors
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *	This product includes software developed by the University of
+ *	California, Berkeley and its contributors.
+ * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
  *
@@ -33,61 +35,54 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	@(#)vfs_init.c	8.3 (Berkeley) 1/4/94
+ *	@(#)vfs_init.c	8.5 (Berkeley) 5/11/95
  */
 
-#include <sys/cdefs.h>
-__FBSDID("$FreeBSD$");
 
 #include <sys/param.h>
-#include <sys/systm.h>
-#include <sys/fnv_hash.h>
-#include <sys/jail.h>
-#include <sys/kernel.h>
-#include <sys/linker.h>
 #include <sys/mount.h>
-#include <sys/proc.h>
-#include <sys/sx.h>
-#include <sys/syscallsubr.h>
-#include <sys/sysctl.h>
+#include <sys/time.h>
 #include <sys/vnode.h>
+#include <sys/stat.h>
+#include <sys/namei.h>
+#include <sys/ucred.h>
+#include <sys/buf.h>
+#include <sys/errno.h>
 #include <sys/malloc.h>
 
-static int	vfs_register(struct vfsconf *);
-static int	vfs_unregister(struct vfsconf *);
+/*
+ * Sigh, such primitive tools are these...
+ */
+#if 0
+#define DODEBUG(A) A
+#else
+#define DODEBUG(A)
+#endif
 
-MALLOC_DEFINE(M_VNODE, "vnodes", "Dynamically allocated vnodes");
+extern struct vnodeopv_desc *vfs_opv_descs[];
+				/* a list of lists of vnodeops defns */
+extern struct vnodeop_desc *vfs_op_descs[];
+				/* and the operations they perform */
+/*
+ * This code doesn't work if the defn is **vnodop_defns with cc.
+ * The problem is because of the compiler sometimes putting in an
+ * extra level of indirection for arrays.  It's an interesting
+ * "feature" of C.
+ */
+int vfs_opv_numops;
+
+typedef (*PFI)();   /* the standard Pointer to a Function returning an Int */
 
 /*
- * The highest defined VFS number.
+ * A miscellaneous routine.
+ * A generic "default" routine that just returns an error.
  */
-int maxvfsconf = VFS_GENERIC + 1;
+int
+vn_default_error()
+{
 
-/*
- * Single-linked list of configured VFSes.
- * New entries are added/deleted by vfs_register()/vfs_unregister()
- */
-struct vfsconfhead vfsconf = TAILQ_HEAD_INITIALIZER(vfsconf);
-struct sx vfsconf_sx;
-SX_SYSINIT(vfsconf, &vfsconf_sx, "vfsconf");
-
-/*
- * Loader.conf variable vfs.typenumhash enables setting vfc_typenum using a hash
- * calculation on vfc_name, so that it doesn't change when file systems are
- * loaded in a different order. This will avoid the NFS server file handles from
- * changing for file systems that use vfc_typenum in their fsid.
- */
-static int	vfs_typenumhash = 1;
-SYSCTL_INT(_vfs, OID_AUTO, typenumhash, CTLFLAG_RDTUN, &vfs_typenumhash, 0,
-    "Set vfc_typenum using a hash calculation on vfc_name, so that it does not"
-    "change when file systems are loaded in a different order.");
-
-/*
- * A Zen vnode attribute structure.
- *
- * Initialized when the first filesystem registers by vfs_register().
- */
-struct vattr va_null;
+	return (EOPNOTSUPP);
+}
 
 /*
  * vfs_init.c
@@ -105,272 +100,152 @@ struct vattr va_null;
  * NFS code. (Of couse, the OTW NFS protocol still needs to be munged, but
  * that is a(whole)nother story.) This is a feature.
  */
+void
+vfs_opv_init()
+{
+	int i, j, k;
+	int (***opv_desc_vector_p)();
+	int (**opv_desc_vector)();
+	struct vnodeopv_entry_desc *opve_descp;
+
+	/*
+	 * Allocate the dynamic vectors and fill them in.
+	 */
+	for (i=0; vfs_opv_descs[i]; i++) {
+		opv_desc_vector_p = vfs_opv_descs[i]->opv_desc_vector_p;
+		/*
+		 * Allocate and init the vector, if it needs it.
+		 * Also handle backwards compatibility.
+		 */
+		if (*opv_desc_vector_p == NULL) {
+			/* XXX - shouldn't be M_VNODE */
+			MALLOC(*opv_desc_vector_p, PFI*,
+			       vfs_opv_numops*sizeof(PFI), M_VNODE, M_WAITOK);
+			bzero (*opv_desc_vector_p, vfs_opv_numops*sizeof(PFI));
+			DODEBUG(printf("vector at %x allocated\n",
+			    opv_desc_vector_p));
+		}
+		opv_desc_vector = *opv_desc_vector_p;
+		for (j=0; vfs_opv_descs[i]->opv_desc_ops[j].opve_op; j++) {
+			opve_descp = &(vfs_opv_descs[i]->opv_desc_ops[j]);
+
+			/*
+			 * Sanity check:  is this operation listed
+			 * in the list of operations?  We check this
+			 * by seeing if its offest is zero.  Since
+			 * the default routine should always be listed
+			 * first, it should be the only one with a zero
+			 * offset.  Any other operation with a zero
+			 * offset is probably not listed in
+			 * vfs_op_descs, and so is probably an error.
+			 *
+			 * A panic here means the layer programmer
+			 * has committed the all-too common bug
+			 * of adding a new operation to the layer's
+			 * list of vnode operations but
+			 * not adding the operation to the system-wide
+			 * list of supported operations.
+			 */
+			if (opve_descp->opve_op->vdesc_offset == 0 &&
+				    opve_descp->opve_op->vdesc_offset !=
+				    	VOFFSET(vop_default)) {
+				printf("operation %s not listed in %s.\n",
+				    opve_descp->opve_op->vdesc_name,
+				    "vfs_op_descs");
+				panic ("vfs_opv_init: bad operation");
+			}
+			/*
+			 * Fill in this entry.
+			 */
+			opv_desc_vector[opve_descp->opve_op->vdesc_offset] =
+					opve_descp->opve_impl;
+		}
+	}
+	/*
+	 * Finally, go back and replace unfilled routines
+	 * with their default.  (Sigh, an O(n^3) algorithm.  I
+	 * could make it better, but that'd be work, and n is small.)
+	 */
+	for (i = 0; vfs_opv_descs[i]; i++) {
+		opv_desc_vector = *(vfs_opv_descs[i]->opv_desc_vector_p);
+		/*
+		 * Force every operations vector to have a default routine.
+		 */
+		if (opv_desc_vector[VOFFSET(vop_default)]==NULL) {
+			panic("vfs_opv_init: operation vector without default routine.");
+		}
+		for (k = 0; k<vfs_opv_numops; k++)
+			if (opv_desc_vector[k] == NULL)
+				opv_desc_vector[k] = 
+					opv_desc_vector[VOFFSET(vop_default)];
+	}
+}
+
+/*
+ * Initialize known vnode operations vectors.
+ */
+void
+vfs_op_init()
+{
+	int i;
+
+	DODEBUG(printf("Vnode_interface_init.\n"));
+	/*
+	 * Set all vnode vectors to a well known value.
+	 */
+	for (i = 0; vfs_opv_descs[i]; i++)
+		*(vfs_opv_descs[i]->opv_desc_vector_p) = NULL;
+	/*
+	 * Figure out how many ops there are by counting the table,
+	 * and assign each its offset.
+	 */
+	for (vfs_opv_numops = 0, i = 0; vfs_op_descs[i]; i++) {
+		vfs_op_descs[i]->vdesc_offset = vfs_opv_numops;
+		vfs_opv_numops++;
+	}
+	DODEBUG(printf ("vfs_opv_numops=%d\n", vfs_opv_numops));
+}
 
 /*
  * Routines having to do with the management of the vnode table.
  */
-
-static struct vfsconf *
-vfs_byname_locked(const char *name)
-{
-	struct vfsconf *vfsp;
-
-	sx_assert(&vfsconf_sx, SA_LOCKED);
-	if (!strcmp(name, "ffs"))
-		name = "ufs";
-	TAILQ_FOREACH(vfsp, &vfsconf, vfc_list) {
-		if (!strcmp(name, vfsp->vfc_name))
-			return (vfsp);
-	}
-	return (NULL);
-}
-
-struct vfsconf *
-vfs_byname(const char *name)
-{
-	struct vfsconf *vfsp;
-
-	vfsconf_slock();
-	vfsp = vfs_byname_locked(name);
-	vfsconf_sunlock();
-	return (vfsp);
-}
-
-struct vfsconf *
-vfs_byname_kld(const char *fstype, struct thread *td, int *error)
-{
-	struct vfsconf *vfsp;
-	int fileid, loaded;
-
-	vfsp = vfs_byname(fstype);
-	if (vfsp != NULL)
-		return (vfsp);
-
-	/* Try to load the respective module. */
-	*error = kern_kldload(td, fstype, &fileid);
-	loaded = (*error == 0);
-	if (*error == EEXIST)
-		*error = 0;
-	if (*error)
-		return (NULL);
-
-	/* Look up again to see if the VFS was loaded. */
-	vfsp = vfs_byname(fstype);
-	if (vfsp == NULL) {
-		if (loaded)
-			(void)kern_kldunload(td, fileid, LINKER_UNLOAD_FORCE);
-		*error = ENODEV;
-		return (NULL);
-	}
-	return (vfsp);
-}
-
-
-/* Register a new filesystem type in the global table */
-static int
-vfs_register(struct vfsconf *vfc)
-{
-	struct sysctl_oid *oidp;
-	struct vfsops *vfsops;
-	static int once;
-	struct vfsconf *tvfc;
-	uint32_t hashval;
-	int secondpass;
-
-	if (!once) {
-		vattr_null(&va_null);
-		once = 1;
-	}
-	
-	if (vfc->vfc_version != VFS_VERSION) {
-		printf("ERROR: filesystem %s, unsupported ABI version %x\n",
-		    vfc->vfc_name, vfc->vfc_version);
-		return (EINVAL);
-	}
-	vfsconf_lock();
-	if (vfs_byname_locked(vfc->vfc_name) != NULL) {
-		vfsconf_unlock();
-		return (EEXIST);
-	}
-
-	if (vfs_typenumhash != 0) {
-		/*
-		 * Calculate a hash on vfc_name to use for vfc_typenum. Unless
-		 * all of 1<->255 are assigned, it is limited to 8bits since
-		 * that is what ZFS uses from vfc_typenum and is also the
-		 * preferred range for vfs_getnewfsid().
-		 */
-		hashval = fnv_32_str(vfc->vfc_name, FNV1_32_INIT);
-		hashval &= 0xff;
-		secondpass = 0;
-		do {
-			/* Look for and fix any collision. */
-			TAILQ_FOREACH(tvfc, &vfsconf, vfc_list) {
-				if (hashval == tvfc->vfc_typenum) {
-					if (hashval == 255 && secondpass == 0) {
-						hashval = 1;
-						secondpass = 1;
-					} else
-						hashval++;
-					break;
-				}
-			}
-		} while (tvfc != NULL);
-		vfc->vfc_typenum = hashval;
-		if (vfc->vfc_typenum >= maxvfsconf)
-			maxvfsconf = vfc->vfc_typenum + 1;
-	} else
-		vfc->vfc_typenum = maxvfsconf++;
-	TAILQ_INSERT_TAIL(&vfsconf, vfc, vfc_list);
-
-	/*
-	 * Initialise unused ``struct vfsops'' fields, to use
-	 * the vfs_std*() functions.  Note, we need the mount
-	 * and unmount operations, at the least.  The check
-	 * for vfsops available is just a debugging aid.
-	 */
-	KASSERT(vfc->vfc_vfsops != NULL,
-	    ("Filesystem %s has no vfsops", vfc->vfc_name));
-	/*
-	 * Check the mount and unmount operations.
-	 */
-	vfsops = vfc->vfc_vfsops;
-	KASSERT(vfsops->vfs_mount != NULL,
-	    ("Filesystem %s has no mount op", vfc->vfc_name));
-	KASSERT(vfsops->vfs_unmount != NULL,
-	    ("Filesystem %s has no unmount op", vfc->vfc_name));
-
-	if (vfsops->vfs_root == NULL)
-		/* return file system's root vnode */
-		vfsops->vfs_root =	vfs_stdroot;
-	if (vfsops->vfs_quotactl == NULL)
-		/* quota control */
-		vfsops->vfs_quotactl =	vfs_stdquotactl;
-	if (vfsops->vfs_statfs == NULL)
-		/* return file system's status */
-		vfsops->vfs_statfs =	vfs_stdstatfs;
-	if (vfsops->vfs_sync == NULL)
-		/*
-		 * flush unwritten data (nosync)
-		 * file systems can use vfs_stdsync
-		 * explicitly by setting it in the
-		 * vfsop vector.
-		 */
-		vfsops->vfs_sync =	vfs_stdnosync;
-	if (vfsops->vfs_vget == NULL)
-		/* convert an inode number to a vnode */
-		vfsops->vfs_vget =	vfs_stdvget;
-	if (vfsops->vfs_fhtovp == NULL)
-		/* turn an NFS file handle into a vnode */
-		vfsops->vfs_fhtovp =	vfs_stdfhtovp;
-	if (vfsops->vfs_checkexp == NULL)
-		/* check if file system is exported */
-		vfsops->vfs_checkexp =	vfs_stdcheckexp;
-	if (vfsops->vfs_init == NULL)
-		/* file system specific initialisation */
-		vfsops->vfs_init =	vfs_stdinit;
-	if (vfsops->vfs_uninit == NULL)
-		/* file system specific uninitialisation */
-		vfsops->vfs_uninit =	vfs_stduninit;
-	if (vfsops->vfs_extattrctl == NULL)
-		/* extended attribute control */
-		vfsops->vfs_extattrctl = vfs_stdextattrctl;
-	if (vfsops->vfs_sysctl == NULL)
-		vfsops->vfs_sysctl = vfs_stdsysctl;
-
-	if (vfc->vfc_flags & VFCF_JAIL)
-		prison_add_vfs(vfc);
-
-	/*
-	 * Call init function for this VFS...
-	 */
-	(*(vfc->vfc_vfsops->vfs_init))(vfc);
-	vfsconf_unlock();
-
-	/*
-	 * If this filesystem has a sysctl node under vfs
-	 * (i.e. vfs.xxfs), then change the oid number of that node to
-	 * match the filesystem's type number.  This allows user code
-	 * which uses the type number to read sysctl variables defined
-	 * by the filesystem to continue working. Since the oids are
-	 * in a sorted list, we need to make sure the order is
-	 * preserved by re-registering the oid after modifying its
-	 * number.
-	 */
-	sysctl_wlock();
-	SLIST_FOREACH(oidp, SYSCTL_CHILDREN(&sysctl___vfs), oid_link) {
-		if (strcmp(oidp->oid_name, vfc->vfc_name) == 0) {
-			sysctl_unregister_oid(oidp);
-			oidp->oid_number = vfc->vfc_typenum;
-			sysctl_register_oid(oidp);
-			break;
-		}
-	}
-	sysctl_wunlock();
-
-	return (0);
-}
-
-
-/* Remove registration of a filesystem type */
-static int
-vfs_unregister(struct vfsconf *vfc)
-{
-	struct vfsconf *vfsp;
-	int error, maxtypenum;
-
-	vfsconf_lock();
-	vfsp = vfs_byname_locked(vfc->vfc_name);
-	if (vfsp == NULL) {
-		vfsconf_unlock();
-		return (EINVAL);
-	}
-	if (vfsp->vfc_refcount != 0) {
-		vfsconf_unlock();
-		return (EBUSY);
-	}
-	if (vfc->vfc_vfsops->vfs_uninit != NULL) {
-		error = (*vfc->vfc_vfsops->vfs_uninit)(vfsp);
-		if (error != 0) {
-			vfsconf_unlock();
-			return (error);
-		}
-	}
-	TAILQ_REMOVE(&vfsconf, vfsp, vfc_list);
-	maxtypenum = VFS_GENERIC;
-	TAILQ_FOREACH(vfsp, &vfsconf, vfc_list)
-		if (maxtypenum < vfsp->vfc_typenum)
-			maxtypenum = vfsp->vfc_typenum;
-	maxvfsconf = maxtypenum + 1;
-	vfsconf_unlock();
-	return (0);
-}
+extern struct vnodeops dead_vnodeops;
+extern struct vnodeops spec_vnodeops;
+struct vattr va_null;
 
 /*
- * Standard kernel module handling code for filesystem modules.
- * Referenced from VFS_SET().
+ * Initialize the vnode structures and initialize each file system type.
  */
-int
-vfs_modevent(module_t mod, int type, void *data)
+vfsinit()
 {
-	struct vfsconf *vfc;
-	int error = 0;
+	struct vfsconf *vfsp;
+	int i, maxtypenum;
 
-	vfc = (struct vfsconf *)data;
-
-	switch (type) {
-	case MOD_LOAD:
-		if (vfc)
-			error = vfs_register(vfc);
-		break;
-
-	case MOD_UNLOAD:
-		if (vfc)
-			error = vfs_unregister(vfc);
-		break;
-	default:
-		error = EOPNOTSUPP;
-		break;
+	/*
+	 * Initialize the vnode table
+	 */
+	vntblinit();
+	/*
+	 * Initialize the vnode name cache
+	 */
+	nchinit();
+	/*
+	 * Build vnode operation vectors.
+	 */
+	vfs_op_init();
+	vfs_opv_init();   /* finish the job */
+	/*
+	 * Initialize each file system type.
+	 */
+	vattr_null(&va_null);
+	maxtypenum = 0;
+	for (vfsp = vfsconf, i = 1; i <= maxvfsconf; i++, vfsp++) {
+		if (i < maxvfsconf)
+			vfsp->vfc_next = vfsp + 1;
+		if (maxtypenum <= vfsp->vfc_typenum)
+			maxtypenum = vfsp->vfc_typenum + 1;
+		(*vfsp->vfc_vfsops->vfs_init)(vfsp);
 	}
-	return (error);
+	/* next vfc_typenum to be used */
+	maxvfsconf = maxtypenum;
 }

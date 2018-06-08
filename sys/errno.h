@@ -1,6 +1,4 @@
-/*-
- * SPDX-License-Identifier: BSD-3-Clause
- *
+/*
  * Copyright (c) 1982, 1986, 1989, 1993
  *	The Regents of the University of California.  All rights reserved.
  * (c) UNIX System Laboratories, Inc.
@@ -17,7 +15,11 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the University nor the names of its contributors
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *	This product includes software developed by the University of
+ *	California, Berkeley and its contributors.
+ * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
  *
@@ -34,18 +36,10 @@
  * SUCH DAMAGE.
  *
  *	@(#)errno.h	8.5 (Berkeley) 1/21/94
- * $FreeBSD$
  */
 
-#ifndef _SYS_ERRNO_H_
-#define _SYS_ERRNO_H_
-
-#if !defined(_KERNEL) && !defined(_STANDALONE)
-#include <sys/cdefs.h>
-__BEGIN_DECLS
-int *	__error(void);
-__END_DECLS
-#define	errno		(* __error())
+#ifndef KERNEL
+extern int errno;			/* global error number */
 #endif
 
 #define	EPERM		1		/* Operation not permitted */
@@ -82,7 +76,7 @@ __END_DECLS
 #define	EFBIG		27		/* File too large */
 #define	ENOSPC		28		/* No space left on device */
 #define	ESPIPE		29		/* Illegal seek */
-#define	EROFS		30		/* Read-only filesystem */
+#define	EROFS		30		/* Read-only file system */
 #define	EMLINK		31		/* Too many links */
 #define	EPIPE		32		/* Broken pipe */
 
@@ -106,7 +100,6 @@ __END_DECLS
 #define	EPROTONOSUPPORT	43		/* Protocol not supported */
 #define	ESOCKTNOSUPPORT	44		/* Socket type not supported */
 #define	EOPNOTSUPP	45		/* Operation not supported */
-#define	ENOTSUP		EOPNOTSUPP	/* Operation not supported */
 #define	EPFNOSUPPORT	46		/* Protocol family not supported */
 #define	EAFNOSUPPORT	47		/* Address family not supported by protocol family */
 #define	EADDRINUSE	48		/* Address already in use */
@@ -160,49 +153,11 @@ __END_DECLS
 #define	EFTYPE		79		/* Inappropriate file type or format */
 #define	EAUTH		80		/* Authentication error */
 #define	ENEEDAUTH	81		/* Need authenticator */
-#define	EIDRM		82		/* Identifier removed */
-#define	ENOMSG		83		/* No message of desired type */
-#define	EOVERFLOW	84		/* Value too large to be stored in data type */
-#define	ECANCELED	85		/* Operation canceled */
-#define	EILSEQ		86		/* Illegal byte sequence */
-#define	ENOATTR		87		/* Attribute not found */
-
-#define	EDOOFUS		88		/* Programming error */
+#define	ELAST		81		/* Must be equal largest errno */
 #endif /* _POSIX_SOURCE */
 
-#define	EBADMSG		89		/* Bad message */
-#define	EMULTIHOP	90		/* Multihop attempted */
-#define	ENOLINK		91		/* Link has been severed */
-#define	EPROTO		92		/* Protocol error */
-
-#ifndef _POSIX_SOURCE
-#define	ENOTCAPABLE	93		/* Capabilities insufficient */
-#define	ECAPMODE	94		/* Not permitted in capability mode */
-#define	ENOTRECOVERABLE	95		/* State not recoverable */
-#define	EOWNERDEAD	96		/* Previous owner died */
-#endif /* _POSIX_SOURCE */
-
-#ifndef _POSIX_SOURCE
-#define	ELAST		96		/* Must be equal largest errno */
-#endif /* _POSIX_SOURCE */
-
-#if defined(_KERNEL) || defined(_WANT_KERNEL_ERRNO)
+#ifdef KERNEL
 /* pseudo-errors returned inside kernel to modify return to process */
-#define	ERESTART	(-1)		/* restart syscall */
-#define	EJUSTRETURN	(-2)		/* don't modify regs, just return */
-#define	ENOIOCTL	(-3)		/* ioctl not handled by this layer */
-#define	EDIRIOCTL	(-4)		/* do direct ioctl in GEOM */
-#define	ERELOOKUP	(-5)		/* retry the directory lookup */
-#endif
-
-#ifndef _KERNEL
-#if __EXT1_VISIBLE
-/* ISO/IEC 9899:2011 K.3.2.2 */
-#ifndef _ERRNO_T_DEFINED
-#define _ERRNO_T_DEFINED
-typedef int errno_t;
-#endif
-#endif /* __EXT1_VISIBLE */
-#endif
-
+#define	ERESTART	-1		/* restart syscall */
+#define	EJUSTRETURN	-2		/* don't modify regs, just return */
 #endif

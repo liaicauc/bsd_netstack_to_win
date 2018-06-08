@@ -1,1 +1,982 @@
----- __mbu Matches (0 in 0 files) ----sys
+---- _KERNEL Matches (981 in 337 files) ----
+Aac_ioctl.h (sys):#ifdef _KERNEL
+Aac_ioctl.h (sys):#ifdef _KERNEL
+Acct.h (sys):#ifdef _KERNEL
+Acct.h (sys):#ifdef _KERNEL
+Acl.h (sys):#if defined(_KERNEL) || defined(_ACL_PRIVATE)
+Acl.h (sys):#else /* _KERNEL || _ACL_PRIVATE */
+Acl.h (sys):#endif /* !_KERNEL && !_ACL_PRIVATE */
+Acl.h (sys):#ifdef _KERNEL
+Acl.h (sys):#else /* !_KERNEL */
+Acl.h (sys):#endif /* !_KERNEL */
+Acpica_machdep.h (x86\include):#ifdef _KERNEL
+Acpica_machdep.h (x86\include):#endif /* _KERNEL */
+Aio.h (sys):#ifdef _KERNEL
+Aio.h (sys):#ifdef _KERNEL
+Aio.h (sys):#ifdef _KERNEL
+Aio.h (sys):#ifdef _KERNEL
+Aio.h (sys):#else /* !_KERNEL */
+Aio.h (sys):#endif /* !_KERNEL */
+Alias.c (netinet\libalias):#ifdef _KERNEL
+Alias.c (netinet\libalias):#ifdef _KERNEL
+Alias.c (netinet\libalias):#ifdef _KERNEL
+Alias.c (netinet\libalias):#ifdef _KERNEL
+Alias.c (netinet\libalias):#ifndef _KERNEL
+Alias.c (netinet\libalias):#ifdef _KERNEL
+Alias.h (netinet\libalias):#ifdef	_KERNEL
+Alias_cuseeme.c (netinet\libalias):#ifdef _KERNEL
+Alias_cuseeme.c (netinet\libalias):#ifdef _KERNEL
+Alias_cuseeme.c (netinet\libalias):#ifdef _KERNEL
+Alias_cuseeme.c (netinet\libalias):#ifdef	_KERNEL
+Alias_db.c (netinet\libalias):#ifdef _KERNEL
+Alias_db.c (netinet\libalias):#ifdef _KERNEL  
+Alias_db.c (netinet\libalias):#ifdef	_KERNEL
+Alias_db.c (netinet\libalias):#ifdef _KERNEL
+Alias_db.c (netinet\libalias):#ifndef _KERNEL
+Alias_db.c (netinet\libalias):#ifdef	_KERNEL
+Alias_db.c (netinet\libalias):#ifdef	_KERNEL
+Alias_db.c (netinet\libalias):#ifndef	_KERNEL
+Alias_db.c (netinet\libalias):#ifdef	_KERNEL
+Alias_db.c (netinet\libalias):#ifdef _KERNEL
+Alias_db.c (netinet\libalias):#ifdef _KERNEL
+Alias_db.c (netinet\libalias):#ifndef	_KERNEL
+Alias_db.c (netinet\libalias):#ifdef _KERNEL
+Alias_db.c (netinet\libalias):#ifndef	_KERNEL		/* kernel cleans up on module unload */
+Alias_db.c (netinet\libalias):#ifdef	_KERNEL
+Alias_db.c (netinet\libalias):#ifdef _KERNEL
+Alias_db.c (netinet\libalias):#ifdef _KERNEL
+Alias_db.c (netinet\libalias):#ifndef _KERNEL
+Alias_db.c (netinet\libalias):#ifdef _KERNEL
+Alias_dummy.c (netinet\libalias):#ifdef _KERNEL
+Alias_dummy.c (netinet\libalias):#ifdef _KERNEL
+Alias_dummy.c (netinet\libalias):#ifdef _KERNEL
+Alias_dummy.c (netinet\libalias):#ifdef	_KERNEL
+Alias_ftp.c (netinet\libalias):#ifdef _KERNEL
+Alias_ftp.c (netinet\libalias):#ifdef _KERNEL
+Alias_ftp.c (netinet\libalias):#ifdef _KERNEL
+Alias_ftp.c (netinet\libalias):#ifdef	_KERNEL
+Alias_ftp.c (netinet\libalias):#ifdef _KERNEL
+Alias_irc.c (netinet\libalias):#ifdef _KERNEL
+Alias_irc.c (netinet\libalias):#ifdef _KERNEL
+Alias_irc.c (netinet\libalias):#ifdef _KERNEL
+Alias_irc.c (netinet\libalias):#ifdef	_KERNEL
+Alias_irc.c (netinet\libalias):#ifdef _KERNEL
+Alias_local.h (netinet\libalias):#ifdef _KERNEL
+Alias_local.h (netinet\libalias):#ifdef _KERNEL
+Alias_local.h (netinet\libalias):#ifdef  _KERNEL
+Alias_local.h (netinet\libalias):#ifdef  _KERNEL
+Alias_local.h (netinet\libalias):#ifdef _KERNEL
+Alias_local.h (netinet\libalias):#ifndef _KERNEL
+Alias_mod.c (netinet\libalias):#ifdef _KERNEL
+Alias_mod.c (netinet\libalias):#ifdef _KERNEL
+Alias_mod.c (netinet\libalias):#ifndef _KERNEL
+Alias_mod.c (netinet\libalias):#endif /* !_KERNEL */
+Alias_mod.h (netinet\libalias):#ifdef _KERNEL
+Alias_mod.h (netinet\libalias):#ifndef _KERNEL
+Alias_mod.h (netinet\libalias):#endif /* !_KERNEL */
+Alias_nbt.c (netinet\libalias):#ifdef _KERNEL
+Alias_nbt.c (netinet\libalias):#ifdef _KERNEL
+Alias_nbt.c (netinet\libalias):#ifdef	_KERNEL
+Alias_nbt.c (netinet\libalias):#ifdef	_KERNEL
+Alias_pptp.c (netinet\libalias):#ifdef _KERNEL
+Alias_pptp.c (netinet\libalias):#ifdef _KERNEL
+Alias_pptp.c (netinet\libalias):#ifdef _KERNEL
+Alias_pptp.c (netinet\libalias):#ifdef	_KERNEL
+Alias_proxy.c (netinet\libalias):#ifdef _KERNEL
+Alias_proxy.c (netinet\libalias):#ifdef _KERNEL
+Alias_proxy.c (netinet\libalias):#ifndef _KERNEL	/* XXX: we accept only numeric ports in kernel */
+Alias_proxy.c (netinet\libalias):#ifdef _KERNEL
+Alias_sctp.c (netinet\libalias):#ifdef _KERNEL
+Alias_sctp.c (netinet\libalias):#endif //#ifdef _KERNEL
+Alias_sctp.c (netinet\libalias):#ifdef _KERNEL
+Alias_sctp.c (netinet\libalias):#ifdef	_KERNEL
+Alias_sctp.c (netinet\libalias):#else //#ifdef	_KERNEL
+Alias_sctp.c (netinet\libalias):#endif //#ifdef	_KERNEL
+Alias_sctp.c (netinet\libalias):#ifdef _KERNEL
+Alias_sctp.c (netinet\libalias):#ifdef _KERNEL
+Alias_sctp.h (netinet\libalias):#ifdef	_KERNEL 
+Alias_sctp.h (netinet\libalias):#endif // #ifdef	_KERNEL 
+Alias_sctp.h (netinet\libalias):#ifndef _KERNEL
+Alias_sctp.h (netinet\libalias):#endif //#ifdef _KERNEL
+Alias_skinny.c (netinet\libalias):#ifdef _KERNEL
+Alias_skinny.c (netinet\libalias):#ifdef _KERNEL
+Alias_skinny.c (netinet\libalias):#ifdef _KERNEL
+Alias_skinny.c (netinet\libalias):#ifdef	_KERNEL
+Alias_skinny.c (netinet\libalias):#ifdef _KERNEL
+Alias_skinny.c (netinet\libalias):#ifdef _KERNEL
+Alias_skinny.c (netinet\libalias):#ifdef _KERNEL
+Alias_smedia.c (netinet\libalias):#ifdef _KERNEL
+Alias_smedia.c (netinet\libalias):#ifdef _KERNEL
+Alias_smedia.c (netinet\libalias):#ifdef _KERNEL
+Alias_smedia.c (netinet\libalias):#ifdef	_KERNEL
+Alias_smedia.c (netinet\libalias):#ifdef _KERNEL
+Alias_smedia.c (netinet\libalias):#ifdef _KERNEL
+Alias_util.c (netinet\libalias):#ifdef _KERNEL
+Alias_util.c (netinet\libalias):#ifdef _KERNEL
+Alias_util.c (netinet\libalias):#ifndef	_KERNEL
+Alias_util.c (netinet\libalias):#endif	/* not _KERNEL */
+Altq.h (net\altq):#ifdef _KERNEL
+Altq_cbq.h (net\altq):#ifdef _KERNEL
+Altq_cbq.h (net\altq):#endif /* _KERNEL */
+Altq_cdnr.h (net\altq):#ifdef _KERNEL
+Altq_cdnr.h (net\altq):#endif /* _KERNEL */
+Altq_classq.h (net\altq):#ifdef _KERNEL
+Altq_classq.h (net\altq):#endif /* _KERNEL */
+Altq_codel.h (net\altq):#ifdef _KERNEL
+Altq_codel.h (net\altq):#endif /* _KERNEL */
+Altq_fairq.h (net\altq):#ifdef _KERNEL
+Altq_fairq.h (net\altq):#endif /* _KERNEL */
+Altq_hfsc.h (net\altq):#ifdef _KERNEL
+Altq_hfsc.h (net\altq):#endif /* _KERNEL */
+Altq_priq.h (net\altq):#ifdef _KERNEL
+Altq_priq.h (net\altq):#endif /* _KERNEL */
+Altq_red.h (net\altq):#ifdef _KERNEL
+Altq_red.h (net\altq):#endif /* _KERNEL */
+Altq_rio.h (net\altq):#ifdef _KERNEL
+Altq_rio.h (net\altq):#endif /* _KERNEL */
+Altq_rmclass.h (net\altq):#ifdef _KERNEL
+Altq_rmclass.h (net\altq):#endif /* _KERNEL */
+Altq_var.h (net\altq):#ifdef _KERNEL
+Altq_var.h (net\altq):#endif /* _KERNEL */
+Apm_bios.h (x86\include):#ifndef _KERNEL
+Apm_bios.h (x86\include):#ifdef _KERNEL
+Atomic.h (machine):#ifdef _KERNEL
+Atomic.h (machine):#if defined(SMP) || !defined(_KERNEL)
+Atomic.h (machine):#if defined(_KERNEL)
+Atomic.h (machine):#else /* _KERNEL && UP */
+Atomic.h (machine):#else /* !_KERNEL */
+Atomic.h (machine):#endif /* _KERNEL*/
+Atomic.h (machine):#ifdef _KERNEL
+Atomic.h (machine):#endif /* _KERNEL */
+Atomic.h (machine):#if defined(_KERNEL)
+Bio.h (sys):#ifdef _KERNEL
+Bio.h (sys):#endif /* _KERNEL */
+Bios.h (machine\pc):#ifdef _KERNEL
+Bitstring.h (sys):#ifdef _KERNEL
+Bitstring.h (sys):#ifdef _KERNEL
+Bootinfo.h (machine):#ifdef _KERNEL
+Bpf.h (net):#ifdef _KERNEL
+Bpf.h (net):#ifdef _KERNEL
+Bpf_buffer.h (net):#ifndef _KERNEL
+Bpf_filter.c (net):#if !defined(_KERNEL)
+Bpf_filter.c (net):#if !defined(_KERNEL) || defined(sun)
+Bpf_filter.c (net):#ifdef _KERNEL
+Bpf_filter.c (net):#ifdef _KERNEL
+Bpf_filter.c (net):#ifdef _KERNEL
+Bpf_filter.c (net):#ifdef _KERNEL
+Bpf_filter.c (net):#ifdef _KERNEL
+Bpf_filter.c (net):#ifdef _KERNEL
+Bpf_filter.c (net):#ifdef _KERNEL
+Bpf_filter.c (net):#ifdef _KERNEL
+Bpf_filter.c (net):#ifdef _KERNEL
+Bpf_filter.c (net):#ifdef _KERNEL
+Bpf_filter.c (net):#ifdef _KERNEL
+Bpf_jitter.c (net):#ifdef _KERNEL
+Bpf_jitter.c (net):#ifdef _KERNEL
+Bpf_jitter.c (net):#ifdef _KERNEL
+Bpf_jitter.c (net):#ifdef _KERNEL
+Bpf_jitter.c (net):#ifdef _KERNEL
+Bpf_jitter.h (net):#ifdef _KERNEL
+Bpf_zerocopy.h (net):#ifndef _KERNEL
+Bridgestp.h (net):#ifdef _KERNEL
+Bridgestp.h (net):#endif /* _KERNEL */
+Buf.h (sys):#ifdef _KERNEL
+Buf.h (sys):#endif /* _KERNEL */
+Buf.h (sys):#ifdef _KERNEL
+Buf.h (sys):#endif /* _KERNEL */
+Buf.h (sys):#ifdef _KERNEL
+Buf.h (sys):#endif /* _KERNEL */
+Bufobj.h (sys):#if defined(_KERNEL) || defined(_KVM_VNODE)
+Bufobj.h (sys):#endif /* defined(_KERNEL) || defined(_KVM_VNODE) */
+Bus.h (sys):#ifdef _KERNEL
+Bus.h (sys):#endif /* _KERNEL */
+Callout.h (sys):#ifdef _KERNEL
+Capsicum.h (sys):#ifndef _KERNEL
+Capsicum.h (sys):#ifdef _KERNEL
+Capsicum.h (sys):#else /* !_KERNEL */
+Capsicum.h (sys):#endif /* !_KERNEL */
+Cc.h (netinet\cc):#if !defined(_KERNEL)
+Cc_cubic.h (netinet\cc):#ifndef _KERNEL
+Cc_cubic.h (netinet\cc):#endif /* !_KERNEL */
+Cdio.h (sys):#ifndef _KERNEL
+Chio.h (sys):#ifndef _KERNEL
+Ck.h (sys):#ifdef _KERNEL
+Clock.h (machine):#ifdef _KERNEL
+Clock.h (machine):#endif /* _KERNEL */
+Clock.h (sys):#ifdef _KERNEL		/* No user serviceable parts */
+Clock.h (sys):#endif /* _KERNEL */
+Cnv.h (sys):#ifndef _KERNEL
+Cnv.h (sys):#ifndef _KERNEL
+Cnv.h (sys):#ifndef _KERNEL
+Cnv.h (sys):#ifndef _KERNEL
+Compressor.h (sys):#ifdef _KERNEL
+Compressor.h (sys):#endif /* _KERNEL */
+Condvar.h (sys):#ifdef _KERNEL
+Condvar.h (sys):#endif	/* _KERNEL */
+Conf.h (sys):#ifdef _KERNEL
+Conf.h (sys):#ifdef _KERNEL
+Conf.h (sys):#endif /* _KERNEL */
+Conf.h (sys):#ifdef _KERNEL
+Conf.h (sys):#endif /* _KERNEL */
+Cons.h (sys):#ifdef _KERNEL
+Cons.h (sys):#endif /* _KERNEL */
+Consio.h (sys):#ifndef _KERNEL
+Counter.h (sys):#ifdef _KERNEL
+Counter.h (sys):#endif	/* _KERNEL */
+Cpu.h (machine):#ifdef _KERNEL
+Cpufunc.h (machine):#ifdef _KERNEL
+Cpufunc.h (machine):#endif /* _KERNEL */
+Cpufunc.h (machine):#ifdef _KERNEL
+Cpuset.h (sys):#ifdef _KERNEL
+_cpuset.h (sys):#ifdef _KERNEL
+Ctype.h (sys):#ifdef _KERNEL
+Devicestat.h (sys):#ifdef _KERNEL
+Devmap.h (sys):#ifndef _KERNEL
+Dirent.h (sys):#if defined(_WANT_FREEBSD11_DIRENT) || defined(_KERNEL)
+Dirent.h (sys):#endif /* _WANT_FREEBSD11_DIRENT || _KERNEL */
+Dirent.h (sys):#ifdef _KERNEL
+Disk.h (sys):#ifdef _KERNEL
+Disklabel.h (sys):#ifndef _KERNEL
+Disklabel.h (sys):#ifndef _KERNEL
+Dnv.h (sys):#ifndef _KERNEL
+Domain.h (sys):#ifdef _KERNEL
+Domain.h (sys):#endif /* _KERNEL */
+Domainset.h (sys):#ifdef _KERNEL
+_domainset.h (sys):#ifdef _KERNEL
+Efi.h (sys):#ifdef _KERNEL
+Efi.h (sys):#endif	/* _KERNEL */
+Epoch.h (sys):#ifdef _KERNEL
+Epoch.h (sys):#ifdef _KERNEL
+Epoch.h (sys):#endif					/* _KERNEL */
+Errno.h (sys):#if !defined(_KERNEL) && !defined(_STANDALONE)
+Errno.h (sys):#if defined(_KERNEL) || defined(_WANT_KERNEL_ERRNO)
+Errno.h (sys):#ifndef _KERNEL
+Ethernet.h (net):#ifdef _KERNEL
+Ethernet.h (net):#else /* _KERNEL */
+Ethernet.h (net):#endif /* !_KERNEL */
+Eui64.h (sys):#ifndef _KERNEL
+Eui64.h (sys):#endif /* !_KERNEL */
+Event.h (sys):#if defined(_WANT_KEVENT32) || (defined(_KERNEL) && defined(__LP64__))
+Event.h (sys):#ifdef _KERNEL
+Event.h (sys):#else 	/* !_KERNEL */
+Event.h (sys):#endif /* !_KERNEL */
+Eventvar.h (sys):#ifndef _KERNEL
+Exec.h (sys):#ifdef _KERNEL
+Extattr.h (sys):#ifdef _KERNEL
+Extattr.h (sys):#endif /* !_KERNEL */
+Fail.h (sys):#ifdef _KERNEL
+Fbio.h (sys):#ifndef _KERNEL
+Fbio.h (sys):#ifdef	_KERNEL
+Fcntl.h (sys): * FREAD and FWRITE are excluded from the #ifdef _KERNEL so that TIOCFLUSH,
+Fcntl.h (sys):#ifdef _KERNEL
+Fcntl.h (sys):#ifdef	_KERNEL
+Fcntl.h (sys):#ifdef _KERNEL
+Fcntl.h (sys):#ifdef _KERNEL
+Fcntl.h (sys):#ifndef _KERNEL
+Fdcio.h (sys):#ifndef _KERNEL
+File.h (sys):#ifndef _KERNEL
+File.h (sys):#endif /* _KERNEL */
+File.h (sys):#ifdef _KERNEL
+File.h (sys):#endif /* _KERNEL */
+File.h (sys):#if defined(_KERNEL) || defined(_WANT_FILE)
+File.h (sys):#endif /* _KERNEL || _WANT_FILE */
+File.h (sys):#ifdef _KERNEL
+File.h (sys):#endif /* _KERNEL */
+Filedesc.h (sys):#ifdef _KERNEL
+Filedesc.h (sys):#endif /* _KERNEL */
+Firewire.h (net):#ifdef _KERNEL
+Firewire.h (net):#endif /* !_KERNEL */
+Gmon.h (sys):#ifdef _KERNEL
+Gmon.h (sys):#else /* !_KERNEL */
+Gmon.h (sys):#endif /* _KERNEL */
+Gtaskqueue.h (sys):#ifndef _KERNEL
+Hash.h (sys):#ifdef _KERNEL
+Hash.h (sys):#endif /* _KERNEL */
+Icmp6.h (netinet):#ifndef _KERNEL
+Icmp6.h (netinet):#ifndef _KERNEL
+Icmp6.h (netinet):#ifndef _KERNEL
+Icmp6.h (netinet):#ifdef _KERNEL
+Icmp6.h (netinet):#else /* _KERNEL */
+Icmp6.h (netinet):#endif /* _KERNEL */
+Icmp6.h (netinet):#ifdef _KERNEL
+Icmp6.h (netinet):#ifdef _KERNEL
+Icmp6.h (netinet):#endif /* _KERNEL */
+Icmp_var.h (netinet):#ifdef _KERNEL
+Icmp_var.h (netinet):#ifdef _KERNEL
+Iconv.h (sys):#ifndef _KERNEL
+Iconv.h (sys):#else /* !_KERNEL */
+Iconv.h (sys):#endif /* !_KERNEL */
+Ieee8023ad_lacp.h (net):#ifdef _KERNEL
+Ieee8023ad_lacp.h (net):#endif	/* _KERNEL */
+If.h (net):#ifndef _KERNEL
+If.h (net):#ifndef _KERNEL
+If.h (net):#ifndef _KERNEL
+If.h (net):#ifndef _KERNEL
+If.h (net):#ifndef _KERNEL
+If.h (net):#ifdef _KERNEL
+If.h (net):#ifndef _KERNEL
+Ifq.h (net):#ifdef _KERNEL
+Ifq.h (net):#endif /* _KERNEL */
+Ifq.h (net):#ifdef _KERNEL
+Ifq.h (net):#endif /* _KERNEL */
+If_altq.h (net\altq):#ifdef _KERNEL
+If_altq.h (net\altq):#endif /* _KERNEL */
+If_arp.h (net):#ifdef _KERNEL
+If_arp.h (net):#endif /* _KERNEL */
+If_bridgevar.h (net):#ifdef _KERNEL
+If_bridgevar.h (net):#endif /* _KERNEL */
+If_clone.h (net):#ifdef _KERNEL
+If_clone.h (net):#endif /* _KERNEL */
+If_dl.h (net):#ifndef _KERNEL
+If_dl.h (net):#endif /* !_KERNEL */
+If_ether.h (netinet):#ifdef	_KERNEL
+If_gif.h (net):#ifdef _KERNEL
+If_gif.h (net):#endif /* _KERNEL */
+If_gre.h (net):#ifdef _KERNEL
+If_gre.h (net):#endif /* _KERNEL */
+If_lagg.h (net):#ifdef _KERNEL
+If_lagg.h (net):#endif /* _KERNEL */
+If_media.h (net):#ifdef _KERNEL
+If_media.h (net):#endif /*_KERNEL */
+If_pflog.h (net):#ifdef _KERNEL
+If_pflog.h (net):#endif /* _KERNEL */
+If_pfsync.h (net):#ifdef _KERNEL
+If_pfsync.h (net):#endif /* _KERNEL */
+If_sppp.h (net):#ifdef _KERNEL
+If_var.h (net):#ifdef _KERNEL
+If_var.h (net):#endif /* _KERNEL */
+If_var.h (net):#ifdef _KERNEL
+If_var.h (net):#endif /* _KERNEL */
+If_var.h (net):#ifdef _KERNEL
+If_var.h (net):#endif /* _KERNEL */
+If_vlan_var.h (net):#ifdef _KERNEL
+If_vlan_var.h (net):#endif /* _KERNEL */
+Igmp_var.h (netinet):#ifdef _KERNEL
+Igmp_var.h (netinet):#endif /* _KERNEL */
+Imgact.h (sys):#ifdef _KERNEL
+Imgact_aout.h (sys):#ifdef _KERNEL
+Imgact_elf.h (sys):#ifdef _KERNEL
+Imgact_elf.h (sys):#endif /* _KERNEL */
+In.h (netinet):#if !defined(_KERNEL) && __POSIX_VISIBLE >= 200112
+In.h (netinet):#endif /* !_KERNEL && __POSIX_VISIBLE >= 200112 */
+In.h (netinet):#ifndef _KERNEL
+In.h (netinet):#ifdef _KERNEL
+In.h (netinet):#endif /* _KERNEL */
+Inflate.c (kern):#ifdef _KERNEL
+Inflate.c (kern):#ifdef _KERNEL
+Inflate.c (kern):#ifdef _KERNEL
+Inflate.c (kern):#ifdef _KERNEL
+Inflate.c (kern):#ifndef _KERNEL /* want to use this file in kzip also */
+Inflate.c (kern):#ifdef _KERNEL
+Inflate.c (kern):#ifdef _KERNEL
+Inflate.c (kern):#ifdef _KERNEL
+Inflate.c (kern):#ifdef _KERNEL
+Inflate.h (sys):#if defined(_KERNEL) || defined(KZIP)
+Inflate.h (sys):#endif	/* _KERNEL || KZIP */
+Intr_machdep.h (machine):#ifdef _KERNEL
+Intr_machdep.h (machine):#endif	/* _KERNEL */
+In_cksum.h (machine):#ifdef _KERNEL
+In_cksum.h (machine):#endif /* _KERNEL */
+In_pcb.h (netinet):#ifdef _KERNEL
+In_pcb.h (netinet):#if defined(_KERNEL) || defined(_WANT_INPCB)
+In_pcb.h (netinet):#endif	/* _KERNEL */
+In_pcb.h (netinet):#ifdef	_KERNEL
+In_pcb.h (netinet):#ifdef _KERNEL
+In_pcb.h (netinet):#endif /* _KERNEL */
+In_pcb.h (netinet):#ifdef _KERNEL
+In_pcb.h (netinet):#endif /* _KERNEL */
+In_systm.h (netinet):#ifdef _KERNEL
+In_var.h (netinet):#ifdef _KERNEL
+In_var.h (netinet):#endif /* _KERNEL */
+Ioccom.h (sys):#ifdef _KERNEL
+Ioctl.h (sys):#ifdef _KERNEL
+Ioctl.h (sys):#endif /* _KERNEL */
+Iodev.h (machine):#ifdef _KERNEL
+Iodev.h (machine):#endif /* _KERNEL */
+Ip6.h (netinet):#ifndef _KERNEL
+Ip6.h (netinet):#ifdef _KERNEL
+Ip6.h (netinet):#endif /*_KERNEL*/
+Ipc.h (sys):#if defined(_KERNEL) || defined(_WANT_SYSVIPC_INTERNALS)
+Ipc.h (sys):#ifdef _KERNEL
+Ipc.h (sys):#else /* ! _KERNEL */
+Ipc.h (sys):#endif /* _KERNEL */
+Ip_carp.h (netinet):#ifdef _KERNEL
+Ip_ecn.h (netinet):#ifdef _KERNEL
+Ip_encap.h (netinet):#ifdef _KERNEL
+Ip_fw.h (netinet):#ifndef	_KERNEL
+Ip_fw.h (netinet):#ifndef	_KERNEL
+Ip_fw.h (netinet):#endif	/* ifndef _KERNEL */
+Ip_fw.h (netinet):#ifndef	_KERNEL
+Ip_icmp.h (netinet):#ifdef _KERNEL
+Ip_mroute.h (netinet):#ifdef _KERNEL
+Ip_mroute.h (netinet):#ifdef _KERNEL
+Ip_mroute.h (netinet):#endif /* _KERNEL */
+Ip_mroute.h (netinet):#ifdef _KERNEL
+Ip_mroute.h (netinet):#endif /* _KERNEL */
+Ip_mroute.h (netinet):#ifdef _KERNEL
+Ip_mroute.h (netinet):#endif /* _KERNEL */
+Ip_var.h (netinet):#ifdef _KERNEL
+Ip_var.h (netinet):#endif /* _KERNEL */
+Ip_var.h (netinet):#ifdef _KERNEL
+Ip_var.h (netinet):#endif /* _KERNEL */
+Jail.h (sys):#ifdef _KERNEL
+Jail.h (sys):#ifndef _KERNEL
+Jail.h (sys):#ifndef _KERNEL
+Jail.h (sys):#else /* _KERNEL */
+Jail.h (sys):#endif /* _KERNEL */
+Jail.h (sys):#if defined(_KERNEL) || defined(_WANT_PRISON)
+Jail.h (sys):#endif /* _KERNEL || _WANT_PRISON */
+Jail.h (sys):#ifdef _KERNEL
+Jail.h (sys):#endif /* _KERNEL */
+Kbio.h (sys):#ifndef _KERNEL
+Kbio.h (sys):#ifdef _KERNEL
+Kbio.h (sys):#endif /* _KERNEL */
+Kbio.h (sys):#ifdef _KERNEL
+Kbio.h (sys):#endif /* _KERNEL */
+Kernel.h (sys):#ifdef _KERNEL
+Kernel.h (sys):#endif /* _KERNEL */
+Kerneldump.h (sys):#ifdef _KERNEL
+Kern_prefetch.h (sys):#ifdef _KERNEL
+Kern_prefetch.h (sys):#endif /* _KERNEL */
+Ksem.h (sys):#if !defined(_KERNEL) && !defined(_WANT_FILE)
+Ktrace.h (sys):#ifdef	_KERNEL
+Libkern.h (sys):#ifdef _KERNEL
+Libkern.h (sys):#ifdef _KERNEL
+Linker.h (sys):#ifdef _KERNEL
+Linker.h (sys):#endif	/* _KERNEL */
+Linker.h (sys):#ifdef _KERNEL
+Linker.h (sys):#ifdef _KERNEL
+Linker.h (sys):#endif /* _KERNEL */
+Linker.h (sys):#ifndef _KERNEL
+Lock.h (sys):#ifdef _KERNEL
+Lock.h (sys):#endif	/* _KERNEL */
+Lockmgr.h (sys):#ifdef _KERNEL
+Lockmgr.h (sys):#endif /* _KERNEL */
+Lockstat.h (sys):#ifdef _KERNEL
+Lockstat.h (sys):#endif /* _KERNEL */
+Lock_profile.h (sys):#ifdef _KERNEL
+Lock_profile.h (sys):#endif /* _KERNEL */
+Mac.h (sys):#ifndef _KERNEL
+Mac.h (sys):#endif /* !_KERNEL */
+Malloc.h (sys):#ifdef _KERNEL
+Malloc.h (sys):#ifdef _KERNEL
+Malloc.h (sys):#ifdef _KERNEL
+Malloc.h (sys):#endif /* _KERNEL */
+Mbuf.h (sys):#ifdef _KERNEL
+Mbuf.h (sys):#ifdef _KERNEL
+Mbuf.h (sys):#endif /* _KERNEL */
+Mbuf.h (sys):#ifdef _KERNEL
+Mbuf.h (sys):#endif /* _KERNEL */
+Mbuf.h (sys): * !_KERNEL so that monitoring tools can look up the zones with
+Mbuf.h (sys):#ifdef _KERNEL
+Mbuf.h (sys):#endif /* _KERNEL */
+Mca.h (x86\include):#ifdef _KERNEL
+Mchain.h (sys):#ifdef _KERNEL
+Mchain.h (sys):#endif	/* ifdef _KERNEL */
+Md4.h (sys):#ifndef _KERNEL
+Md5.h (sys):#ifndef _KERNEL
+Md5c.c (kern):#ifdef _KERNEL
+Memrange.h (sys):#ifdef _KERNEL
+Memrange.h (sys):#endif /* _KERNEL */
+Mman.h (sys):#ifndef _KERNEL
+Mman.h (sys):#endif /* !_KERNEL */
+Mman.h (sys):#if defined(_KERNEL) || defined(_WANT_FILE)
+Mman.h (sys):#ifdef _KERNEL
+Mman.h (sys):#else /* !_KERNEL */
+Mman.h (sys):#endif /* !_KERNEL */
+Module.h (sys):#ifdef	_KERNEL
+Module.h (sys):#endif	/* _KERNEL */
+Module.h (sys):#ifndef _KERNEL
+Mount.h (sys):#ifdef _KERNEL
+Mount.h (sys):#if defined(_WANT_FREEBSD11_STATFS) || defined(_KERNEL)
+Mount.h (sys):#endif /* _WANT_FREEBSD11_STATFS || _KERNEL */
+Mount.h (sys):#ifdef _KERNEL
+Mount.h (sys):#endif /* _KERNEL */
+Mount.h (sys):#ifdef _KERNEL
+Mount.h (sys):#ifdef _KERNEL
+Mount.h (sys):#ifdef _KERNEL
+Mount.h (sys):#else /* !_KERNEL */
+Mount.h (sys):#endif /* _KERNEL */
+Mptable.h (x86\include):#ifdef _KERNEL
+Mp_ring.h (net):#ifndef _KERNEL
+Mqueue.h (sys):#ifdef _KERNEL
+Msg.h (sys):#ifdef _KERNEL
+Msg.h (sys):#if defined(_KERNEL) || defined(_WANT_SYSVMSG_INTERNALS)
+Msg.h (sys):#ifdef _KERNEL
+Msg.h (sys):#else /* _KERNEL */
+Msg.h (sys):#endif /* !_KERNEL */
+Msgbuf.h (sys):#ifdef _KERNEL
+Mtio.h (sys):#ifndef _KERNEL
+Mtio.h (sys):#ifndef _KERNEL
+Mutex.h (sys):#ifdef _KERNEL
+Mutex.h (sys):#endif	/* _KERNEL */
+Namei.h (sys):#ifdef _KERNEL
+Netdump.h (netinet\netdump):#ifdef _KERNEL
+Netdump.h (netinet\netdump):#endif /* _KERNEL */
+Netisr.h (net):#ifdef _KERNEL
+Netisr.h (net):#endif /* !_KERNEL */
+Netisr_internal.h (net):#ifndef _KERNEL
+Npx.h (machine):#ifdef _KERNEL
+Nv.h (sys):#ifndef _KERNEL
+Nv.h (sys):#if defined(_KERNEL) && defined(MALLOC_DECLARE)
+Nv.h (sys):#ifndef _KERNEL
+Nv.h (sys):#ifndef _KERNEL
+Nv.h (sys):#if !defined(_KERNEL) || defined(_VA_LIST_DECLARED)
+Nv.h (sys):#ifndef _KERNEL
+Nv.h (sys):#ifndef _KERNEL
+Nv.h (sys):#ifndef _KERNEL
+Nv.h (sys):#ifndef _KERNEL
+Nv.h (sys):#ifndef _KERNEL
+Osd.h (sys):#ifdef _KERNEL
+Osd.h (sys):#endif	/* _KERNEL */
+Param.h (sys):#if defined(_KERNEL) || defined(IN_RTLD)
+Param.h (sys):#ifdef _KERNEL
+Param.h (sys):#ifndef _KERNEL
+Param.h (sys):#ifndef _KERNEL
+Param.h (sys):#ifdef _KERNEL
+Param.h (sys):#endif /* _KERNEL */
+Pcb.h (machine):#ifndef _KERNEL
+Pcb.h (machine):#ifdef _KERNEL
+Pcb_ext.h (machine):#ifdef _KERNEL
+Pcpu.h (machine):#ifdef _KERNEL
+Pcpu.h (machine):#endif /* _KERNEL */
+Pcpu.h (sys):#ifdef _KERNEL
+Pcpu.h (sys):#endif /* _KERNEL */
+Pcpu.h (sys):	 * (e.g., lsof, part of gtop) define _KERNEL and include this
+Pcpu.h (sys):#ifdef _KERNEL
+Pcpu.h (sys):#endif /* _KERNEL */
+Pctrie.h (sys):#ifdef _KERNEL
+Pctrie.h (sys):#endif /* _KERNEL */
+Perfmon.h (machine):#ifndef _KERNEL
+Perfmon.h (machine):#ifndef _KERNEL
+Perfmon.h (machine):#endif /* _KERNEL */
+Pfvar.h (net):#ifdef _KERNEL
+Pfvar.h (net):#endif /* _KERNEL */
+Pfvar.h (net):#ifdef _KERNEL
+Pfvar.h (net):#endif /* _KERNEL */
+Pfvar.h (net):#ifdef _KERNEL
+Pfvar.h (net):#ifdef _KERNEL
+Pfvar.h (net):#endif /* _KERNEL */
+Pfvar.h (net):#ifdef _KERNEL
+Pfvar.h (net):#ifdef _KERNEL
+Pfvar.h (net):#endif /* _KERNEL */
+Pfvar.h (net):#ifdef _KERNEL
+Pfvar.h (net):#endif /* _KERNEL */
+Pim_var.h (netinet):#ifdef _KERNEL
+Pim_var.h (netinet):#ifdef _KERNEL
+Pipe.h (sys):#ifndef _KERNEL
+Pmap.h (machine):#ifdef _KERNEL
+Pmap.h (machine):#endif /* _KERNEL */
+Pmap.h (machine):#ifdef _KERNEL
+Pmap.h (machine):#ifdef	_KERNEL
+Pmap.h (machine):#endif /* _KERNEL */
+Pmc.h (sys):#ifdef _KERNEL
+Pmc.h (sys):#ifdef _KERNEL
+Pmc.h (sys):#ifdef _KERNEL
+Pmc.h (sys):#endif /* _KERNEL */
+Pmclog.h (sys):#ifdef	_KERNEL
+Pmclog.h (sys):#endif	/* _KERNEL */
+Pmc_mdep.h (machine):#ifdef	_KERNEL
+Pmc_mdep.h (machine):#ifdef _KERNEL
+Pmc_mdep.h (machine):#endif /* _KERNEL */
+Poll.h (sys):#ifndef _KERNEL
+Poll.h (sys):#endif /* !_KERNEL */
+Ppireg.h (machine):#ifdef _KERNEL
+Ppireg.h (machine):#endif /* _KERNEL */
+Priority.h (sys):#ifdef _KERNEL
+Priv.h (sys):#ifdef _KERNEL
+Proc.h (machine):#ifdef	_KERNEL
+Proc.h (machine):#endif	/* _KERNEL */
+Proc.h (sys):#ifndef _KERNEL
+Proc.h (sys):#ifndef _KERNEL
+Proc.h (sys):#ifdef _KERNEL
+Proc.h (sys):#ifdef _KERNEL
+Proc.h (sys):#endif	/* _KERNEL */
+Procctl.h (sys):#ifndef _KERNEL
+Procctl.h (sys):#ifndef _KERNEL
+Procdesc.h (sys):#ifdef _KERNEL
+Procdesc.h (sys):#else /* !_KERNEL */
+Procdesc.h (sys):#endif /* _KERNEL */
+Profile.h (machine):#ifdef _KERNEL
+Profile.h (machine):#else /* !_KERNEL */
+Profile.h (machine):#endif /* _KERNEL */
+Profile.h (machine):#ifdef _KERNEL
+Profile.h (machine):#else /* !_KERNEL */
+Profile.h (machine):#endif /* _KERNEL */
+Protosw.h (sys):/*#ifdef _KERNEL*/
+Protosw.h (sys):#ifdef	_KERNEL			/* users shouldn't see this decl */
+Protosw.h (sys):#endif /* _KERNEL */
+Protosw.h (sys):#ifdef _KERNEL
+Ptrace.h (sys):#if defined(_WANT_LWPINFO32) || (defined(_KERNEL) && defined(__LP64__))
+Ptrace.h (sys):#ifdef _KERNEL
+Ptrace.h (sys):#else /* !_KERNEL */
+Ptrace.h (sys):#endif /* !_KERNEL */
+Ptrace.h (x86\include):#ifdef _KERNEL
+Queue.h (sys):#if (defined(_KERNEL) && defined(INVARIANTS))
+Queue.h (sys):#if (defined(_KERNEL) && defined(INVARIANTS))
+Queue.h (sys):#endif /* (_KERNEL && INVARIANTS) */
+Queue.h (sys):#if (defined(_KERNEL) && defined(INVARIANTS))
+Queue.h (sys):#endif /* (_KERNEL && INVARIANTS) */
+Radix.c (net):#ifdef	_KERNEL
+Radix.c (net):#else /* !_KERNEL */
+Radix.c (net):#endif /* !_KERNEL */
+Radix.h (net):#ifdef _KERNEL
+Radix.h (net):#ifdef _KERNEL
+Radix.h (net):#ifndef _KERNEL
+Radix.h (net):#endif /* _KERNEL */
+Radix_mpath.h (net):#ifdef _KERNEL
+Random.h (sys):#ifdef _KERNEL
+Random.h (sys):#endif /* _KERNEL */
+Rangelock.h (sys):#ifdef _KERNEL
+Rangelock.h (sys):#endif	/* _KERNEL */
+Raw_cb.h (net):#ifdef _KERNEL
+Rctl.h (sys):#ifdef _KERNEL
+Rctl.h (sys):#else /* !_KERNEL */
+Rctl.h (sys):#endif /* !_KERNEL */
+Refcount.h (sys):#ifdef _KERNEL
+Reg.h (x86\include):#ifdef _KERNEL
+Regression.h (sys):#ifndef _KERNEL
+Regression.h (sys):#endif /* !_KERNEL */
+Resource.h (sys):#ifdef _KERNEL
+Resource.h (sys):#endif	/* _KERNEL */
+Resourcevar.h (sys):#ifdef _KERNEL
+Resourcevar.h (sys):#ifdef _KERNEL
+Resourcevar.h (sys):#endif /* _KERNEL */
+Rman.h (sys):#ifndef	_KERNEL
+Rman.h (sys):#ifdef _KERNEL
+Rman.h (sys):#endif /* _KERNEL */
+Rmlock.h (sys):#ifdef _KERNEL
+Rmlock.h (sys):#endif /* _KERNEL */
+Route.h (net):#ifdef _KERNEL
+Route.h (net):#if defined(_KERNEL)
+Route.h (net):#endif /* _KERNEL */
+Route.h (net):#ifdef _KERNEL
+Route.h (net):#ifdef _KERNEL
+Rtprio.h (sys):#ifdef _KERNEL
+Rtprio.h (sys):#ifndef _KERNEL
+Rtprio.h (sys):#endif	/* !_KERNEL */
+Rwlock.h (sys):#ifdef _KERNEL
+Rwlock.h (sys):#ifdef _KERNEL
+Rwlock.h (sys):#endif /* _KERNEL */
+Sbuf.h (sys):#ifdef _KERNEL
+Sched.h (sys):#ifdef _KERNEL
+Sched.h (sys):#endif /* _KERNEL */
+Sched.h (sys):#ifndef _KERNEL
+Sctputil.h (netinet):#if defined(_KERNEL) || defined(__Userspace__)
+Sctputil.h (netinet):#endif				/* _KERNEL */
+Sctp_asconf.h (netinet):#if defined(_KERNEL) || defined(__Userspace__)
+Sctp_asconf.h (netinet):#endif				/* _KERNEL */
+Sctp_bsd_addr.h (netinet):#if defined(_KERNEL) || defined(__Userspace__)
+Sctp_constants.h (netinet):#if defined(_KERNEL)
+Sctp_constants.h (netinet):#if defined(_KERNEL) || defined(__Userspace__)
+Sctp_constants.h (netinet):#endif				/* _KERNEL || __Userspace__ */
+Sctp_crc32.h (netinet):#if defined(_KERNEL)
+Sctp_crc32.h (netinet):#endif				/* _KERNEL */
+Sctp_indata.h (netinet):#if defined(_KERNEL) || defined(__Userspace__)
+Sctp_input.h (netinet):#if defined(_KERNEL) || defined(__Userspace__)
+Sctp_output.c (netinet):			 * macros when _KERNEL is undefined.
+Sctp_output.h (netinet):#if defined(_KERNEL) || defined(__Userspace__)
+Sctp_output.h (netinet):#endif				/* _KERNEL || __Userspace__ */
+Sctp_output.h (netinet):#if defined(_KERNEL) || defined(__Userspace__)
+Sctp_pcb.h (netinet):/* TODO where to put non-_KERNEL things for __Userspace__? */
+Sctp_pcb.h (netinet):#if defined(_KERNEL) || defined(__Userspace__)
+Sctp_pcb.h (netinet):#endif				/* _KERNEL */
+Sctp_peeloff.h (netinet):#if defined(_KERNEL)
+Sctp_peeloff.h (netinet):#endif				/* _KERNEL */
+Sctp_sysctl.h (netinet):#if defined(_KERNEL) || defined(__Userspace__)
+Sctp_sysctl.h (netinet):#endif				/* _KERNEL */
+Sctp_timer.h (netinet):#if defined(_KERNEL) || defined(__Userspace__)
+Sctp_uio.h (netinet):#if ! defined(_KERNEL)
+Sctp_uio.h (netinet):#if defined(_KERNEL) || defined(__Userspace__)
+Sctp_uio.h (netinet):#if !(defined(_KERNEL)) && !(defined(__Userspace__))
+Sctp_uio.h (netinet):#endif				/* !_KERNEL */
+Sctp_var.h (netinet):#if defined(_KERNEL) || defined(__Userspace__)
+Sctp_var.h (netinet):#endif				/* _KERNEL */
+Sdt.h (sys):#ifndef _KERNEL
+Sdt.h (sys):#else /* _KERNEL */
+Sdt.h (sys):#endif /* _KERNEL */
+Segments.h (machine):#ifdef _KERNEL
+Segments.h (machine):#endif /* _KERNEL */
+Select.h (sys):#ifndef _KERNEL
+Select.h (sys):#endif /* !_KERNEL */
+Selinfo.h (sys):#ifdef _KERNEL
+Sem.h (sys):#if defined(_KERNEL) || defined(_WANT_SEMUN)
+Sem.h (sys):#if defined(_KERNEL) || defined(_WANT_SYSVSEM_INTERNALS)
+Sem.h (sys):#ifdef _KERNEL
+Sem.h (sys):#else /* !_KERNEL */
+Sem.h (sys):#endif /* !_KERNEL */
+Sema.h (sys):#ifdef _KERNEL
+Sema.h (sys):#endif	/* _KERNEL */
+_semaphore.h (sys):#ifndef _KERNEL
+_semaphore.h (sys):#endif /* !_KERNEL */
+Seq.h (sys):#ifdef _KERNEL
+Seq.h (sys):#ifdef _KERNEL
+Seq.h (sys):#endif	/* _KERNEL */
+Serial.h (sys):#ifdef _KERNEL
+Serial.h (sys):#endif	/* _KERNEL */
+Sf_buf.h (sys):#ifdef _KERNEL
+Sf_buf.h (sys):#endif /* _KERNEL */
+Shm.h (sys):#if defined(_KERNEL) || defined(_WANT_SYSVSHM_INTERNALS)
+Shm.h (sys):#ifdef _KERNEL
+Shm.h (sys):#else /* !_KERNEL */
+Shm.h (sys):#endif /* _KERNEL */
+Sigframe.h (machine):#ifdef _KERNEL
+Signal.h (machine):#if defined(_KERNEL) && defined(COMPAT_43)
+Signal.h (sys):#if defined(_WANT_LWPINFO32) || (defined(_KERNEL) && defined(__LP64__))
+Signal.h (sys):#if defined(_WANT_LWPINFO32) || (defined(_KERNEL) && defined(__LP64__))
+Signal.h (sys):#if defined(_KERNEL) && defined(COMPAT_43) && \
+Signalvar.h (sys):#ifdef _KERNEL
+Signalvar.h (sys):#endif /* _KERNEL */
+Signalvar.h (sys):#ifdef _KERNEL
+Signalvar.h (sys):#endif /* _KERNEL */
+_sigset.h (sys):#if defined(_KERNEL) && defined(COMPAT_43)
+Sleepqueue.h (sys):#ifdef _KERNEL
+Sleepqueue.h (sys):#endif	/* _KERNEL */
+Slicer.h (sys):#ifdef _KERNEL
+Slicer.h (sys):#endif /* _KERNEL */
+Smapi.h (machine):#ifndef _KERNEL
+Smp.h (machine):#ifdef _KERNEL
+Smp.h (machine):#endif /* _KERNEL */
+Smp.h (sys):#ifdef _KERNEL
+Smp.h (sys):#endif /* _KERNEL */
+Snoop.h (sys):#ifndef _KERNEL
+Sockbuf.h (sys):#if defined(_KERNEL) || defined(_WANT_SOCKET)
+Sockbuf.h (sys):#endif	/* defined(_KERNEL) || defined(_WANT_SOCKET) */
+Sockbuf.h (sys):#ifdef _KERNEL
+Sockbuf.h (sys):#endif /* _KERNEL */
+Socket.h (sys):#ifdef _KERNEL
+Socket.h (sys):#endif	/* _KERNEL */
+Socket.h (sys):#ifdef _KERNEL
+Socket.h (sys):#ifdef _KERNEL
+Socket.h (sys):#ifdef _KERNEL
+Socket.h (sys):#ifdef _KERNEL
+Socket.h (sys):#endif /* _KERNEL */
+Socket.h (sys):#ifndef	_KERNEL
+Socket.h (sys):#endif /* !_KERNEL */
+Socket.h (sys):#ifdef _KERNEL
+Socket.h (sys):#endif /* _KERNEL */
+Socketvar.h (sys):#if defined(_KERNEL) || defined(_WANT_SOCKET)
+Socketvar.h (sys):#ifdef _KERNEL
+Socketvar.h (sys):#endif	/* defined(_KERNEL) || defined(_WANT_SOCKET) */
+Socketvar.h (sys):#ifdef _KERNEL
+Socketvar.h (sys):#endif /* _KERNEL */
+Socketvar.h (sys):#ifdef _KERNEL
+Sockopt.h (sys):#ifndef _KERNEL
+Soundcard.h (sys):#if !defined(_KERNEL) || defined(USE_SEQ_MACROS)
+Stack.h (x86\include):#ifdef _KERNEL
+Stat.h (sys):#if !defined(_KERNEL) && __BSD_VISIBLE
+Stat.h (sys):#ifdef _KERNEL
+Stat.h (sys):#if defined(_WANT_FREEBSD11_STAT) || defined(_KERNEL)
+Stat.h (sys):#endif /* _WANT_FREEBSD11_STAT || _KERNEL */
+Stat.h (sys):#ifdef _KERNEL
+Stat.h (sys):#ifndef _KERNEL
+Stat.h (sys):#endif /* !_KERNEL */
+Stat.h (sys):#ifdef _KERNEL
+Stat.h (sys):#ifndef _KERNEL
+Stat.h (sys):#endif /* !_KERNEL */
+Stdatomic.h (sys):#if defined(_KERNEL)
+Stdatomic.h (sys):#ifndef _KERNEL
+Stdatomic.h (sys):#endif /* !_KERNEL */
+Stdatomic.h (sys):#ifndef _KERNEL
+Stdatomic.h (sys):#endif /* !_KERNEL */
+Subr_acl_nfs4.c (kern):#ifdef _KERNEL
+Subr_acl_nfs4.c (kern):#endif /* !_KERNEL */
+Subr_acl_nfs4.c (kern):#ifdef _KERNEL
+Subr_acl_nfs4.c (kern):#endif /* _KERNEL */
+Subr_acl_nfs4.c (kern):#ifdef _KERNEL
+Subr_acl_nfs4.c (kern):#endif /* _KERNEL */
+Subr_acl_nfs4.c (kern):#ifdef _KERNEL
+Subr_acl_nfs4.c (kern):#endif /* _KERNEL */
+Subr_acl_nfs4.c (kern):#ifdef _KERNEL
+Subr_acl_nfs4.c (kern):#endif /* _KERNEL */
+Subr_acl_nfs4.c (kern):#ifndef _KERNEL
+Subr_acl_nfs4.c (kern):#endif /* !_KERNEL */
+Subr_acl_nfs4.c (kern):#ifdef _KERNEL
+Subr_acl_nfs4.c (kern):#endif /* _KERNEL */
+Subr_acl_nfs4.c (kern):#ifdef	_KERNEL
+Subr_acl_nfs4.c (kern):#endif	/* _KERNEL */
+Subr_blist.c (kern):#ifdef _KERNEL
+Subr_blist.c (kern):#ifndef _KERNEL
+Subr_blist.c (kern):#ifdef _KERNEL
+Subr_capability.c (kern):#ifdef _KERNEL
+Subr_capability.c (kern):#else	/* !_KERNEL */
+Subr_capability.c (kern):#ifdef _KERNEL
+Subr_prf.c (kern):#ifdef _KERNEL
+Subr_prf.c (kern):#endif  /* _KERNEL */
+Subr_prf.c (kern):#ifdef _KERNEL
+Subr_prf.c (kern):#ifdef _KERNEL
+Subr_prf.c (kern):#ifndef _KERNEL
+Subr_prf.c (kern):#ifdef _KERNEL
+Subr_prf.c (kern):#endif /* _KERNEL */
+Subr_prf.c (kern):#ifdef _KERNEL
+Subr_prf.c (kern):#ifdef _KERNEL
+Subr_sbuf.c (kern):#ifdef _KERNEL
+Subr_sbuf.c (kern):#else /* _KERNEL */
+Subr_sbuf.c (kern):#endif /* _KERNEL */
+Subr_sbuf.c (kern):#ifdef _KERNEL
+Subr_sbuf.c (kern):#else /* _KERNEL */
+Subr_sbuf.c (kern):#endif /* _KERNEL */
+Subr_sbuf.c (kern):#if defined(_KERNEL) && defined(INVARIANTS)
+Subr_sbuf.c (kern):#else /* _KERNEL && INVARIANTS */
+Subr_sbuf.c (kern):#endif /* _KERNEL && INVARIANTS */
+Subr_sbuf.c (kern):#ifdef _KERNEL
+Subr_sbuf.c (kern):#ifdef _KERNEL
+Subr_sbuf.c (kern):#ifdef _KERNEL
+Subr_sbuf.c (kern):#ifdef _KERNEL
+Subr_sbuf.c (kern):#else /* !_KERNEL */
+Subr_sbuf.c (kern):#endif /* _KERNEL */
+Subr_sbuf.c (kern):#ifdef _KERNEL
+Subr_unit.c (kern):#ifdef _KERNEL
+Subr_unit.c (kern):#if defined(DIAGNOSTIC) || !defined(_KERNEL)
+Subr_unit.c (kern):#ifndef _KERNEL	/* USERLAND test driver */
+Sx.h (sys):#ifdef	_KERNEL
+Sx.h (sys):#ifdef _KERNEL
+Sx.h (sys):#endif /* _KERNEL */
+Sysarch.h (x86\include):#ifndef _KERNEL
+Sysctl.h (sys):#ifdef _KERNEL
+Sysctl.h (sys):#ifdef _KERNEL
+Sysctl.h (sys):#endif /* _KERNEL */
+Sysctl.h (sys):#ifdef _KERNEL
+Sysctl.h (sys):#else	/* !_KERNEL */
+Sysctl.h (sys):#endif	/* _KERNEL */
+Sysent.h (sys):#ifdef _KERNEL
+Sysent.h (sys):#ifdef _KERNEL
+Sysent.h (sys):#endif /* _KERNEL */
+Syslimits.h (sys):#if !defined(_STANDALONE) && !defined(_KERNEL) && !defined(_LIMITS_H_) && !defined(_SYS_PARAM_H_)
+Syslog.h (sys):#ifdef _KERNEL
+Syslog.h (sys):#ifdef _KERNEL
+Syslog.h (sys):#else /* not _KERNEL */
+Syslog.h (sys):#endif /* !_KERNEL */
+Taskqueue.h (sys):#ifndef _KERNEL
+Tcp_debug.h (netinet):#if !defined(_KERNEL) && defined(INET6)
+Tcp_debug.h (netinet):#ifndef _KERNEL
+Tcp_fastopen.h (netinet):#ifdef _KERNEL
+Tcp_fastopen.h (netinet):#endif /* _KERNEL */
+Tcp_hpts.h (netinet):#ifdef _KERNEL
+Tcp_hpts.h (netinet):#ifdef _KERNEL
+Tcp_hpts.h (netinet):#endif /* _KERNEL */
+Tcp_log_buf.h (netinet):#ifdef _KERNEL
+Tcp_log_buf.h (netinet):#endif /* _KERNEL */
+Tcp_log_buf.h (netinet):#ifdef _KERNEL
+Tcp_log_buf.h (netinet):#endif	/* _KERNEL */
+Tcp_offload.h (netinet):#ifndef _KERNEL
+Tcp_seq.h (netinet):#ifdef _KERNEL
+Tcp_seq.h (netinet):#endif /* _KERNEL */
+Tcp_syncache.h (netinet):#ifdef _KERNEL
+Tcp_syncache.h (netinet):#endif /* _KERNEL */
+Tcp_timer.h (netinet):#ifdef _KERNEL
+Tcp_timer.h (netinet):#endif /* _KERNEL */
+Tcp_var.h (netinet):#ifdef _KERNEL
+Tcp_var.h (netinet):#if defined(_KERNEL) || defined(_WANT_TCPCB)
+Tcp_var.h (netinet):#endif	/* _KERNEL || _WANT_TCPCB */
+Tcp_var.h (netinet):#ifdef _KERNEL
+Tcp_var.h (netinet):#endif	/* _KERNEL */
+Tcp_var.h (netinet):#if defined(_KERNEL) && !defined(TCP_RFC7413)
+Tcp_var.h (netinet):#ifdef _KERNEL
+Tcp_var.h (netinet):#ifdef _KERNEL
+Tcp_var.h (netinet):#ifdef _KERNEL
+Tcp_var.h (netinet):#endif /* _KERNEL */
+Terminal.h (sys):#ifdef _KERNEL
+Terminal.h (sys):#endif /* _KERNEL */
+Thr.h (sys):#ifndef _KERNEL
+Thr.h (sys):#endif /* !_KERNEL */
+Time.h (sys):#ifdef _KERNEL
+Time.h (sys):#endif /* _KERNEL */
+Time.h (sys):#ifndef _KERNEL			/* NetBSD/OpenBSD compatible interfaces */
+Time.h (sys):#ifdef _KERNEL
+Time.h (sys):#else /* !_KERNEL */
+Time.h (sys):#endif /* !_KERNEL */
+Timeb.h (sys):#ifndef _KERNEL
+Timeb.h (sys):#endif /* _KERNEL */
+Timeet.h (sys):#ifndef _KERNEL
+Timeffc.h (sys):#ifdef _KERNEL
+Timeffc.h (sys):#else /* !_KERNEL */
+Timeffc.h (sys):#endif /* _KERNEL */
+Timepps.h (sys):#ifdef _KERNEL
+Timepps.h (sys):#else /* !_KERNEL */
+Timerreg.h (machine):#ifdef _KERNEL
+Timerreg.h (machine):#endif /* _KERNEL */
+Timers.h (sys):#ifdef _KERNEL
+Times.h (sys):#ifndef _KERNEL
+Timetc.h (sys):#ifndef _KERNEL
+Timex.h (sys):#ifdef _KERNEL
+Timex.h (sys):#else /* !_KERNEL */
+Timex.h (sys):#endif /* _KERNEL */
+Toecore.h (netinet):#ifndef _KERNEL
+Tty.h (sys):#ifdef _KERNEL
+Tty.h (sys):#endif /* _KERNEL */
+Ttyqueue.h (sys):#ifdef _KERNEL
+Ttyqueue.h (sys):#endif /* _KERNEL */
+Turnstile.h (sys):#ifdef _KERNEL
+Turnstile.h (sys):#endif	/* _KERNEL */
+Types.h (sys):#ifndef _KERNEL
+Types.h (sys):#ifdef _KERNEL
+Types.h (sys):#endif /* !_KERNEL */
+Types.h (sys):#ifndef _KERNEL
+Types.h (sys):#endif /* !_KERNEL */
+Ucontext.h (machine):#if defined(_KERNEL) && defined(COMPAT_FREEBSD4)
+Ucontext.h (sys):#if defined(_KERNEL) && defined(COMPAT_FREEBSD4)
+Ucontext.h (sys):#endif	/* _KERNEL */
+Ucontext.h (sys):#ifndef _KERNEL
+Ucontext.h (sys):#else /* _KERNEL */
+Ucontext.h (sys):#endif /* !_KERNEL */
+Ucred.h (sys):#if defined(_KERNEL) || defined(_WANT_UCRED)
+Ucred.h (sys):#endif /* _KERNEL || _WANT_UCRED */
+Ucred.h (sys):#ifdef _KERNEL
+Ucred.h (sys):#endif /* _KERNEL */
+Udp_var.h (netinet):#ifdef _KERNEL
+Udp_var.h (netinet):#ifdef _KERNEL
+Udp_var.h (netinet):#endif /* _KERNEL */
+Uio.h (sys):#ifdef _KERNEL
+Uio.h (sys):#else /* !_KERNEL */
+Uio.h (sys):#endif /* _KERNEL */
+Uipc_mbuf.c (kern):#ifdef _KERNEL
+Umtx.h (sys):#ifndef _KERNEL
+Umtx.h (sys):#endif /* !_KERNEL */
+Un.h (sys):#ifndef _KERNEL
+Un.h (sys):#endif /* !_KERNEL */
+Unpcb.h (sys):#if defined(_KERNEL) || defined(_WANT_UNPCB)
+Unpcb.h (sys):#endif	/* _KERNEL || _WANT_UNPCB */
+User.h (sys):#ifndef _KERNEL
+User.h (sys):#endif /* !_KERNEL */
+User.h (sys):#ifndef _KERNEL
+User.h (sys):#endif /* !_KERNEL */
+User.h (sys):#ifndef _KERNEL
+User.h (sys):#ifdef _KERNEL
+User.h (sys):#endif /* !_KERNEL */
+Utsname.h (sys):#ifdef _KERNEL
+Utsname.h (sys):#ifndef _KERNEL
+Utsname.h (sys):#endif	/* _KERNEL */
+Uuid.h (sys):#ifdef _KERNEL
+Uuid.h (sys):#else	/* _KERNEL */
+Uuid.h (sys):#endif	/* _KERNEL */
+Vdso.h (sys):#ifndef _KERNEL
+Vdso.h (sys):#ifdef _KERNEL
+Vdso.h (x86\include):#ifdef _KERNEL
+Vm86.h (machine):#ifdef _KERNEL
+Vm86.h (machine):#endif /* _KERNEL */
+Vmem.h (sys):#ifdef _KERNEL
+Vmem.h (sys):#endif /* _KERNEL */
+Vmmeter.h (sys):#if defined(_KERNEL) || defined(_WANT_VMMETER)
+Vmmeter.h (sys):#ifdef _KERNEL
+Vmmeter.h (sys):#endif /* _KERNEL || _WANT_VMMETER */
+Vmmeter.h (sys):#ifdef _KERNEL
+Vmmeter.h (sys):#endif	/* _KERNEL */
+Vnet.h (net):#if defined(_KERNEL) || defined(_WANT_VNET)
+Vnet.h (net):#ifdef _KERNEL
+Vnet.h (net):#endif /* _KERNEL */
+Vnode.h (sys):#if defined(_KERNEL) || defined(_KVM_VNODE)
+Vnode.h (sys):#endif /* defined(_KERNEL) || defined(_KVM_VNODE) */
+Vnode.h (sys):#ifdef _KERNEL
+Vnode.h (sys):#endif /* _KERNEL */
+Vnode.h (sys):#ifdef _KERNEL
+Vnode.h (sys):#endif /* _KERNEL */
+Wait.h (sys):#if defined(_KERNEL) || defined(_WANT_KW_EXITCODE)
+Wait.h (sys):#endif	/* _KERNEL || _WANT_KW_EXITCODE */
+Wait.h (sys):#ifndef _KERNEL
+Wait.h (sys):#endif /* !_KERNEL */
+Watchdog.h (sys):#ifdef _KERNEL
+Zlib.h (sys):#if defined(__FreeBSD__) && defined(_KERNEL)
+Zutil.h (sys):#ifdef _KERNEL
+Zutil.h (sys):#ifdef _KERNEL
+Zutil.h (sys):#endif /* _KERNEL */

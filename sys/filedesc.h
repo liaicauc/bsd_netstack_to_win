@@ -1,6 +1,4 @@
-/*-
- * SPDX-License-Identifier: BSD-3-Clause
- *
+/*
  * Copyright (c) 1990, 1993
  *	The Regents of the University of California.  All rights reserved.
  *
@@ -12,7 +10,11 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the University nor the names of its contributors
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *	This product includes software developed by the University of
+ *	California, Berkeley and its contributors.
+ * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
  *
@@ -29,222 +31,69 @@
  * SUCH DAMAGE.
  *
  *	@(#)filedesc.h	8.1 (Berkeley) 6/2/93
- * $FreeBSD$
  */
-
-#ifndef _SYS_FILEDESC_H_
-#define	_SYS_FILEDESC_H_
-
-#include <sys/caprights.h>
-#include <sys/queue.h>
-#include <sys/event.h>
-#include <sys/lock.h>
-#include <sys/priority.h>
-#include <sys/seq.h>
-#include <sys/sx.h>
-
-#include <machine/_limits.h>
-
-struct filecaps {
-	cap_rights_t	 fc_rights;	/* per-descriptor capability rights */
-	u_long		*fc_ioctls;	/* per-descriptor allowed ioctls */
-	int16_t		 fc_nioctls;	/* fc_ioctls array size */
-	uint32_t	 fc_fcntls;	/* per-descriptor allowed fcntls */
-};
-
-struct filedescent {
-	struct file	*fde_file;	/* file structure for open file */
-	struct filecaps	 fde_caps;	/* per-descriptor rights */
-	uint8_t		 fde_flags;	/* per-process open file flags */
-	seq_t		 fde_seq;	/* keep file and caps in sync */
-};
-#define	fde_rights	fde_caps.fc_rights
-#define	fde_fcntls	fde_caps.fc_fcntls
-#define	fde_ioctls	fde_caps.fc_ioctls
-#define	fde_nioctls	fde_caps.fc_nioctls
-#define	fde_change_size	(offsetof(struct filedescent, fde_seq))
-
-struct fdescenttbl {
-	int	fdt_nfiles;		/* number of open files allocated */
-	struct	filedescent fdt_ofiles[0];	/* open files */
-};
-#define	fd_seq(fdt, fd)	(&(fdt)->fdt_ofiles[(fd)].fde_seq)
 
 /*
  * This structure is used for the management of descriptors.  It may be
  * shared by multiple processes.
+ *
+ * A process is initially started out with NDFILE descriptors stored within
+ * this structure, selected to be enough for typical applications based on
+ * the historical limit of 20 open files (and the usage of descriptors by
+ * shells).  If these descriptors are exhausted, a larger descriptor table
+ * may be allocated, up to a process' resource limit; the internal arrays
+ * are then unused.  The initial expansion is set to NDEXTENT; each time
+ * it runs out, it is doubled until the resource limit is reached. NDEXTENT
+ * should be selected to be the biggest multiple of OFILESIZE (see below)
+ * that will fit in a power-of-two sized piece of memory.
  */
-#define NDSLOTTYPE	u_long
+#define NDFILE		20
+#define NDEXTENT	50		/* 250 bytes in 256-byte alloc. */ 
 
 struct filedesc {
-	struct	fdescenttbl *fd_files;	/* open files table */
+	struct	file **fd_ofiles;	/* file structures for open files */
+	char	*fd_ofileflags;		/* per-process open file flags */
 	struct	vnode *fd_cdir;		/* current directory */
 	struct	vnode *fd_rdir;		/* root directory */
-	struct	vnode *fd_jdir;		/* jail root directory */
-	NDSLOTTYPE *fd_map;		/* bitmap of free fds */
-	int	fd_lastfile;		/* high-water mark of fd_ofiles */
-	int	fd_freefile;		/* approx. next free file */
+	int	fd_nfiles;		/* number of open files allocated */
+	u_short	fd_lastfile;		/* high-water mark of fd_ofiles */
+	u_short	fd_freefile;		/* approx. next free file */
 	u_short	fd_cmask;		/* mask for file creation */
-	int	fd_refcnt;		/* thread reference count */
-	int	fd_holdcnt;		/* hold count on structure + mutex */
-	struct	sx fd_sx;		/* protects members of this struct */
-	struct	kqlist fd_kqlist;	/* list of kqueues on this filedesc */
-	int	fd_holdleaderscount;	/* block fdfree() for shared close() */
-	int	fd_holdleaderswakeup;	/* fdfree() needs wakeup */
+	u_short	fd_refcnt;		/* reference count */
 };
 
 /*
- * Structure to keep track of (process leader, struct fildedesc) tuples.
- * Each process has a pointer to such a structure when detailed tracking
- * is needed, e.g., when rfork(RFPROC | RFMEM) causes a file descriptor
- * table to be shared by processes having different "p_leader" pointers
- * and thus distinct POSIX style locks.
- *
- * fdl_refcount and fdl_holdcount are protected by struct filedesc mtx.
+ * Basic allocation of descriptors:
+ * one of the above, plus arrays for NDFILE descriptors.
  */
-struct filedesc_to_leader {
-	int		fdl_refcount;	/* references from struct proc */
-	int		fdl_holdcount;	/* temporary hold during closef */
-	int		fdl_wakeup;	/* fdfree() waits on closef() */
-	struct proc	*fdl_leader;	/* owner of POSIX locks */
-	/* Circular list: */
-	struct filedesc_to_leader *fdl_prev;
-	struct filedesc_to_leader *fdl_next;
+struct filedesc0 {
+	struct	filedesc fd_fd;
+	/*
+	 * These arrays are used when the number of open files is
+	 * <= NDFILE, and are then pointed to by the pointers above.
+	 */
+	struct	file *fd_dfiles[NDFILE];
+	char	fd_dfileflags[NDFILE];
 };
-#define	fd_nfiles	fd_files->fdt_nfiles
-#define	fd_ofiles	fd_files->fdt_ofiles
 
 /*
  * Per-process open flags.
  */
-#define	UF_EXCLOSE	0x01		/* auto-close on exec */
+#define	UF_EXCLOSE 	0x01		/* auto-close on exec */
+#define	UF_MAPPED 	0x02		/* mapped from device */
 
-#ifdef _KERNEL
+/*
+ * Storage required per open file descriptor.
+ */
+#define OFILESIZE (sizeof(struct file *) + sizeof(char))
 
-/* Lock a file descriptor table. */
-#define	FILEDESC_LOCK_INIT(fdp)	sx_init(&(fdp)->fd_sx, "filedesc structure")
-#define	FILEDESC_LOCK_DESTROY(fdp)	sx_destroy(&(fdp)->fd_sx)
-#define	FILEDESC_LOCK(fdp)	(&(fdp)->fd_sx)
-#define	FILEDESC_XLOCK(fdp)	sx_xlock(&(fdp)->fd_sx)
-#define	FILEDESC_XUNLOCK(fdp)	sx_xunlock(&(fdp)->fd_sx)
-#define	FILEDESC_SLOCK(fdp)	sx_slock(&(fdp)->fd_sx)
-#define	FILEDESC_SUNLOCK(fdp)	sx_sunlock(&(fdp)->fd_sx)
-
-#define	FILEDESC_LOCK_ASSERT(fdp)	sx_assert(&(fdp)->fd_sx, SX_LOCKED | \
-					    SX_NOTRECURSED)
-#define	FILEDESC_XLOCK_ASSERT(fdp)	sx_assert(&(fdp)->fd_sx, SX_XLOCKED | \
-					    SX_NOTRECURSED)
-#define	FILEDESC_UNLOCK_ASSERT(fdp)	sx_assert(&(fdp)->fd_sx, SX_UNLOCKED)
-
-/* Operation types for kern_dup(). */
-enum {
-	FDDUP_NORMAL,		/* dup() behavior. */
-	FDDUP_FCNTL,		/* fcntl()-style errors. */
-	FDDUP_FIXED,		/* Force fixed allocation. */
-	FDDUP_MUSTREPLACE,	/* Target must exist. */
-	FDDUP_LASTMODE,
-};
-
-/* Flags for kern_dup(). */
-#define	FDDUP_FLAG_CLOEXEC	0x1	/* Atomically set UF_EXCLOSE. */
-
-/* For backward compatibility. */
-#define	falloc(td, resultfp, resultfd, flags) \
-	falloc_caps(td, resultfp, resultfd, flags, NULL)
-
-struct thread;
-
-void	filecaps_init(struct filecaps *fcaps);
-bool	filecaps_copy(const struct filecaps *src, struct filecaps *dst,
-	    bool locked);
-void	filecaps_move(struct filecaps *src, struct filecaps *dst);
-void	filecaps_free(struct filecaps *fcaps);
-
-int	closef(struct file *fp, struct thread *td);
-int	dupfdopen(struct thread *td, struct filedesc *fdp, int dfd, int mode,
-	    int openerror, int *indxp);
-int	falloc_caps(struct thread *td, struct file **resultfp, int *resultfd,
-	    int flags, struct filecaps *fcaps);
-int	falloc_noinstall(struct thread *td, struct file **resultfp);
-void	_finstall(struct filedesc *fdp, struct file *fp, int fd, int flags,
-	    struct filecaps *fcaps);
-int	finstall(struct thread *td, struct file *fp, int *resultfd, int flags,
-	    struct filecaps *fcaps);
-int	fdalloc(struct thread *td, int minfd, int *result);
-int	fdallocn(struct thread *td, int minfd, int *fds, int n);
-int	fdcheckstd(struct thread *td);
-void	fdclose(struct thread *td, struct file *fp, int idx);
-void	fdcloseexec(struct thread *td);
-void	fdsetugidsafety(struct thread *td);
-struct	filedesc *fdcopy(struct filedesc *fdp);
-int	fdcopy_remapped(struct filedesc *fdp, const int *fds, size_t nfds,
-	    struct filedesc **newfdp);
-void	fdinstall_remapped(struct thread *td, struct filedesc *fdp);
-void	fdunshare(struct thread *td);
-void	fdescfree(struct thread *td);
-void	fdescfree_remapped(struct filedesc *fdp);
-struct	filedesc *fdinit(struct filedesc *fdp, bool prepfiles);
-struct	filedesc *fdshare(struct filedesc *fdp);
-struct filedesc_to_leader *
-	filedesc_to_leader_alloc(struct filedesc_to_leader *old,
-	    struct filedesc *fdp, struct proc *leader);
-int	getvnode(struct thread *td, int fd, cap_rights_t *rightsp,
-	    struct file **fpp);
-void	mountcheckdirs(struct vnode *olddp, struct vnode *newdp);
-
-int	fget_cap_locked(struct filedesc *fdp, int fd, cap_rights_t *needrightsp,
-	    struct file **fpp, struct filecaps *havecapsp);
-int	fget_cap(struct thread *td, int fd, cap_rights_t *needrightsp,
-	    struct file **fpp, struct filecaps *havecapsp);
-
-/* Return a referenced file from an unlocked descriptor. */
-int	fget_unlocked(struct filedesc *fdp, int fd, cap_rights_t *needrightsp,
-	    struct file **fpp, seq_t *seqp);
-
-/* Requires a FILEDESC_{S,X}LOCK held and returns without a ref. */
-static __inline struct file *
-fget_locked(struct filedesc *fdp, int fd)
-{
-
-	FILEDESC_LOCK_ASSERT(fdp);
-
-	if (fd < 0 || fd > fdp->fd_lastfile)
-		return (NULL);
-
-	return (fdp->fd_ofiles[fd].fde_file);
-}
-
-static __inline struct filedescent *
-fdeget_locked(struct filedesc *fdp, int fd)
-{
-	struct filedescent *fde;
-
-	FILEDESC_LOCK_ASSERT(fdp);
-
-	if (fd < 0 || fd > fdp->fd_lastfile)
-		return (NULL);
-
-	fde = &fdp->fd_ofiles[fd];
-	if (fde->fde_file == NULL)
-		return (NULL);
-
-	return (fde);
-}
-
-#ifdef CAPABILITIES
-static __inline bool
-fd_modified(struct filedesc *fdp, int fd, seq_t seq)
-{
-
-	return (!seq_consistent(fd_seq(fdp->fd_files, fd), seq));
-}
+#ifdef KERNEL
+/*
+ * Kernel global variables and routines.
+ */
+int	fdalloc __P((struct proc *p, int want, int *result));
+int	fdavail __P((struct proc *p, int n));
+int	falloc __P((struct proc *p, struct file **resultfp, int *resultfd));
+struct	filedesc *fdcopy __P((struct proc *p));
+void	fdfree __P((struct proc *p));
 #endif
-
-/* cdir/rdir/jdir manipulation functions. */
-void	pwd_chdir(struct thread *td, struct vnode *vp);
-int	pwd_chroot(struct thread *td, struct vnode *vp);
-void	pwd_ensure_dirs(void);
-
-#endif /* _KERNEL */
-
-#endif /* !_SYS_FILEDESC_H_ */

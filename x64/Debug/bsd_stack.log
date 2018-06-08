@@ -1,61 +1,12 @@
-﻿  uipc_mbuf.c
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(234): warning C4013: 'M_ASSERTPKTHDR' undefined; assuming extern returning int
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(236): warning C4013: 'm_tag_delete_chain' undefined; assuming extern returning int
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(238): warning C4013: '__builtin_memset' undefined; assuming extern returning int
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(286): warning C4013: 'M_START' undefined; assuming extern returning int
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(286): warning C4047: '=': 'caddr_t' differs in levels of indirection from 'int'
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(287): warning C4013: 'M_SIZE' undefined; assuming extern returning int
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(298): warning C4013: 'm_freem' undefined; assuming extern returning int
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(299): warning C4312: 'type cast': conversion from 'unsigned int' to 'mbuf *' of greater size
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(412): warning C4013: 'MBUF_CHECKSLEEP' undefined; assuming extern returning int
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(422): warning C4013: 'm_tag_copy_chain' undefined; assuming extern returning int
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(436): warning C4013: 'm_gethdr' undefined; assuming extern returning int
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(436): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(438): warning C4013: 'm_get' undefined; assuming extern returning int
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(438): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(448): warning C4013: 'M_ALIGN' undefined; assuming extern returning int
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(542): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(560): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(638): warning C4013: 'm_getcl' undefined; assuming extern returning int
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(638): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(641): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(649): warning C4013: 'm_free' undefined; assuming extern returning int
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(698): warning C4013: 'M_WRITABLE' undefined; assuming extern returning int
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(699): warning C4013: 'M_TRAILINGSPACE' undefined; assuming extern returning int
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(708): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(831): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(837): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(849): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(875): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(881): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(893): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(924): warning C4018: '>': signed/unsigned mismatch
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(930): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(940): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(966): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(1003): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(1006): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(1021): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(1024): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(1068): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(1092): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(1136): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(1232): warning C4476: 'printf' : unknown type field character 'b' in format specifier
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(1232): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 4 has type 'uint32_t'
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(1232): warning C4313: 'printf': '%s' in format string conflicts with argument 4 of type 'uint32_t'
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(1233): warning C4474: 'printf' : too many arguments passed for format string
-  d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(1233): note: placeholders and their parameters expect 4 variadic arguments, but 6 were provided
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(1237): warning C4476: 'printf' : unknown type field character 'D' in format specifier
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(1237): warning C4474: 'printf' : too many arguments passed for format string
-  d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(1237): note: placeholders and their parameters expect 1 variadic arguments, but 3 were provided
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(1252): warning C4013: 'm_length' undefined; assuming extern returning int
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(1259): warning C4142: benign redefinition of type
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(1306): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(1308): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(1325): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(1327): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(1399): warning C4018: '<=': signed/unsigned mismatch
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(1413): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(1424): warning C4018: '<=': signed/unsigned mismatch
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(1688): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
-d:\bsd_netstack_to_win\my_bsd_stack_src\bsd_stack\bsd_stack\kern\uipc_mbuf.c(1718): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
+﻿  uipc_domain.c
+d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack\bsd_stack\sys\sysctl.h(186): error C2079: 'e_vm' uses undefined struct 'vmspace'
+d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack\bsd_stack\kern\uipc_domain.c(65): error C2146: syntax error: missing ';' before identifier 'domain'
+d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack\bsd_stack\kern\uipc_domain.c(65): error C2065: 'domain': undeclared identifier
+d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack\bsd_stack\kern\uipc_domain.c(65): error C2224: left of '.dom_next' must have struct/union type
+d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack\bsd_stack\kern\uipc_domain.c(66): error C2146: syntax error: missing ';' before identifier 'domain'
+d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack\bsd_stack\kern\uipc_domain.c(66): error C2065: 'domain': undeclared identifier
+d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack\bsd_stack\kern\uipc_domain.c(66): error C2224: left of '.dom_next' must have struct/union type
+d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack\bsd_stack\kern\uipc_domain.c(68): error C2146: syntax error: missing ';' before identifier 'domain'
+d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack\bsd_stack\kern\uipc_domain.c(68): error C2065: 'domain': undeclared identifier
+d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack\bsd_stack\kern\uipc_domain.c(68): error C2224: left of '.dom_next' must have struct/union type
+d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack\bsd_stack\kern\uipc_domain.c(79): fatal error C1083: Cannot open include file: 'imp.h': No such file or directory

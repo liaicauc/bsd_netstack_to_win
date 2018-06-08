@@ -1,6 +1,4 @@
 /*-
- * SPDX-License-Identifier: BSD-3-Clause
- *
  * Copyright (c) 1982, 1986, 1991, 1993
  *	The Regents of the University of California.  All rights reserved.
  * (c) UNIX System Laboratories, Inc.
@@ -17,7 +15,11 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the University nor the names of its contributors
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *	This product includes software developed by the University of
+ *	California, Berkeley and its contributors.
+ * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
  *
@@ -36,330 +38,26 @@
  *	@(#)kern_clock.c	8.5 (Berkeley) 1/21/94
  */
 
-#include <sys/cdefs.h>
-__FBSDID("$FreeBSD$");
-
-#include "opt_kdb.h"
-#include "opt_device_polling.h"
-#include "opt_hwpmc_hooks.h"
-#include "opt_ntp.h"
-#include "opt_watchdog.h"
-
 #include <sys/param.h>
 #include <sys/systm.h>
+#include <sys/dkstat.h>
 #include <sys/callout.h>
-#include <sys/epoch.h>
-#include <sys/gtaskqueue.h>
-#include <sys/kdb.h>
 #include <sys/kernel.h>
-#include <sys/kthread.h>
-#include <sys/ktr.h>
-#include <sys/lock.h>
-#include <sys/mutex.h>
 #include <sys/proc.h>
-#include <sys/resource.h>
 #include <sys/resourcevar.h>
-#include <sys/sched.h>
-#include <sys/sdt.h>
-#include <sys/signalvar.h>
-#include <sys/sleepqueue.h>
-#include <sys/smp.h>
-#include <vm/vm.h>
-#include <vm/pmap.h>
-#include <vm/vm_map.h>
-#include <sys/sysctl.h>
-#include <sys/bus.h>
-#include <sys/interrupt.h>
-#include <sys/limits.h>
-#include <sys/timetc.h>
+
+#include <machine/cpu.h>
 
 #ifdef GPROF
 #include <sys/gmon.h>
 #endif
 
-#ifdef HWPMC_HOOKS
-#include <sys/pmckern.h>
-PMC_SOFT_DEFINE( , , clock, hard);
-PMC_SOFT_DEFINE( , , clock, stat);
-PMC_SOFT_DEFINE_EX( , , clock, prof, \
-    cpu_startprofclock, cpu_stopprofclock);
-#endif
-
-#ifdef DEVICE_POLLING
-extern void hardclock_device_poll(void);
-#endif /* DEVICE_POLLING */
-
-static void initclocks(void *dummy);
-SYSINIT(clocks, SI_SUB_CLOCKS, SI_ORDER_FIRST, initclocks, NULL);
-
-/* Spin-lock protecting profiling statistics. */
-static struct mtx time_lock;
-
-SDT_PROVIDER_DECLARE(sched);
-SDT_PROBE_DEFINE2(sched, , , tick, "struct thread *", "struct proc *");
-
-static int
-sysctl_kern_cp_time(SYSCTL_HANDLER_ARGS)
-{
-	int error;
-	long cp_time[CPUSTATES];
-#ifdef SCTL_MASK32
-	int i;
-	unsigned int cp_time32[CPUSTATES];
-#endif
-
-	read_cpu_time(cp_time);
-#ifdef SCTL_MASK32
-	if (req->flags & SCTL_MASK32) {
-		if (!req->oldptr)
-			return SYSCTL_OUT(req, 0, sizeof(cp_time32));
-		for (i = 0; i < CPUSTATES; i++)
-			cp_time32[i] = (unsigned int)cp_time[i];
-		error = SYSCTL_OUT(req, cp_time32, sizeof(cp_time32));
-	} else
-#endif
-	{
-		if (!req->oldptr)
-			return SYSCTL_OUT(req, 0, sizeof(cp_time));
-		error = SYSCTL_OUT(req, cp_time, sizeof(cp_time));
-	}
-	return error;
-}
-
-SYSCTL_PROC(_kern, OID_AUTO, cp_time, CTLTYPE_LONG|CTLFLAG_RD|CTLFLAG_MPSAFE,
-    0,0, sysctl_kern_cp_time, "LU", "CPU time statistics");
-
-static long empty[CPUSTATES];
-
-static int
-sysctl_kern_cp_times(SYSCTL_HANDLER_ARGS)
-{
-	struct pcpu *pcpu;
-	int error;
-	int c;
-	long *cp_time;
-#ifdef SCTL_MASK32
-	unsigned int cp_time32[CPUSTATES];
-	int i;
-#endif
-
-	if (!req->oldptr) {
-#ifdef SCTL_MASK32
-		if (req->flags & SCTL_MASK32)
-			return SYSCTL_OUT(req, 0, sizeof(cp_time32) * (mp_maxid + 1));
-		else
-#endif
-			return SYSCTL_OUT(req, 0, sizeof(long) * CPUSTATES * (mp_maxid + 1));
-	}
-	for (error = 0, c = 0; error == 0 && c <= mp_maxid; c++) {
-		if (!CPU_ABSENT(c)) {
-			pcpu = pcpu_find(c);
-			cp_time = pcpu->pc_cp_time;
-		} else {
-			cp_time = empty;
-		}
-#ifdef SCTL_MASK32
-		if (req->flags & SCTL_MASK32) {
-			for (i = 0; i < CPUSTATES; i++)
-				cp_time32[i] = (unsigned int)cp_time[i];
-			error = SYSCTL_OUT(req, cp_time32, sizeof(cp_time32));
-		} else
-#endif
-			error = SYSCTL_OUT(req, cp_time, sizeof(long) * CPUSTATES);
-	}
-	return error;
-}
-
-SYSCTL_PROC(_kern, OID_AUTO, cp_times, CTLTYPE_LONG|CTLFLAG_RD|CTLFLAG_MPSAFE,
-    0,0, sysctl_kern_cp_times, "LU", "per-CPU time statistics");
-
-#ifdef DEADLKRES
-static const char *blessed[] = {
-	"getblk",
-	"so_snd_sx",
-	"so_rcv_sx",
-	NULL
-};
-static int slptime_threshold = 1800;
-static int blktime_threshold = 900;
-static int sleepfreq = 3;
-
-static void
-deadlkres(void)
-{
-	struct proc *p;
-	struct thread *td;
-	void *wchan;
-	int blkticks, i, slpticks, slptype, tryl, tticks;
-
-	tryl = 0;
-	for (;;) {
-		blkticks = blktime_threshold * hz;
-		slpticks = slptime_threshold * hz;
-
-		/*
-		 * Avoid to sleep on the sx_lock in order to avoid a possible
-		 * priority inversion problem leading to starvation.
-		 * If the lock can't be held after 100 tries, panic.
-		 */
-		if (!sx_try_slock(&allproc_lock)) {
-			if (tryl > 100)
-		panic("%s: possible deadlock detected on allproc_lock\n",
-				    __func__);
-			tryl++;
-			pause("allproc", sleepfreq * hz);
-			continue;
-		}
-		tryl = 0;
-		FOREACH_PROC_IN_SYSTEM(p) {
-			PROC_LOCK(p);
-			if (p->p_state == PRS_NEW) {
-				PROC_UNLOCK(p);
-				continue;
-			}
-			FOREACH_THREAD_IN_PROC(p, td) {
-
-				thread_lock(td);
-				if (TD_ON_LOCK(td)) {
-
-					/*
-					 * The thread should be blocked on a
-					 * turnstile, simply check if the
-					 * turnstile channel is in good state.
-					 */
-					MPASS(td->td_blocked != NULL);
-
-					tticks = ticks - td->td_blktick;
-					thread_unlock(td);
-					if (tticks > blkticks) {
-
-						/*
-						 * Accordingly with provided
-						 * thresholds, this thread is
-						 * stuck for too long on a
-						 * turnstile.
-						 */
-						PROC_UNLOCK(p);
-						sx_sunlock(&allproc_lock);
-	panic("%s: possible deadlock detected for %p, blocked for %d ticks\n",
-						    __func__, td, tticks);
-					}
-				} else if (TD_IS_SLEEPING(td) &&
-				    TD_ON_SLEEPQ(td)) {
-
-					/*
-					 * Check if the thread is sleeping on a
-					 * lock, otherwise skip the check.
-					 * Drop the thread lock in order to
-					 * avoid a LOR with the sleepqueue
-					 * spinlock.
-					 */
-					wchan = td->td_wchan;
-					tticks = ticks - td->td_slptick;
-					thread_unlock(td);
-					slptype = sleepq_type(wchan);
-					if ((slptype == SLEEPQ_SX ||
-					    slptype == SLEEPQ_LK) &&
-					    tticks > slpticks) {
-
-						/*
-						 * Accordingly with provided
-						 * thresholds, this thread is
-						 * stuck for too long on a
-						 * sleepqueue.
-						 * However, being on a
-						 * sleepqueue, we might still
-						 * check for the blessed
-						 * list.
-						 */
-						tryl = 0;
-						for (i = 0; blessed[i] != NULL;
-						    i++) {
-							if (!strcmp(blessed[i],
-							    td->td_wmesg)) {
-								tryl = 1;
-								break;
-							}
-						}
-						if (tryl != 0) {
-							tryl = 0;
-							continue;
-						}
-						PROC_UNLOCK(p);
-						sx_sunlock(&allproc_lock);
-	panic("%s: possible deadlock detected for %p, blocked for %d ticks\n",
-						    __func__, td, tticks);
-					}
-				} else
-					thread_unlock(td);
-			}
-			PROC_UNLOCK(p);
-		}
-		sx_sunlock(&allproc_lock);
-
-		/* Sleep for sleepfreq seconds. */
-		pause("-", sleepfreq * hz);
-	}
-}
-
-static struct kthread_desc deadlkres_kd = {
-	"deadlkres",
-	deadlkres,
-	(struct thread **)NULL
-};
-
-SYSINIT(deadlkres, SI_SUB_CLOCKS, SI_ORDER_ANY, kthread_start, &deadlkres_kd);
-
-static SYSCTL_NODE(_debug, OID_AUTO, deadlkres, CTLFLAG_RW, 0,
-    "Deadlock resolver");
-SYSCTL_INT(_debug_deadlkres, OID_AUTO, slptime_threshold, CTLFLAG_RW,
-    &slptime_threshold, 0,
-    "Number of seconds within is valid to sleep on a sleepqueue");
-SYSCTL_INT(_debug_deadlkres, OID_AUTO, blktime_threshold, CTLFLAG_RW,
-    &blktime_threshold, 0,
-    "Number of seconds within is valid to block on a turnstile");
-SYSCTL_INT(_debug_deadlkres, OID_AUTO, sleepfreq, CTLFLAG_RW, &sleepfreq, 0,
-    "Number of seconds between any deadlock resolver thread run");
-#endif	/* DEADLKRES */
-
-void
-read_cpu_time(long *cp_time)
-{
-	struct pcpu *pc;
-	int i, j;
-
-	/* Sum up global cp_time[]. */
-	bzero(cp_time, sizeof(long) * CPUSTATES);
-	CPU_FOREACH(i) {
-		pc = pcpu_find(i);
-		for (j = 0; j < CPUSTATES; j++)
-			cp_time[j] += pc->pc_cp_time[j];
-	}
-}
-
-#include <sys/watchdog.h>
-
-static int watchdog_ticks;
-static int watchdog_enabled;
-static void watchdog_fire(void);
-static void watchdog_config(void *, u_int, int *);
-
-static void
-watchdog_attach(void)
-{
-	EVENTHANDLER_REGISTER(watchdog_list, watchdog_config, NULL, 0);
-}
-
 /*
  * Clock handling routines.
  *
  * This code is written to operate with two timers that run independently of
- * each other.
- *
- * The main timer, running hz times per second, is used to trigger interval
- * timers, timeouts and rescheduling as needed.
- *
- * The second timer handles kernel and user profiling,
+ * each other.  The main clock, running hz times per second, is used to keep
+ * track of real time.  The second timer handles kernel and user profiling,
  * and does resource use estimation.  If the second timer is programmable,
  * it is randomized to avoid aliasing between the two clocks.  For example,
  * the randomization prevents an adversary from always giving up the cpu
@@ -376,37 +74,50 @@ watchdog_attach(void)
  *
  * If the statistics clock is running fast, it must be divided by the ratio
  * profhz/stathz for statistics.  (For profiling, every tick counts.)
- *
- * Time-of-day is maintained using a "timecounter", which may or may
- * not be related to the hardware generating the above mentioned
- * interrupts.
  */
+
+/*
+ * TODO:
+ *	allocate more timeout table slots when table overflows.
+ */
+
+/*
+ * Bump a timeval by a small number of usec's.
+ */
+#define BUMPTIME(t, usec) { \
+	register volatile struct timeval *tp = (t); \
+	register long us; \
+ \
+	tp->tv_usec = us = tp->tv_usec + (usec); \
+	if (us >= 1000000) { \
+		tp->tv_usec = us - 1000000; \
+		tp->tv_sec++; \
+	} \
+}
 
 int	stathz;
 int	profhz;
 int	profprocs;
-volatile int	ticks;
-int	psratio;
+int	ticks;
+static int psdiv, pscnt;	/* prof => stat divider */
+int	psratio;		/* ratio: prof / stat */
 
-static DPCPU_DEFINE(int, pcputicks);	/* Per-CPU version of ticks. */
-#ifdef DEVICE_POLLING
-static int devpoll_run = 0;
-#endif
+volatile struct	timeval time;
+volatile struct	timeval mono_time;
 
 /*
  * Initialize clock frequencies and start both clocks running.
  */
-/* ARGSUSED*/
-static void
-initclocks(void *dummy)
+void
+initclocks()
 {
-	int i;
+	register int i;
 
 	/*
 	 * Set divisors to 1 (normal case) and let the machine-specific
 	 * code do its bit.
 	 */
-	mtx_init(&time_lock, "time lock", NULL, MTX_DEF);
+	psdiv = pscnt = 1;
 	cpu_initclocks();
 
 	/*
@@ -416,235 +127,233 @@ initclocks(void *dummy)
 	if (profhz == 0)
 		profhz = i;
 	psratio = profhz / i;
-
-#ifdef SW_WATCHDOG
-	/* Enable hardclock watchdog now, even if a hardware watchdog exists. */
-	watchdog_attach();
-#else
-	/* Volunteer to run a software watchdog. */
-	if (wdog_software_attach == NULL)
-		wdog_software_attach = watchdog_attach;
-#endif
-}
-
-/*
- * Each time the real-time timer fires, this function is called on all CPUs.
- * Note that hardclock() calls hardclock_cpu() for the boot CPU, so only
- * the other CPUs in the system need to call this function.
- */
-void
-hardclock_cpu(int usermode)
-{
-	struct pstats *pstats;
-	struct thread *td = curthread;
-	struct proc *p = td->td_proc;
-	int flags;
-
-	/*
-	 * Run current process's virtual and profile time, as needed.
-	 */
-	pstats = p->p_stats;
-	flags = 0;
-	if (usermode &&
-	    timevalisset(&pstats->p_timer[ITIMER_VIRTUAL].it_value)) {
-		PROC_ITIMLOCK(p);
-		if (itimerdecr(&pstats->p_timer[ITIMER_VIRTUAL], tick) == 0)
-			flags |= TDF_ALRMPEND | TDF_ASTPENDING;
-		PROC_ITIMUNLOCK(p);
-	}
-	if (timevalisset(&pstats->p_timer[ITIMER_PROF].it_value)) {
-		PROC_ITIMLOCK(p);
-		if (itimerdecr(&pstats->p_timer[ITIMER_PROF], tick) == 0)
-			flags |= TDF_PROFPEND | TDF_ASTPENDING;
-		PROC_ITIMUNLOCK(p);
-	}
-	thread_lock(td);
-	td->td_flags |= flags;
-	thread_unlock(td);
-
-#ifdef HWPMC_HOOKS
-	if (PMC_CPU_HAS_SAMPLES(PCPU_GET(cpuid)))
-		PMC_CALL_HOOK_UNLOCKED(curthread, PMC_FN_DO_SAMPLES, NULL);
-	if (td->td_intr_frame != NULL)
-		PMC_SOFT_CALL_TF( , , clock, hard, td->td_intr_frame);
-#endif
-	callout_process(sbinuptime());
-	if (__predict_false(DPCPU_GET(epoch_cb_count)))
-		GROUPTASK_ENQUEUE(DPCPU_PTR(epoch_cb_task));
 }
 
 /*
  * The real-time timer, interrupting hz times per second.
  */
 void
-hardclock(int usermode, uintfptr_t pc)
+hardclock(frame)
+	register struct clockframe *frame;
 {
+	register struct callout *p1;
+	register struct proc *p;
+	register int delta, needsoft;
+	extern int tickdelta;
+	extern long timedelta;
 
-	atomic_add_int(&ticks, 1);
-	hardclock_cpu(usermode);
-	tc_ticktock(1);
-	cpu_tick_calibration();
+	/*
+	 * Update real-time timeout queue.
+	 * At front of queue are some number of events which are ``due''.
+	 * The time to these is <= 0 and if negative represents the
+	 * number of ticks which have passed since it was supposed to happen.
+	 * The rest of the q elements (times > 0) are events yet to happen,
+	 * where the time for each is given as a delta from the previous.
+	 * Decrementing just the first of these serves to decrement the time
+	 * to all events.
+	 */
+	needsoft = 0;
+	for (p1 = calltodo.c_next; p1 != NULL; p1 = p1->c_next) {
+		if (--p1->c_time > 0)
+			break;
+		needsoft = 1;
+		if (p1->c_time == 0)
+			break;
+	}
+
+	p = curproc;
+	if (p) {
+		register struct pstats *pstats;
+
+		/*
+		 * Run current process's virtual and profile time, as needed.
+		 */
+		pstats = p->p_stats;
+		if (CLKF_USERMODE(frame) &&
+		    timerisset(&pstats->p_timer[ITIMER_VIRTUAL].it_value) &&
+		    itimerdecr(&pstats->p_timer[ITIMER_VIRTUAL], tick) == 0)
+			psignal(p, SIGVTALRM);
+		if (timerisset(&pstats->p_timer[ITIMER_PROF].it_value) &&
+		    itimerdecr(&pstats->p_timer[ITIMER_PROF], tick) == 0)
+			psignal(p, SIGPROF);
+	}
+
 	/*
 	 * If no separate statistics clock is available, run it from here.
-	 *
-	 * XXX: this only works for UP
 	 */
-	if (stathz == 0) {
-		profclock(usermode, pc);
-		statclock(usermode);
-	}
-#ifdef DEVICE_POLLING
-	hardclock_device_poll();	/* this is very short and quick */
-#endif /* DEVICE_POLLING */
-	if (watchdog_enabled > 0 && --watchdog_ticks <= 0)
-		watchdog_fire();
-}
-
-void
-hardclock_cnt(int cnt, int usermode)
-{
-	struct pstats *pstats;
-	struct thread *td = curthread;
-	struct proc *p = td->td_proc;
-	int *t = DPCPU_PTR(pcputicks);
-	int flags, global, newticks;
-	int i;
+	if (stathz == 0)
+		statclock(frame);
 
 	/*
-	 * Update per-CPU and possibly global ticks values.
+	 * Increment the time-of-day.  The increment is just ``tick'' unless
+	 * we are still adjusting the clock; see adjtime().
 	 */
-	*t += cnt;
-	do {
-		global = ticks;
-		newticks = *t - global;
-		if (newticks <= 0) {
-			if (newticks < -1)
-				*t = global - 1;
-			newticks = 0;
-			break;
-		}
-	} while (!atomic_cmpset_int(&ticks, global, *t));
+	ticks++;
+	if (timedelta == 0)
+		delta = tick;
+	else {
+		delta = tick + tickdelta;
+		timedelta -= tickdelta;
+	}
+	BUMPTIME(&time, delta);
+	BUMPTIME(&mono_time, delta);
 
 	/*
-	 * Run current process's virtual and profile time, as needed.
+	 * Process callouts at a very low cpu priority, so we don't keep the
+	 * relatively high clock interrupt priority any longer than necessary.
 	 */
-	pstats = p->p_stats;
-	flags = 0;
-	if (usermode &&
-	    timevalisset(&pstats->p_timer[ITIMER_VIRTUAL].it_value)) {
-		PROC_ITIMLOCK(p);
-		if (itimerdecr(&pstats->p_timer[ITIMER_VIRTUAL],
-		    tick * cnt) == 0)
-			flags |= TDF_ALRMPEND | TDF_ASTPENDING;
-		PROC_ITIMUNLOCK(p);
+	if (needsoft) {
+		if (CLKF_BASEPRI(frame)) {
+			/*
+			 * Save the overhead of a software interrupt;
+			 * it will happen as soon as we return, so do it now.
+			 */
+			(void)splsoftclock();
+			softclock();
+		} else
+			setsoftclock();
 	}
-	if (timevalisset(&pstats->p_timer[ITIMER_PROF].it_value)) {
-		PROC_ITIMLOCK(p);
-		if (itimerdecr(&pstats->p_timer[ITIMER_PROF],
-		    tick * cnt) == 0)
-			flags |= TDF_PROFPEND | TDF_ASTPENDING;
-		PROC_ITIMUNLOCK(p);
-	}
-	if (flags != 0) {
-		thread_lock(td);
-		td->td_flags |= flags;
-		thread_unlock(td);
-	}
-
-#ifdef	HWPMC_HOOKS
-	if (PMC_CPU_HAS_SAMPLES(PCPU_GET(cpuid)))
-		PMC_CALL_HOOK_UNLOCKED(curthread, PMC_FN_DO_SAMPLES, NULL);
-	if (td->td_intr_frame != NULL)
-		PMC_SOFT_CALL_TF( , , clock, hard, td->td_intr_frame);
-#endif
-	/* We are in charge to handle this tick duty. */
-	if (newticks > 0) {
-		tc_ticktock(newticks);
-#ifdef DEVICE_POLLING
-		/* Dangerous and no need to call these things concurrently. */
-		if (atomic_cmpset_acq_int(&devpoll_run, 0, 1)) {
-			/* This is very short and quick. */
-			hardclock_device_poll();
-			atomic_store_rel_int(&devpoll_run, 0);
-		}
-#endif /* DEVICE_POLLING */
-		if (watchdog_enabled > 0) {
-			i = atomic_fetchadd_int(&watchdog_ticks, -newticks);
-			if (i > 0 && i <= newticks)
-				watchdog_fire();
-		}
-	}
-	if (curcpu == CPU_FIRST())
-		cpu_tick_calibration();
-	if (__predict_false(DPCPU_GET(epoch_cb_count)))
-		GROUPTASK_ENQUEUE(DPCPU_PTR(epoch_cb_task));
-}
-
-void
-hardclock_sync(int cpu)
-{
-	int *t;
-	KASSERT(!CPU_ABSENT(cpu), ("Absent CPU %d", cpu));
-	t = DPCPU_ID_PTR(cpu, pcputicks);
-
-	*t = ticks;
 }
 
 /*
- * Compute number of ticks in the specified amount of time.
+ * Software (low priority) clock interrupt.
+ * Run periodic events from timeout queue.
  */
-int
-tvtohz(struct timeval *tv)
+/*ARGSUSED*/
+void
+softclock()
 {
-	unsigned long ticks;
-	long sec, usec;
+	register struct callout *c;
+	register void *arg;
+	register void (*func) __P((void *));
+	register int s;
+
+	s = splhigh();
+	while ((c = calltodo.c_next) != NULL && c->c_time <= 0) {
+		func = c->c_func;
+		arg = c->c_arg;
+		calltodo.c_next = c->c_next;
+		c->c_next = callfree;
+		callfree = c;
+		splx(s);
+		(*func)(arg);
+		(void) splhigh();
+	}
+	splx(s);
+}
+
+/*
+ * timeout --
+ *	Execute a function after a specified length of time.
+ *
+ * untimeout --
+ *	Cancel previous timeout function call.
+ *
+ *	See AT&T BCI Driver Reference Manual for specification.  This
+ *	implementation differs from that one in that no identification
+ *	value is returned from timeout, rather, the original arguments
+ *	to timeout are used to identify entries for untimeout.
+ */
+void
+timeout(ftn, arg, ticks)
+	void (*ftn) __P((void *));
+	void *arg;
+	register int ticks;
+{
+	register struct callout *new, *p, *t;
+	register int s;
+
+	if (ticks <= 0)
+		ticks = 1;
+
+	/* Lock out the clock. */
+	s = splhigh();
+
+	/* Fill in the next free callout structure. */
+	if (callfree == NULL)
+		panic("timeout table full");
+	new = callfree;
+	callfree = new->c_next;
+	new->c_arg = arg;
+	new->c_func = ftn;
 
 	/*
-	 * If the number of usecs in the whole seconds part of the time
-	 * difference fits in a long, then the total number of usecs will
-	 * fit in an unsigned long.  Compute the total and convert it to
-	 * ticks, rounding up and adding 1 to allow for the current tick
-	 * to expire.  Rounding also depends on unsigned long arithmetic
-	 * to avoid overflow.
-	 *
-	 * Otherwise, if the number of ticks in the whole seconds part of
-	 * the time difference fits in a long, then convert the parts to
-	 * ticks separately and add, using similar rounding methods and
-	 * overflow avoidance.  This method would work in the previous
-	 * case but it is slightly slower and assumes that hz is integral.
-	 *
-	 * Otherwise, round the time difference down to the maximum
-	 * representable value.
-	 *
-	 * If ints have 32 bits, then the maximum value for any timeout in
-	 * 10ms ticks is 248 days.
+	 * The time for each event is stored as a difference from the time
+	 * of the previous event on the queue.  Walk the queue, correcting
+	 * the ticks argument for queue entries passed.  Correct the ticks
+	 * value for the queue entry immediately after the insertion point
+	 * as well.  Watch out for negative c_time values; these represent
+	 * overdue events.
 	 */
-	sec = tv->tv_sec;
-	usec = tv->tv_usec;
-	if (usec < 0) {
-		sec--;
-		usec += 1000000;
-	}
-	if (sec < 0) {
-#ifdef DIAGNOSTIC
-		if (usec > 0) {
-			sec++;
-			usec -= 1000000;
+	for (p = &calltodo;
+	    (t = p->c_next) != NULL && ticks > t->c_time; p = t)
+		if (t->c_time > 0)
+			ticks -= t->c_time;
+	new->c_time = ticks;
+	if (t != NULL)
+		t->c_time -= ticks;
+
+	/* Insert the new entry into the queue. */
+	p->c_next = new;
+	new->c_next = t;
+	splx(s);
+}
+
+void
+untimeout(ftn, arg)
+	void (*ftn) __P((void *));
+	void *arg;
+{
+	register struct callout *p, *t;
+	register int s;
+
+	s = splhigh();
+	for (p = &calltodo; (t = p->c_next) != NULL; p = t)
+		if (t->c_func == ftn && t->c_arg == arg) {
+			/* Increment next entry's tick count. */
+			if (t->c_next && t->c_time > 0)
+				t->c_next->c_time += t->c_time;
+
+			/* Move entry from callout queue to callfree queue. */
+			p->c_next = t->c_next;
+			t->c_next = callfree;
+			callfree = t;
+			break;
 		}
-		printf("tvotohz: negative time difference %ld sec %ld usec\n",
-		       sec, usec);
-#endif
-		ticks = 1;
-	} else if (sec <= LONG_MAX / 1000000)
-		ticks = howmany(sec * 1000000 + (unsigned long)usec, tick) + 1;
-	else if (sec <= LONG_MAX / hz)
-		ticks = sec * hz
-			+ howmany((unsigned long)usec, tick) + 1;
+	splx(s);
+}
+
+/*
+ * Compute number of hz until specified time.  Used to
+ * compute third argument to timeout() from an absolute time.
+ */
+int
+hzto(tv)
+	struct timeval *tv;
+{
+	register long ticks, sec;
+	int s;
+
+	/*
+	 * If number of milliseconds will fit in 32 bit arithmetic,
+	 * then compute number of milliseconds to time and scale to
+	 * ticks.  Otherwise just compute number of hz in time, rounding
+	 * times greater than representible to maximum value.
+	 *
+	 * Delta times less than 25 days can be computed ``exactly''.
+	 * Maximum value for any timeout in 10ms ticks is 250 days.
+	 */
+	s = splhigh();
+	sec = tv->tv_sec - time.tv_sec;
+	if (sec <= 0x7fffffff / 1000 - 1000)
+		ticks = ((tv->tv_sec - time.tv_sec) * 1000 +
+			(tv->tv_usec - time.tv_usec) / 1000) / (tick / 1000);
+	else if (sec <= 0x7fffffff / hz)
+		ticks = sec * hz;
 	else
-		ticks = LONG_MAX;
-	if (ticks > INT_MAX)
-		ticks = INT_MAX;
-	return ((int)ticks);
+		ticks = 0x7fffffff;
+	splx(s);
+	return (ticks);
 }
 
 /*
@@ -654,18 +363,19 @@ tvtohz(struct timeval *tv)
  * keeps the profile clock running constantly.
  */
 void
-startprofclock(struct proc *p)
+startprofclock(p)
+	register struct proc *p;
 {
+	int s;
 
-	PROC_LOCK_ASSERT(p, MA_OWNED);
-	if (p->p_flag & P_STOPPROF)
-		return;
 	if ((p->p_flag & P_PROFIL) == 0) {
 		p->p_flag |= P_PROFIL;
-		mtx_lock(&time_lock);
-		if (++profprocs == 1)
-			cpu_startprofclock();
-		mtx_unlock(&time_lock);
+		if (++profprocs == 1 && stathz != 0) {
+			s = splstatclock();
+			psdiv = pscnt = psratio;
+			setstatclockrate(profhz);
+			splx(s);
+		}
 	}
 }
 
@@ -673,65 +383,69 @@ startprofclock(struct proc *p)
  * Stop profiling on a process.
  */
 void
-stopprofclock(struct proc *p)
+stopprofclock(p)
+	register struct proc *p;
 {
+	int s;
 
-	PROC_LOCK_ASSERT(p, MA_OWNED);
 	if (p->p_flag & P_PROFIL) {
-		if (p->p_profthreads != 0) {
-			while (p->p_profthreads != 0) {
-				p->p_flag |= P_STOPPROF;
-				msleep(&p->p_profthreads, &p->p_mtx, PPAUSE,
-				    "stopprof", 0);
-			}
-		}
-		if ((p->p_flag & P_PROFIL) == 0)
-			return;
 		p->p_flag &= ~P_PROFIL;
-		mtx_lock(&time_lock);
-		if (--profprocs == 0)
-			cpu_stopprofclock();
-		mtx_unlock(&time_lock);
+		if (--profprocs == 0 && stathz != 0) {
+			s = splstatclock();
+			psdiv = pscnt = 1;
+			setstatclockrate(stathz);
+			splx(s);
+		}
 	}
 }
 
+int	dk_ndrive = DK_NDRIVE;
+
 /*
- * Statistics clock.  Updates rusage information and calls the scheduler
- * to adjust priorities of the active thread.
- *
- * This should be called by all active processors.
+ * Statistics clock.  Grab profile sample, and if divider reaches 0,
+ * do process and kernel statistics.
  */
 void
-statclock(int usermode)
+statclock(frame)
+	register struct clockframe *frame;
 {
+#ifdef GPROF
+	register struct gmonparam *g;
+#endif
+	register struct proc *p;
+	register int i;
 
-	statclock_cnt(1, usermode);
-}
-
-void
-statclock_cnt(int cnt, int usermode)
-{
-	struct rusage *ru;
-	struct vmspace *vm;
-	struct thread *td;
-	struct proc *p;
-	long rss;
-	long *cp_time;
-
-	td = curthread;
-	p = td->td_proc;
-
-	cp_time = (long *)PCPU_PTR(cp_time);
-	if (usermode) {
+	if (CLKF_USERMODE(frame)) {
+		p = curproc;
+		if (p->p_flag & P_PROFIL)
+			addupc_intr(p, CLKF_PC(frame), 1);
+		if (--pscnt > 0)
+			return;
 		/*
-		 * Charge the time as appropriate.
+		 * Came from user mode; CPU was in user state.
+		 * If this process is being profiled record the tick.
 		 */
-		td->td_uticks += cnt;
+		p->p_uticks++;
 		if (p->p_nice > NZERO)
-			cp_time[CP_NICE] += cnt;
+			cp_time[CP_NICE]++;
 		else
-			cp_time[CP_USER] += cnt;
+			cp_time[CP_USER]++;
 	} else {
+#ifdef GPROF
+		/*
+		 * Kernel statistics are just like addupc_intr, only easier.
+		 */
+		g = &_gmonparam;
+		if (g->state == GMON_PROF_ON) {
+			i = CLKF_PC(frame) - g->lowpc;
+			if (i < g->textsize) {
+				i /= HISTFRACTION * sizeof(*g->kcount);
+				g->kcount[i]++;
+			}
+		}
+#endif
+		if (--pscnt > 0)
+			return;
 		/*
 		 * Came from kernel mode, so we were:
 		 * - handling an interrupt,
@@ -744,158 +458,71 @@ statclock_cnt(int cnt, int usermode)
 		 * so that we know how much of its real time was spent
 		 * in ``non-process'' (i.e., interrupt) work.
 		 */
-		if ((td->td_pflags & TDP_ITHREAD) ||
-		    td->td_intr_nesting_level >= 2) {
-			td->td_iticks += cnt;
-			cp_time[CP_INTR] += cnt;
-		} else {
-			td->td_pticks += cnt;
-			td->td_sticks += cnt;
-			if (!TD_IS_IDLETHREAD(td))
-				cp_time[CP_SYS] += cnt;
-			else
-				cp_time[CP_IDLE] += cnt;
+		p = curproc;
+		if (CLKF_INTR(frame)) {
+			if (p != NULL)
+				p->p_iticks++;
+			cp_time[CP_INTR]++;
+		} else if (p != NULL) {
+			p->p_sticks++;
+			cp_time[CP_SYS]++;
+		} else
+			cp_time[CP_IDLE]++;
+	}
+	pscnt = psdiv;
+
+	/*
+	 * We maintain statistics shown by user-level statistics
+	 * programs:  the amount of time in each cpu state, and
+	 * the amount of time each of DK_NDRIVE ``drives'' is busy.
+	 *
+	 * XXX	should either run linked list of drives, or (better)
+	 *	grab timestamps in the start & done code.
+	 */
+	for (i = 0; i < DK_NDRIVE; i++)
+		if (dk_busy & (1 << i))
+			dk_time[i]++;
+
+	/*
+	 * We adjust the priority of the current process.  The priority of
+	 * a process gets worse as it accumulates CPU time.  The cpu usage
+	 * estimator (p_estcpu) is increased here.  The formula for computing
+	 * priorities (in kern_synch.c) will compute a different value each
+	 * time p_estcpu increases by 4.  The cpu usage estimator ramps up
+	 * quite quickly when the process is running (linearly), and decays
+	 * away exponentially, at a rate which is proportionally slower when
+	 * the system is busy.  The basic principal is that the system will
+	 * 90% forget that the process used a lot of CPU time in 5 * loadav
+	 * seconds.  This causes the system to favor processes which haven't
+	 * run much recently, and to round-robin among other processes.
+	 */
+	if (p != NULL) {
+		p->p_cpticks++;
+		if (++p->p_estcpu == 0)
+			p->p_estcpu--;
+		if ((p->p_estcpu & 3) == 0) {
+			resetpriority(p);
+			if (p->p_priority >= PUSER)
+				p->p_priority = p->p_usrpri;
 		}
 	}
-
-	/* Update resource usage integrals and maximums. */
-	MPASS(p->p_vmspace != NULL);
-	vm = p->p_vmspace;
-	ru = &td->td_ru;
-	ru->ru_ixrss += pgtok(vm->vm_tsize) * cnt;
-	ru->ru_idrss += pgtok(vm->vm_dsize) * cnt;
-	ru->ru_isrss += pgtok(vm->vm_ssize) * cnt;
-	rss = pgtok(vmspace_resident_count(vm));
-	if (ru->ru_maxrss < rss)
-		ru->ru_maxrss = rss;
-	KTR_POINT2(KTR_SCHED, "thread", sched_tdname(td), "statclock",
-	    "prio:%d", td->td_priority, "stathz:%d", (stathz)?stathz:hz);
-	SDT_PROBE2(sched, , , tick, td, td->td_proc);
-	thread_lock_flags(td, MTX_QUIET);
-	for ( ; cnt > 0; cnt--)
-		sched_clock(td);
-	thread_unlock(td);
-#ifdef HWPMC_HOOKS
-	if (td->td_intr_frame != NULL)
-		PMC_SOFT_CALL_TF( , , clock, stat, td->td_intr_frame);
-#endif
-}
-
-void
-profclock(int usermode, uintfptr_t pc)
-{
-
-	profclock_cnt(1, usermode, pc);
-}
-
-void
-profclock_cnt(int cnt, int usermode, uintfptr_t pc)
-{
-	struct thread *td;
-#ifdef GPROF
-	struct gmonparam *g;
-	uintfptr_t i;
-#endif
-
-	td = curthread;
-	if (usermode) {
-		/*
-		 * Came from user mode; CPU was in user state.
-		 * If this process is being profiled, record the tick.
-		 * if there is no related user location yet, don't
-		 * bother trying to count it.
-		 */
-		if (td->td_proc->p_flag & P_PROFIL)
-			addupc_intr(td, pc, cnt);
-	}
-#ifdef GPROF
-	else {
-		/*
-		 * Kernel statistics are just like addupc_intr, only easier.
-		 */
-		g = &_gmonparam;
-		if (g->state == GMON_PROF_ON && pc >= g->lowpc) {
-			i = PC_TO_I(g, pc);
-			if (i < g->textsize) {
-				KCOUNT(g, i) += cnt;
-			}
-		}
-	}
-#endif
-#ifdef HWPMC_HOOKS
-	if (td->td_intr_frame != NULL)
-		PMC_SOFT_CALL_TF( , , clock, prof, td->td_intr_frame);
-#endif
 }
 
 /*
  * Return information about system clocks.
  */
-static int
-sysctl_kern_clockrate(SYSCTL_HANDLER_ARGS)
+sysctl_clockrate(where, sizep)
+	register char *where;
+	size_t *sizep;
 {
 	struct clockinfo clkinfo;
+
 	/*
 	 * Construct clockinfo structure.
 	 */
-	bzero(&clkinfo, sizeof(clkinfo));
 	clkinfo.hz = hz;
 	clkinfo.tick = tick;
 	clkinfo.profhz = profhz;
 	clkinfo.stathz = stathz ? stathz : hz;
-	return (sysctl_handle_opaque(oidp, &clkinfo, sizeof clkinfo, req));
-}
-
-SYSCTL_PROC(_kern, KERN_CLOCKRATE, clockrate,
-	CTLTYPE_STRUCT|CTLFLAG_RD|CTLFLAG_MPSAFE,
-	0, 0, sysctl_kern_clockrate, "S,clockinfo",
-	"Rate and period of various kernel clocks");
-
-static void
-watchdog_config(void *unused __unused, u_int cmd, int *error)
-{
-	u_int u;
-
-	u = cmd & WD_INTERVAL;
-	if (u >= WD_TO_1SEC) {
-		watchdog_ticks = (1 << (u - WD_TO_1SEC)) * hz;
-		watchdog_enabled = 1;
-		*error = 0;
-	} else {
-		watchdog_enabled = 0;
-	}
-}
-
-/*
- * Handle a watchdog timeout by dumping interrupt information and
- * then either dropping to DDB or panicking.
- */
-static void
-watchdog_fire(void)
-{
-	int nintr;
-	uint64_t inttotal;
-	u_long *curintr;
-	char *curname;
-
-	curintr = intrcnt;
-	curname = intrnames;
-	inttotal = 0;
-	nintr = sintrcnt / sizeof(u_long);
-
-	printf("interrupt                   total\n");
-	while (--nintr >= 0) {
-		if (*curintr)
-			printf("%-12s %20lu\n", curname, *curintr);
-		curname += strlen(curname) + 1;
-		inttotal += *curintr++;
-	}
-	printf("Total        %20ju\n", (uintmax_t)inttotal);
-
-#if defined(KDB) && !defined(KDB_UNATTENDED)
-	kdb_backtrace();
-	kdb_enter(KDB_WHY_WATCHDOG, "watchdog timeout");
-#else
-	panic("watchdog timeout");
-#endif
+	return (sysctl_rdstruct(where, sizep, NULL, &clkinfo, sizeof(clkinfo)));
 }

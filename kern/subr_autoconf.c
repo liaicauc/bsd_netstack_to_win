@@ -1,12 +1,15 @@
-/*-
- * SPDX-License-Identifier: BSD-3-Clause
- *
+/*
  * Copyright (c) 1992, 1993
  *	The Regents of the University of California.  All rights reserved.
  *
  * This software was developed by the Computer Systems Engineering group
  * at Lawrence Berkeley Laboratory under DARPA contract BG 91-66 and
  * contributed to Berkeley.
+ *
+ * All advertising materials mentioning features or use of this software
+ * must display the following acknowledgement:
+ *	This product includes software developed by the University of
+ *	California, Lawrence Berkeley Laboratories.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -16,7 +19,11 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the University nor the names of its contributors
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *	This product includes software developed by the University of
+ *	California, Berkeley and its contributors.
+ * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
  *
@@ -32,243 +39,307 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	@(#)subr_autoconf.c	8.1 (Berkeley) 6/10/93
+ *	@(#)subr_autoconf.c	8.3 (Berkeley) 5/17/94
  *
+ * from: $Header: subr_autoconf.c,v 1.12 93/02/01 19:31:48 torek Exp $ (LBL)
  */
 
-#include <sys/cdefs.h>
-__FBSDID("$FreeBSD$");
-
-#include "opt_ddb.h"
-
 #include <sys/param.h>
-#include <sys/kernel.h>
-#include <sys/linker.h>
-#include <sys/lock.h>
+#include <sys/device.h>
 #include <sys/malloc.h>
-#include <sys/mutex.h>
-#include <sys/systm.h>
+#include <libkern/libkern.h>
 
 /*
  * Autoconfiguration subroutines.
  */
 
 /*
- * "Interrupt driven config" functions.
+ * ioconf.c exports exactly two names: cfdata and cfroots.  All system
+ * devices and drivers are found via these tables.
  */
-static TAILQ_HEAD(, intr_config_hook) intr_config_hook_list =
-	TAILQ_HEAD_INITIALIZER(intr_config_hook_list);
-static struct intr_config_hook *next_to_notify;
-static struct mtx intr_config_hook_lock;
-MTX_SYSINIT(intr_config_hook, &intr_config_hook_lock, "intr config", MTX_DEF);
+extern struct cfdata cfdata[];
+extern short cfroots[];
 
-/* ARGSUSED */
-static void run_interrupt_driven_config_hooks(void);
+#define	ROOT ((struct device *)NULL)
 
-/*
- * Private data and a shim function for implementing config_interhook_oneshot().
- */
-struct oneshot_config_hook {
-	struct intr_config_hook 
-			och_hook;		/* Must be first */
-	ich_func_t	och_func;
-	void		*och_arg;
+struct matchinfo {
+	cfmatch_t fn;
+	struct	device *parent;
+	void	*aux;
+	struct	cfdata *match;
+	int	pri;
 };
 
-static void
-config_intrhook_oneshot_func(void *arg)
-{
-	struct oneshot_config_hook *ohook;
-
-	ohook = arg;
-	ohook->och_func(ohook->och_arg);
-	config_intrhook_disestablish(&ohook->och_hook);
-	free(ohook, M_DEVBUF);
-}
-
 /*
- * If we wait too long for an interrupt-driven config hook to return, print
- * a diagnostic.
+ * Apply the matching function and choose the best.  This is used
+ * a few times and we want to keep the code small.
  */
-#define	WARNING_INTERVAL_SECS	60
 static void
-run_interrupt_driven_config_hooks_warning(int warned)
+mapply(m, cf)
+	register struct matchinfo *m;
+	register struct cfdata *cf;
 {
-	struct intr_config_hook *hook_entry;
-	char namebuf[64];
-	long offset;
+	register int pri;
 
-	if (warned < 6) {
-		printf("run_interrupt_driven_hooks: still waiting after %d "
-		    "seconds for", warned * WARNING_INTERVAL_SECS);
-		TAILQ_FOREACH(hook_entry, &intr_config_hook_list, ich_links) {
-			if (linker_search_symbol_name(
-			    (caddr_t)hook_entry->ich_func, namebuf,
-			    sizeof(namebuf), &offset) == 0)
-				printf(" %s", namebuf);
-			else
-				printf(" %p", hook_entry->ich_func);
-		}
-		printf("\n");
+	if (m->fn != NULL)
+		pri = (*m->fn)(m->parent, cf, m->aux);
+	else
+		pri = (*cf->cf_driver->cd_match)(m->parent, cf, m->aux);
+	if (pri > m->pri) {
+		m->match = cf;
+		m->pri = pri;
 	}
-	KASSERT(warned < 6,
-	    ("run_interrupt_driven_config_hooks: waited too long"));
 }
-
-static void
-run_interrupt_driven_config_hooks()
-{
-	static int running;
-	struct intr_config_hook *hook_entry;
-
-	mtx_lock(&intr_config_hook_lock);
-
-	/*
-	 * If hook processing is already active, any newly
-	 * registered hooks will eventually be notified.
-	 * Let the currently running session issue these
-	 * notifications.
-	 */
-	if (running != 0) {
-		mtx_unlock(&intr_config_hook_lock);
-		return;
-	}
-	running = 1;
-
-	while (next_to_notify != NULL) {
-		hook_entry = next_to_notify;
-		next_to_notify = TAILQ_NEXT(hook_entry, ich_links);
-		mtx_unlock(&intr_config_hook_lock);
-		(*hook_entry->ich_func)(hook_entry->ich_arg);
-		mtx_lock(&intr_config_hook_lock);
-	}
-
-	running = 0;
-	mtx_unlock(&intr_config_hook_lock);
-}
-
-static void
-boot_run_interrupt_driven_config_hooks(void *dummy)
-{
-	int warned;
-
-	run_interrupt_driven_config_hooks();
-
-	/* Block boot processing until all hooks are disestablished. */
-	TSWAIT("config hooks");
-	mtx_lock(&intr_config_hook_lock);
-	warned = 0;
-	while (!TAILQ_EMPTY(&intr_config_hook_list)) {
-		if (msleep(&intr_config_hook_list, &intr_config_hook_lock,
-		    0, "conifhk", WARNING_INTERVAL_SECS * hz) ==
-		    EWOULDBLOCK) {
-			mtx_unlock(&intr_config_hook_lock);
-			warned++;
-			run_interrupt_driven_config_hooks_warning(warned);
-			mtx_lock(&intr_config_hook_lock);
-		}
-	}
-	mtx_unlock(&intr_config_hook_lock);
-	TSUNWAIT("config hooks");
-}
-
-SYSINIT(intr_config_hooks, SI_SUB_INT_CONFIG_HOOKS, SI_ORDER_FIRST,
-	boot_run_interrupt_driven_config_hooks, NULL);
 
 /*
- * Register a hook that will be called after "cold"
- * autoconfiguration is complete and interrupts can
- * be used to complete initialization.
+ * Iterate over all potential children of some device, calling the given
+ * function (default being the child's match function) for each one.
+ * Nonzero returns are matches; the highest value returned is considered
+ * the best match.  Return the `found child' if we got a match, or NULL
+ * otherwise.  The `aux' pointer is simply passed on through.
+ *
+ * Note that this function is designed so that it can be used to apply
+ * an arbitrary function to all potential children (its return value
+ * can be ignored).
+ */
+struct cfdata *
+config_search(fn, parent, aux)
+	cfmatch_t fn;
+	register struct device *parent;
+	void *aux;
+{
+	register struct cfdata *cf;
+	register short *p;
+	struct matchinfo m;
+
+	m.fn = fn;
+	m.parent = parent;
+	m.aux = aux;
+	m.match = NULL;
+	m.pri = 0;
+	for (cf = cfdata; cf->cf_driver; cf++) {
+		/*
+		 * Skip cf if no longer eligible, otherwise scan through
+		 * parents for one matching `parent', and try match function.
+		 */
+		if (cf->cf_fstate == FSTATE_FOUND)
+			continue;
+		for (p = cf->cf_parents; *p >= 0; p++)
+			if (parent->dv_cfdata == &cfdata[*p])
+				mapply(&m, cf);
+	}
+	return (m.match);
+}
+
+/*
+ * Find the given root device.
+ * This is much like config_search, but there is no parent.
+ */
+struct cfdata *
+config_rootsearch(fn, rootname, aux)
+	register cfmatch_t fn;
+	register char *rootname;
+	register void *aux;
+{
+	register struct cfdata *cf;
+	register short *p;
+	struct matchinfo m;
+
+	m.fn = fn;
+	m.parent = ROOT;
+	m.aux = aux;
+	m.match = NULL;
+	m.pri = 0;
+	/*
+	 * Look at root entries for matching name.  We do not bother
+	 * with found-state here since only one root should ever be
+	 * searched (and it must be done first).
+	 */
+	for (p = cfroots; *p >= 0; p++) {
+		cf = &cfdata[*p];
+		if (strcmp(cf->cf_driver->cd_name, rootname) == 0)
+			mapply(&m, cf);
+	}
+	return (m.match);
+}
+
+static char *msgs[3] = { "", " not configured\n", " unsupported\n" };
+
+/*
+ * The given `aux' argument describes a device that has been found
+ * on the given parent, but not necessarily configured.  Locate the
+ * configuration data for that device (using the cd_match configuration
+ * driver function) and attach it, and return true.  If the device was
+ * not configured, call the given `print' function and return 0.
  */
 int
-config_intrhook_establish(struct intr_config_hook *hook)
+config_found(parent, aux, print)
+	struct device *parent;
+	void *aux;
+	cfprint_t print;
 {
-	struct intr_config_hook *hook_entry;
+	struct cfdata *cf;
 
-	TSHOLD("config hooks");
-	mtx_lock(&intr_config_hook_lock);
-	TAILQ_FOREACH(hook_entry, &intr_config_hook_list, ich_links)
-		if (hook_entry == hook)
-			break;
-	if (hook_entry != NULL) {
-		mtx_unlock(&intr_config_hook_lock);
-		printf("config_intrhook_establish: establishing an "
-		       "already established hook.\n");
+	if ((cf = config_search((cfmatch_t)NULL, parent, aux)) != NULL) {
+		config_attach(parent, cf, aux, print);
 		return (1);
 	}
-	TAILQ_INSERT_TAIL(&intr_config_hook_list, hook, ich_links);
-	if (next_to_notify == NULL)
-		next_to_notify = hook;
-	mtx_unlock(&intr_config_hook_lock);
-	if (cold == 0)
-		/*
-		 * XXX Call from a task since not all drivers expect
-		 *     to be re-entered at the time a hook is established.
-		 */
-		/* XXX Sufficient for modules loaded after initial config??? */
-		run_interrupt_driven_config_hooks();	
+	printf(msgs[(*print)(aux, parent->dv_xname)]);
 	return (0);
 }
 
 /*
- * Register a hook function that is automatically unregistered after it runs.
+ * As above, but for root devices.
+ */
+int
+config_rootfound(rootname, aux)
+	char *rootname;
+	void *aux;
+{
+	struct cfdata *cf;
+
+	if ((cf = config_rootsearch((cfmatch_t)NULL, rootname, aux)) != NULL) {
+		config_attach(ROOT, cf, aux, (cfprint_t)NULL);
+		return (1);
+	}
+	printf("root device %s not configured\n", rootname);
+	return (0);
+}
+
+/* just like sprintf(buf, "%d") except that it works from the end */
+static char *
+number(ep, n)
+	register char *ep;
+	register int n;
+{
+
+	*--ep = 0;
+	while (n >= 10) {
+		*--ep = (n % 10) + '0';
+		n /= 10;
+	}
+	*--ep = n + '0';
+	return (ep);
+}
+
+/*
+ * Attach a found device.  Allocates memory for device variables.
  */
 void
-config_intrhook_oneshot(ich_func_t func, void *arg)
+config_attach(parent, cf, aux, print)
+	register struct device *parent;
+	register struct cfdata *cf;
+	register void *aux;
+	cfprint_t print;
 {
-	struct oneshot_config_hook *ohook;
+	register struct device *dev;
+	register struct cfdriver *cd;
+	register size_t lname, lunit;
+	register char *xunit;
+	int myunit;
+	char num[10];
+	static struct device **nextp = &alldevs;
 
-	ohook = malloc(sizeof(*ohook), M_DEVBUF, M_WAITOK);
-	ohook->och_func = func;
-	ohook->och_arg  = arg;
-	ohook->och_hook.ich_func = config_intrhook_oneshot_func;
-	ohook->och_hook.ich_arg  = ohook;
-	config_intrhook_establish(&ohook->och_hook);
-}
+	cd = cf->cf_driver;
+	if (cd->cd_devsize < sizeof(struct device))
+		panic("config_attach");
+	myunit = cf->cf_unit;
+	if (cf->cf_fstate == FSTATE_NOTFOUND)
+		cf->cf_fstate = FSTATE_FOUND;
+	else
+		cf->cf_unit++;
 
-void
-config_intrhook_disestablish(struct intr_config_hook *hook)
-{
-	struct intr_config_hook *hook_entry;
+	/* compute length of name and decimal expansion of unit number */
+	lname = strlen(cd->cd_name);
+	xunit = number(&num[sizeof num], myunit);
+	lunit = &num[sizeof num] - xunit;
+	if (lname + lunit >= sizeof(dev->dv_xname))
+		panic("config_attach: device name too long");
 
-	mtx_lock(&intr_config_hook_lock);
-	TAILQ_FOREACH(hook_entry, &intr_config_hook_list, ich_links)
-		if (hook_entry == hook)
-			break;
-	if (hook_entry == NULL)
-		panic("config_intrhook_disestablish: disestablishing an "
-		      "unestablished hook");
-
-	if (next_to_notify == hook)
-		next_to_notify = TAILQ_NEXT(hook, ich_links);
-	TAILQ_REMOVE(&intr_config_hook_list, hook, ich_links);
-	TSRELEASE("config hooks");
-
-	/* Wakeup anyone watching the list */
-	wakeup(&intr_config_hook_list);
-	mtx_unlock(&intr_config_hook_lock);
-}
-
-#ifdef DDB
-#include <ddb/ddb.h>
-
-DB_SHOW_COMMAND(conifhk, db_show_conifhk)
-{
-	struct intr_config_hook *hook_entry;
-	char namebuf[64];
-	long offset;
-
-	TAILQ_FOREACH(hook_entry, &intr_config_hook_list, ich_links) {
-		if (linker_ddb_search_symbol_name(
-		    (caddr_t)hook_entry->ich_func, namebuf, sizeof(namebuf),
-		    &offset) == 0) {
-			db_printf("hook: %p at %s+%#lx arg: %p\n",
-			    hook_entry->ich_func, namebuf, offset,
-			    hook_entry->ich_arg);
-		} else {
-			db_printf("hook: %p at ??+?? arg %p\n",
-			    hook_entry->ich_func, hook_entry->ich_arg);
-		}
+	/* get memory for all device vars */
+	dev = (struct device *)malloc(cd->cd_devsize, M_DEVBUF, M_WAITOK);
+					/* XXX cannot wait! */
+	bzero(dev, cd->cd_devsize);
+	*nextp = dev;			/* link up */
+	nextp = &dev->dv_next;
+	dev->dv_class = cd->cd_class;
+	dev->dv_cfdata = cf;
+	dev->dv_unit = myunit;
+	bcopy(cd->cd_name, dev->dv_xname, lname);
+	bcopy(xunit, dev->dv_xname + lname, lunit);
+	dev->dv_parent = parent;
+	if (parent == ROOT)
+		printf("%s (root)", dev->dv_xname);
+	else {
+		printf("%s at %s", dev->dv_xname, parent->dv_xname);
+		(void) (*print)(aux, (char *)0);
 	}
+
+	/* put this device in the devices array */
+	if (dev->dv_unit >= cd->cd_ndevs) {
+		/*
+		 * Need to expand the array.
+		 */
+		int old = cd->cd_ndevs, oldbytes, new, newbytes;
+		void **nsp;
+
+		if (old == 0) {
+			new = max(MINALLOCSIZE / sizeof(void *),
+			    dev->dv_unit + 1);
+			newbytes = new * sizeof(void *);
+			nsp = malloc(newbytes, M_DEVBUF, M_WAITOK);	/*XXX*/
+			bzero(nsp, newbytes);
+		} else {
+			new = cd->cd_ndevs;
+			do {
+				new *= 2;
+			} while (new <= dev->dv_unit);
+			oldbytes = old * sizeof(void *);
+			newbytes = new * sizeof(void *);
+			nsp = malloc(newbytes, M_DEVBUF, M_WAITOK);	/*XXX*/
+			bcopy(cd->cd_devs, nsp, oldbytes);
+			bzero(&nsp[old], newbytes - oldbytes);
+			free(cd->cd_devs, M_DEVBUF);
+		}
+		cd->cd_ndevs = new;
+		cd->cd_devs = nsp;
+	}
+	if (cd->cd_devs[dev->dv_unit])
+		panic("config_attach: duplicate %s", dev->dv_xname);
+	cd->cd_devs[dev->dv_unit] = dev;
+
+	/*
+	 * Before attaching, clobber any unfound devices that are
+	 * otherwise identical.
+	 */
+	for (cf = cfdata; cf->cf_driver; cf++)
+		if (cf->cf_driver == cd && cf->cf_unit == dev->dv_unit &&
+		    cf->cf_fstate == FSTATE_NOTFOUND)
+			cf->cf_fstate = FSTATE_FOUND;
+	(*cd->cd_attach)(parent, dev, aux);
 }
-#endif /* DDB */
+
+/*
+ * Attach an event.  These must come from initially-zero space (see
+ * commented-out assignments below), but that occurs naturally for
+ * device instance variables.
+ */
+void
+evcnt_attach(dev, name, ev)
+	struct device *dev;
+	const char *name;
+	struct evcnt *ev;
+{
+	static struct evcnt **nextp = &allevents;
+
+#ifdef DIAGNOSTIC
+	if (strlen(name) >= sizeof(ev->ev_name))
+		panic("evcnt_attach");
+#endif
+	/* ev->ev_next = NULL; */
+	ev->ev_dev = dev;
+	/* ev->ev_count = 0; */
+	strcpy(ev->ev_name, name);
+	*nextp = ev;
+	nextp = &ev->ev_next;
+}

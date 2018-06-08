@@ -912,11 +912,49 @@
     <ClCompile Include="netinet\udp_usrreq.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="net\if.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="net\bpf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="net\bpf_filter.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="net\if_ethersubr.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="net\if_loop.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="net\if_sl.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="net\radix.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="net\raw_cb.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="net\raw_usrreq.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="net\route.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="net\rtsock.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="net\slcompress.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="kern\Make.tags.inc">
       <Filter>Header Files</Filter>
     </None>
+    <None Include="net\tags" />
+    <None Include="i386\include\tags" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="netinet\cc\cc.h">
@@ -2108,6 +2146,144 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="sys\zutil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="net\bpf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="net\bpf_compat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="net\bpfdesc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="net\if.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="net\if_arp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="net\if_dl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="net\if_llc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="net\if_slvar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="net\if_types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="net\netisr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="net\radix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="net\raw_cb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="net\route.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="net\slcompress.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="net\slip.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="i386\include\ansi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="i386\include\cpu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="i386\include\dbg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="i386\include\dkio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="i386\include\endian.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="i386\include\exec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="i386\include\float.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="i386\include\frame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="i386\include\limits.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="i386\include\mtpr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="i386\include\npx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="i386\include\param.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="i386\include\pcb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="i386\include\pmap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="i386\include\proc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="i386\include\profile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="i386\include\psl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="i386\include\pte.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="i386\include\ptrace.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="i386\include\reg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="i386\include\reloc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="i386\include\remote-sl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="i386\include\segments.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="i386\include\signal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="i386\include\specialreg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="i386\include\stdarg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="i386\include\trap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="i386\include\tss.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="i386\include\types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="i386\include\varargs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="i386\include\vmparam.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

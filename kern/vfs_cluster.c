@@ -1,10 +1,6 @@
 /*-
- * SPDX-License-Identifier: BSD-3-Clause
- *
  * Copyright (c) 1993
  *	The Regents of the University of California.  All rights reserved.
- * Modifications/enhancements:
- * 	Copyright (c) 1995 John S. Dyson.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -14,7 +10,11 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the University nor the names of its contributors
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *	This product includes software developed by the University of
+ *	California, Berkeley and its contributors.
+ * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
  *
@@ -30,305 +30,233 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	@(#)vfs_cluster.c	8.7 (Berkeley) 2/13/94
+ *	@(#)vfs_cluster.c	8.10 (Berkeley) 3/28/95
  */
-
-#include <sys/cdefs.h>
-__FBSDID("$FreeBSD$");
-
-#include "opt_debug_cluster.h"
 
 #include <sys/param.h>
-#include <sys/systm.h>
-#include <sys/kernel.h>
 #include <sys/proc.h>
-#include <sys/bio.h>
 #include <sys/buf.h>
 #include <sys/vnode.h>
-#include <sys/malloc.h>
 #include <sys/mount.h>
-#include <sys/racct.h>
+#include <sys/trace.h>
+#include <sys/malloc.h>
 #include <sys/resourcevar.h>
-#include <sys/rwlock.h>
-#include <sys/vmmeter.h>
-#include <vm/vm.h>
-#include <vm/vm_object.h>
-#include <vm/vm_page.h>
-#include <sys/sysctl.h>
-
-#if defined(CLUSTERDEBUG)
-static int	rcluster= 0;
-SYSCTL_INT(_debug, OID_AUTO, rcluster, CTLFLAG_RW, &rcluster, 0,
-    "Debug VFS clustering code");
-#endif
-
-static MALLOC_DEFINE(M_SEGMENT, "cl_savebuf", "cluster_save buffer");
-
-static struct cluster_save *cluster_collectbufs(struct vnode *vp,
-	    struct buf *last_bp, int gbflags);
-static struct buf *cluster_rbuild(struct vnode *vp, u_quad_t filesize,
-	    daddr_t lbn, daddr_t blkno, long size, int run, int gbflags,
-	    struct buf *fbp);
-static void cluster_callback(struct buf *);
-
-static int write_behind = 1;
-SYSCTL_INT(_vfs, OID_AUTO, write_behind, CTLFLAG_RW, &write_behind, 0,
-    "Cluster write-behind; 0: disable, 1: enable, 2: backed off");
-
-static int read_max = 64;
-SYSCTL_INT(_vfs, OID_AUTO, read_max, CTLFLAG_RW, &read_max, 0,
-    "Cluster read-ahead max block count");
-
-static int read_min = 1;
-SYSCTL_INT(_vfs, OID_AUTO, read_min, CTLFLAG_RW, &read_min, 0,
-    "Cluster read min block count");
+#include <libkern/libkern.h>
 
 /*
- * Read data to a buf, including read-ahead if we find this to be beneficial.
- * cluster_read replaces bread.
+ * Local declarations
  */
-int
-cluster_read(struct vnode *vp, u_quad_t filesize, daddr_t lblkno, long size,
-    struct ucred *cred, long totread, int seqcount, int gbflags,
-    struct buf **bpp)
+struct buf *cluster_newbuf __P((struct vnode *, struct buf *, long, daddr_t,
+	    daddr_t, long, int));
+struct buf *cluster_rbuild __P((struct vnode *, u_quad_t, struct buf *,
+	    daddr_t, daddr_t, long, int, long));
+void	    cluster_wbuild __P((struct vnode *, struct buf *, long,
+	    daddr_t, int, daddr_t));
+struct cluster_save *cluster_collectbufs __P((struct vnode *, struct buf *));
+
+#ifdef DIAGNOSTIC
+/*
+ * Set to 1 if reads of block zero should cause readahead to be done.
+ * Set to 0 treats a read of block zero as a non-sequential read.
+ *
+ * Setting to one assumes that most reads of block zero of files are due to
+ * sequential passes over the files (e.g. cat, sum) where additional blocks
+ * will soon be needed.  Setting to zero assumes that the majority are
+ * surgical strikes to get particular info (e.g. size, file) where readahead
+ * blocks will not be used and, in fact, push out other potentially useful
+ * blocks from the cache.  The former seems intuitive, but some quick tests
+ * showed that the latter performed better from a system-wide point of view.
+ */
+int	doclusterraz = 0;
+#define ISSEQREAD(vp, blk) \
+	(((blk) != 0 || doclusterraz) && \
+	 ((blk) == (vp)->v_lastr + 1 || (blk) == (vp)->v_lastr))
+#else
+#define ISSEQREAD(vp, blk) \
+	((blk) != 0 && ((blk) == (vp)->v_lastr + 1 || (blk) == (vp)->v_lastr))
+#endif
+
+/*
+ * This replaces bread.  If this is a bread at the beginning of a file and
+ * lastr is 0, we assume this is the first read and we'll read up to two
+ * blocks if they are sequential.  After that, we'll do regular read ahead
+ * in clustered chunks.
+ *
+ * There are 4 or 5 cases depending on how you count:
+ *	Desired block is in the cache:
+ *	    1 Not sequential access (0 I/Os).
+ *	    2 Access is sequential, do read-ahead (1 ASYNC).
+ *	Desired block is not in cache:
+ *	    3 Not sequential access (1 SYNC).
+ *	    4 Sequential access, next block is contiguous (1 SYNC).
+ *	    5 Sequential access, next block is not contiguous (1 SYNC, 1 ASYNC)
+ *
+ * There are potentially two buffers that require I/O.
+ * 	bp is the block requested.
+ *	rbp is the read-ahead block.
+ *	If either is NULL, then you don't have to do the I/O.
+ */
+cluster_read(vp, filesize, lblkno, size, cred, bpp)
+	struct vnode *vp;
+	u_quad_t filesize;
+	daddr_t lblkno;
+	long size;
+	struct ucred *cred;
+	struct buf **bpp;
 {
-	struct buf *bp, *rbp, *reqbp;
-	struct bufobj *bo;
-	struct thread *td;
-	daddr_t blkno, origblkno;
-	int maxra, racluster;
-	int error, ncontig;
-	int i;
+	struct buf *bp, *rbp;
+	daddr_t blkno, ioblkno;
+	long flags;
+	int error, num_ra, alreadyincore;
+
+#ifdef DIAGNOSTIC
+	if (size == 0)
+		panic("cluster_read: size = 0");
+#endif
 
 	error = 0;
-	td = curthread;
-	bo = &vp->v_bufobj;
-	if (!unmapped_buf_allowed)
-		gbflags &= ~GB_UNMAPPED;
-
-	/*
-	 * Try to limit the amount of read-ahead by a few
-	 * ad-hoc parameters.  This needs work!!!
-	 */
-	racluster = vp->v_mount->mnt_iosize_max / size;
-	maxra = seqcount;
-	maxra = min(read_max, maxra);
-	maxra = min(nbuf/8, maxra);
-	if (((u_quad_t)(lblkno + maxra + 1) * size) > filesize)
-		maxra = (filesize / size) - lblkno;
-
-	/*
-	 * get the requested block
-	 */
-	error = getblkx(vp, lblkno, size, 0, 0, gbflags, &bp);
-	if (error != 0) {
-		*bpp = NULL;
-		return (error);
-	}
-	gbflags &= ~GB_NOSPARSE;
-	origblkno = lblkno;
-	*bpp = reqbp = bp;
-
-	/*
-	 * if it is in the cache, then check to see if the reads have been
-	 * sequential.  If they have, then try some read-ahead, otherwise
-	 * back-off on prospective read-aheads.
-	 */
+	flags = B_READ;
+	*bpp = bp = getblk(vp, lblkno, size, 0, 0);
 	if (bp->b_flags & B_CACHE) {
-		if (!seqcount) {
-			return 0;
-		} else if ((bp->b_flags & B_RAM) == 0) {
-			return 0;
-		} else {
-			bp->b_flags &= ~B_RAM;
-			BO_RLOCK(bo);
-			for (i = 1; i < maxra; i++) {
-				/*
-				 * Stop if the buffer does not exist or it
-				 * is invalid (about to go away?)
-				 */
-				rbp = gbincore(&vp->v_bufobj, lblkno+i);
-				if (rbp == NULL || (rbp->b_flags & B_INVAL))
-					break;
-
-				/*
-				 * Set another read-ahead mark so we know 
-				 * to check again. (If we can lock the
-				 * buffer without waiting)
-				 */
-				if ((((i % racluster) == (racluster - 1)) ||
-				    (i == (maxra - 1))) 
-				    && (0 == BUF_LOCK(rbp, 
-					LK_EXCLUSIVE | LK_NOWAIT, NULL))) {
-					rbp->b_flags |= B_RAM;
-					BUF_UNLOCK(rbp);
-				}			
-			}
-			BO_RUNLOCK(bo);
-			if (i >= maxra) {
-				return 0;
-			}
-			lblkno += i;
-		}
-		reqbp = bp = NULL;
-	/*
-	 * If it isn't in the cache, then get a chunk from
-	 * disk if sequential, otherwise just get the block.
-	 */
+		/*
+		 * Desired block is in cache; do any readahead ASYNC.
+		 * Case 1, 2.
+		 */
+		trace(TR_BREADHIT, pack(vp, size), lblkno);
+		flags |= B_ASYNC;
+		ioblkno = lblkno + (vp->v_ralen ? vp->v_ralen : 1);
+		alreadyincore = incore(vp, ioblkno) != NULL;
+		bp = NULL;
 	} else {
-		off_t firstread = bp->b_offset;
-		int nblks;
-		long minread;
-
-		KASSERT(bp->b_offset != NOOFFSET,
-		    ("cluster_read: no buffer offset"));
-
-		ncontig = 0;
-
+		/* Block wasn't in cache, case 3, 4, 5. */
+		trace(TR_BREADMISS, pack(vp, size), lblkno);
+		bp->b_flags |= B_READ;
+		ioblkno = lblkno;
+		alreadyincore = 0;
+		curproc->p_stats->p_ru.ru_inblock++;		/* XXX */
+	}
+	/*
+	 * XXX
+	 * Replace 1 with a window size based on some permutation of
+	 * maxcontig and rot_delay.  This will let you figure out how
+	 * many blocks you should read-ahead (case 2, 4, 5).
+	 *
+	 * If the access isn't sequential, reset the window to 1.
+	 * Note that a read to the same block is considered sequential.
+	 * This catches the case where the file is being read sequentially,
+	 * but at smaller than the filesystem block size.
+	 */
+	rbp = NULL;
+	if (!ISSEQREAD(vp, lblkno)) {
+		vp->v_ralen = 0;
+		vp->v_maxra = lblkno;
+	} else if ((ioblkno + 1) * size <= filesize && !alreadyincore &&
+	    !(error = VOP_BMAP(vp, ioblkno, NULL, &blkno, &num_ra)) &&
+	    blkno != -1) {
 		/*
-		 * Adjust totread if needed
+		 * Reading sequentially, and the next block is not in the
+		 * cache.  We are going to try reading ahead.
 		 */
-		minread = read_min * size;
-		if (minread > totread)
-			totread = minread;
-
-		/*
-		 * Compute the total number of blocks that we should read
-		 * synchronously.
-		 */
-		if (firstread + totread > filesize)
-			totread = filesize - firstread;
-		nblks = howmany(totread, size);
-		if (nblks > racluster)
-			nblks = racluster;
-
-		/*
-		 * Now compute the number of contiguous blocks.
-		 */
-		if (nblks > 1) {
-	    		error = VOP_BMAP(vp, lblkno, NULL,
-				&blkno, &ncontig, NULL);
+		if (num_ra) {
 			/*
-			 * If this failed to map just do the original block.
+			 * If our desired readahead block had been read
+			 * in a previous readahead but is no longer in
+			 * core, then we may be reading ahead too far
+			 * or are not using our readahead very rapidly.
+			 * In this case we scale back the window.
 			 */
-			if (error || blkno == -1)
-				ncontig = 0;
+			if (!alreadyincore && ioblkno <= vp->v_maxra)
+				vp->v_ralen = max(vp->v_ralen >> 1, 1);
+			/*
+			 * There are more sequential blocks than our current
+			 * window allows, scale up.  Ideally we want to get
+			 * in sync with the filesystem maxcontig value.
+			 */
+			else if (num_ra > vp->v_ralen && lblkno != vp->v_lastr)
+				vp->v_ralen = vp->v_ralen ?
+					min(num_ra, vp->v_ralen << 1) : 1;
+
+			if (num_ra > vp->v_ralen)
+				num_ra = vp->v_ralen;
 		}
 
-		/*
-		 * If we have contiguous data available do a cluster
-		 * otherwise just read the requested block.
-		 */
-		if (ncontig) {
-			/* Account for our first block. */
-			ncontig = min(ncontig + 1, nblks);
-			if (ncontig < nblks)
-				nblks = ncontig;
-			bp = cluster_rbuild(vp, filesize, lblkno,
-			    blkno, size, nblks, gbflags, bp);
-			lblkno += (bp->b_bufsize / size);
-		} else {
-			bp->b_flags |= B_RAM;
-			bp->b_iocmd = BIO_READ;
-			lblkno += 1;
-		}
-	}
-
-	/*
-	 * handle the synchronous read so that it is available ASAP.
-	 */
-	if (bp) {
-		if ((bp->b_flags & B_CLUSTER) == 0) {
-			vfs_busy_pages(bp, 0);
-		}
-		bp->b_flags &= ~B_INVAL;
-		bp->b_ioflags &= ~BIO_ERROR;
-		if ((bp->b_flags & B_ASYNC) || bp->b_iodone != NULL)
-			BUF_KERNPROC(bp);
-		bp->b_iooffset = dbtob(bp->b_blkno);
-		bstrategy(bp);
-#ifdef RACCT
-		if (racct_enable) {
-			PROC_LOCK(td->td_proc);
-			racct_add_buf(td->td_proc, bp, 0);
-			PROC_UNLOCK(td->td_proc);
-		}
-#endif /* RACCT */
-		td->td_ru.ru_inblock++;
-	}
-
-	/*
-	 * If we have been doing sequential I/O, then do some read-ahead.
-	 */
-	while (lblkno < (origblkno + maxra)) {
-		error = VOP_BMAP(vp, lblkno, NULL, &blkno, &ncontig, NULL);
-		if (error)
-			break;
-
-		if (blkno == -1)
-			break;
-
-		/*
-		 * We could throttle ncontig here by maxra but we might as
-		 * well read the data if it is contiguous.  We're throttled
-		 * by racluster anyway.
-		 */
-		if (ncontig) {
-			ncontig = min(ncontig + 1, racluster);
-			rbp = cluster_rbuild(vp, filesize, lblkno, blkno,
-			    size, ncontig, gbflags, NULL);
-			lblkno += (rbp->b_bufsize / size);
-			if (rbp->b_flags & B_DELWRI) {
-				bqrelse(rbp);
-				continue;
+		if (num_ra)				/* case 2, 4 */
+			rbp = cluster_rbuild(vp, filesize,
+			    bp, ioblkno, blkno, size, num_ra, flags);
+		else if (ioblkno == lblkno) {
+			bp->b_blkno = blkno;
+			/* Case 5: check how many blocks to read ahead */
+			++ioblkno;
+			if ((ioblkno + 1) * size > filesize ||
+			    incore(vp, ioblkno) || (error = VOP_BMAP(vp,
+			     ioblkno, NULL, &blkno, &num_ra)) || blkno == -1)
+				goto skip_readahead;
+			/*
+			 * Adjust readahead as above.
+			 * Don't check alreadyincore, we know it is 0 from
+			 * the previous conditional.
+			 */
+			if (num_ra) {
+				if (ioblkno <= vp->v_maxra)
+					vp->v_ralen = max(vp->v_ralen >> 1, 1);
+				else if (num_ra > vp->v_ralen &&
+					 lblkno != vp->v_lastr)
+					vp->v_ralen = vp->v_ralen ?
+						min(num_ra,vp->v_ralen<<1) : 1;
+				if (num_ra > vp->v_ralen)
+					num_ra = vp->v_ralen;
+			}
+			flags |= B_ASYNC;
+			if (num_ra)
+				rbp = cluster_rbuild(vp, filesize,
+				    NULL, ioblkno, blkno, size, num_ra, flags);
+			else {
+				rbp = getblk(vp, ioblkno, size, 0, 0);
+				rbp->b_flags |= flags;
+				rbp->b_blkno = blkno;
 			}
 		} else {
-			rbp = getblk(vp, lblkno, size, 0, 0, gbflags);
-			lblkno += 1;
-			if (rbp->b_flags & B_DELWRI) {
-				bqrelse(rbp);
-				continue;
-			}
-			rbp->b_flags |= B_ASYNC | B_RAM;
-			rbp->b_iocmd = BIO_READ;
+			/* case 2; read ahead single block */
+			rbp = getblk(vp, ioblkno, size, 0, 0);
+			rbp->b_flags |= flags;
 			rbp->b_blkno = blkno;
 		}
-		if (rbp->b_flags & B_CACHE) {
-			rbp->b_flags &= ~B_ASYNC;
-			bqrelse(rbp);
-			continue;
+
+		if (rbp == bp)			/* case 4 */
+			rbp = NULL;
+		else if (rbp) {			/* case 2, 5 */
+			trace(TR_BREADMISSRA,
+			    pack(vp, (num_ra + 1) * size), ioblkno);
+			curproc->p_stats->p_ru.ru_inblock++;	/* XXX */
 		}
-		if ((rbp->b_flags & B_CLUSTER) == 0) {
-			vfs_busy_pages(rbp, 0);
-		}
-		rbp->b_flags &= ~B_INVAL;
-		rbp->b_ioflags &= ~BIO_ERROR;
-		if ((rbp->b_flags & B_ASYNC) || rbp->b_iodone != NULL)
-			BUF_KERNPROC(rbp);
-		rbp->b_iooffset = dbtob(rbp->b_blkno);
-		bstrategy(rbp);
-#ifdef RACCT
-		if (racct_enable) {
-			PROC_LOCK(td->td_proc);
-			racct_add_buf(td->td_proc, rbp, 0);
-			PROC_UNLOCK(td->td_proc);
-		}
-#endif /* RACCT */
-		td->td_ru.ru_inblock++;
 	}
 
-	if (reqbp) {
-		/*
-		 * Like bread, always brelse() the buffer when
-		 * returning an error.
-		 */
-		error = bufwait(reqbp);
-		if (error != 0) {
-			brelse(reqbp);
-			*bpp = NULL;
-		}
-	}
-	return (error);
+	/* XXX Kirk, do we need to make sure the bp has creds? */
+skip_readahead:
+	if (bp)
+		if (bp->b_flags & (B_DONE | B_DELWRI))
+			panic("cluster_read: DONE bp");
+		else 
+			error = VOP_STRATEGY(bp);
+
+	if (rbp)
+		if (error || rbp->b_flags & (B_DONE | B_DELWRI)) {
+			rbp->b_flags &= ~(B_ASYNC | B_READ);
+			brelse(rbp);
+		} else
+			(void) VOP_STRATEGY(rbp);
+
+	/*
+	 * Recalculate our maximum readahead
+	 */
+	if (rbp == NULL)
+		rbp = bp;
+	if (rbp)
+		vp->v_maxra = rbp->b_lblkno + (rbp->b_bufsize / size) - 1;
+
+	if (bp)
+		return(biowait(bp));
+	return(error);
 }
 
 /*
@@ -336,222 +264,145 @@ cluster_read(struct vnode *vp, u_quad_t filesize, daddr_t lblkno, long size,
  * read ahead.  We will read as many blocks as possible sequentially
  * and then parcel them up into logical blocks in the buffer hash table.
  */
-static struct buf *
-cluster_rbuild(struct vnode *vp, u_quad_t filesize, daddr_t lbn,
-    daddr_t blkno, long size, int run, int gbflags, struct buf *fbp)
+struct buf *
+cluster_rbuild(vp, filesize, bp, lbn, blkno, size, run, flags)
+	struct vnode *vp;
+	u_quad_t filesize;
+	struct buf *bp;
+	daddr_t lbn;
+	daddr_t blkno;
+	long size;
+	int run;
+	long flags;
 {
-	struct buf *bp, *tbp;
+	struct cluster_save *b_save;
+	struct buf *tbp;
 	daddr_t bn;
-	off_t off;
-	long tinc, tsize;
-	int i, inc, j, k, toff;
+	int i, inc;
 
-	KASSERT(size == vp->v_mount->mnt_stat.f_iosize,
-	    ("cluster_rbuild: size %ld != f_iosize %jd\n",
-	    size, (intmax_t)vp->v_mount->mnt_stat.f_iosize));
-
-	/*
-	 * avoid a division
-	 */
-	while ((u_quad_t) size * (lbn + run) > filesize) {
+#ifdef DIAGNOSTIC
+	if (size != vp->v_mount->mnt_stat.f_iosize)
+		panic("cluster_rbuild: size %d != filesize %d\n",
+			size, vp->v_mount->mnt_stat.f_iosize);
+#endif
+	if (size * (lbn + run + 1) > filesize)
 		--run;
+	if (run == 0) {
+		if (!bp) {
+			bp = getblk(vp, lbn, size, 0, 0);
+			bp->b_blkno = blkno;
+			bp->b_flags |= flags;
+		}
+		return(bp);
 	}
 
-	if (fbp) {
-		tbp = fbp;
-		tbp->b_iocmd = BIO_READ; 
-	} else {
-		tbp = getblk(vp, lbn, size, 0, 0, gbflags);
-		if (tbp->b_flags & B_CACHE)
-			return tbp;
-		tbp->b_flags |= B_ASYNC | B_RAM;
-		tbp->b_iocmd = BIO_READ;
-	}
-	tbp->b_blkno = blkno;
-	if( (tbp->b_flags & B_MALLOC) ||
-		((tbp->b_flags & B_VMIO) == 0) || (run <= 1) )
-		return tbp;
+	bp = cluster_newbuf(vp, bp, flags, blkno, lbn, size, run + 1);
+	if (bp->b_flags & (B_DONE | B_DELWRI))
+		return (bp);
 
-	bp = trypbuf(&cluster_pbuf_freecnt);
-	if (bp == NULL)
-		return tbp;
-
-	/*
-	 * We are synthesizing a buffer out of vm_page_t's, but
-	 * if the block size is not page aligned then the starting
-	 * address may not be either.  Inherit the b_data offset
-	 * from the original buffer.
-	 */
-	bp->b_flags = B_ASYNC | B_CLUSTER | B_VMIO;
-	if ((gbflags & GB_UNMAPPED) != 0) {
-		bp->b_data = unmapped_buf;
-	} else {
-		bp->b_data = (char *)((vm_offset_t)bp->b_data |
-		    ((vm_offset_t)tbp->b_data & PAGE_MASK));
-	}
-	bp->b_iocmd = BIO_READ;
-	bp->b_iodone = cluster_callback;
-	bp->b_blkno = blkno;
-	bp->b_lblkno = lbn;
-	bp->b_offset = tbp->b_offset;
-	KASSERT(bp->b_offset != NOOFFSET, ("cluster_rbuild: no buffer offset"));
-	pbgetvp(vp, bp);
-
-	TAILQ_INIT(&bp->b_cluster.cluster_head);
-
-	bp->b_bcount = 0;
-	bp->b_bufsize = 0;
-	bp->b_npages = 0;
+	b_save = malloc(sizeof(struct buf *) * run + sizeof(struct cluster_save),
+	    M_SEGMENT, M_WAITOK);
+	b_save->bs_bufsize = b_save->bs_bcount = size;
+	b_save->bs_nchildren = 0;
+	b_save->bs_children = (struct buf **)(b_save + 1);
+	b_save->bs_saveaddr = bp->b_saveaddr;
+	bp->b_saveaddr = (caddr_t) b_save;
 
 	inc = btodb(size);
-	for (bn = blkno, i = 0; i < run; ++i, bn += inc) {
-		if (i == 0) {
-			VM_OBJECT_WLOCK(tbp->b_bufobj->bo_object);
-			vfs_drain_busy_pages(tbp);
-			vm_object_pip_add(tbp->b_bufobj->bo_object,
-			    tbp->b_npages);
-			for (k = 0; k < tbp->b_npages; k++)
-				vm_page_sbusy(tbp->b_pages[k]);
-			VM_OBJECT_WUNLOCK(tbp->b_bufobj->bo_object);
-		} else {
-			if ((bp->b_npages * PAGE_SIZE) +
-			    round_page(size) > vp->v_mount->mnt_iosize_max) {
-				break;
-			}
-
-			tbp = getblk(vp, lbn + i, size, 0, 0, GB_LOCK_NOWAIT |
-			    (gbflags & GB_UNMAPPED));
-
-			/* Don't wait around for locked bufs. */
-			if (tbp == NULL)
-				break;
-
-			/*
-			 * Stop scanning if the buffer is fully valid
-			 * (marked B_CACHE), or locked (may be doing a
-			 * background write), or if the buffer is not
-			 * VMIO backed.  The clustering code can only deal
-			 * with VMIO-backed buffers.  The bo lock is not
-			 * required for the BKGRDINPROG check since it
-			 * can not be set without the buf lock.
-			 */
-			if ((tbp->b_vflags & BV_BKGRDINPROG) ||
-			    (tbp->b_flags & B_CACHE) ||
-			    (tbp->b_flags & B_VMIO) == 0) {
-				bqrelse(tbp);
-				break;
-			}
-
-			/*
-			 * The buffer must be completely invalid in order to
-			 * take part in the cluster.  If it is partially valid
-			 * then we stop.
-			 */
-			off = tbp->b_offset;
-			tsize = size;
-			VM_OBJECT_WLOCK(tbp->b_bufobj->bo_object);
-			for (j = 0; tsize > 0; j++) {
-				toff = off & PAGE_MASK;
-				tinc = tsize;
-				if (toff + tinc > PAGE_SIZE)
-					tinc = PAGE_SIZE - toff;
-				VM_OBJECT_ASSERT_WLOCKED(tbp->b_pages[j]->object);
-				if ((tbp->b_pages[j]->valid &
-				    vm_page_bits(toff, tinc)) != 0)
-					break;
-				if (vm_page_xbusied(tbp->b_pages[j]))
-					break;
-				vm_object_pip_add(tbp->b_bufobj->bo_object, 1);
-				vm_page_sbusy(tbp->b_pages[j]);
-				off += tinc;
-				tsize -= tinc;
-			}
-			if (tsize > 0) {
-clean_sbusy:
-				vm_object_pip_add(tbp->b_bufobj->bo_object, -j);
-				for (k = 0; k < j; k++)
-					vm_page_sunbusy(tbp->b_pages[k]);
-				VM_OBJECT_WUNLOCK(tbp->b_bufobj->bo_object);
-				bqrelse(tbp);
-				break;
-			}
-			VM_OBJECT_WUNLOCK(tbp->b_bufobj->bo_object);
-
-			/*
-			 * Set a read-ahead mark as appropriate
-			 */
-			if ((fbp && (i == 1)) || (i == (run - 1)))
-				tbp->b_flags |= B_RAM;
-
-			/*
-			 * Set the buffer up for an async read (XXX should
-			 * we do this only if we do not wind up brelse()ing?).
-			 * Set the block number if it isn't set, otherwise
-			 * if it is make sure it matches the block number we
-			 * expect.
-			 */
-			tbp->b_flags |= B_ASYNC;
-			tbp->b_iocmd = BIO_READ;
-			if (tbp->b_blkno == tbp->b_lblkno) {
-				tbp->b_blkno = bn;
-			} else if (tbp->b_blkno != bn) {
-				VM_OBJECT_WLOCK(tbp->b_bufobj->bo_object);
-				goto clean_sbusy;
-			}
-		}
+	for (bn = blkno + inc, i = 1; i <= run; ++i, bn += inc) {
 		/*
-		 * XXX fbp from caller may not be B_ASYNC, but we are going
-		 * to biodone() it in cluster_callback() anyway
+		 * A component of the cluster is already in core,
+		 * terminate the cluster early.
 		 */
-		BUF_KERNPROC(tbp);
-		TAILQ_INSERT_TAIL(&bp->b_cluster.cluster_head,
-			tbp, b_cluster.cluster_entry);
-		VM_OBJECT_WLOCK(tbp->b_bufobj->bo_object);
-		for (j = 0; j < tbp->b_npages; j += 1) {
-			vm_page_t m;
-			m = tbp->b_pages[j];
-			if ((bp->b_npages == 0) ||
-			    (bp->b_pages[bp->b_npages-1] != m)) {
-				bp->b_pages[bp->b_npages] = m;
-				bp->b_npages++;
-			}
-			if (m->valid == VM_PAGE_BITS_ALL)
-				tbp->b_pages[j] = bogus_page;
-		}
-		VM_OBJECT_WUNLOCK(tbp->b_bufobj->bo_object);
+		if (incore(vp, lbn + i))
+			break;
+		tbp = getblk(vp, lbn + i, 0, 0, 0);
 		/*
-		 * Don't inherit tbp->b_bufsize as it may be larger due to
-		 * a non-page-aligned size.  Instead just aggregate using
-		 * 'size'.
+		 * getblk may return some memory in the buffer if there were
+		 * no empty buffers to shed it to.  If there is currently
+		 * memory in the buffer, we move it down size bytes to make
+		 * room for the valid pages that cluster_callback will insert.
+		 * We do this now so we don't have to do it at interrupt time
+		 * in the callback routine.
 		 */
-		if (tbp->b_bcount != size)
-			printf("warning: tbp->b_bcount wrong %ld vs %ld\n", tbp->b_bcount, size);
-		if (tbp->b_bufsize != size)
-			printf("warning: tbp->b_bufsize wrong %ld vs %ld\n", tbp->b_bufsize, size);
-		bp->b_bcount += size;
-		bp->b_bufsize += size;
+		if (tbp->b_bufsize != 0) {
+			caddr_t bdata = (char *)tbp->b_data;
+
+			/*
+			 * No room in the buffer to add another page,
+			 * terminate the cluster early.
+			 */
+			if (tbp->b_bufsize + size > MAXBSIZE) {
+#ifdef DIAGNOSTIC
+				if (tbp->b_bufsize != MAXBSIZE)
+					panic("cluster_rbuild: too much memory");
+#endif
+				brelse(tbp);
+				break;
+			}
+			if (tbp->b_bufsize > size) {
+				/*
+				 * XXX if the source and destination regions
+				 * overlap we have to copy backward to avoid
+				 * clobbering any valid pages (i.e. pagemove
+				 * implementations typically can't handle
+				 * overlap).
+				 */
+				bdata += tbp->b_bufsize;
+				while (bdata > (char *)tbp->b_data) {
+					bdata -= CLBYTES;
+					pagemove(bdata, bdata + size, CLBYTES);
+				}
+			} else 
+				pagemove(bdata, bdata + size, tbp->b_bufsize);
+		}
+		tbp->b_blkno = bn;
+		tbp->b_flags |= flags | B_READ | B_ASYNC;
+		++b_save->bs_nchildren;
+		b_save->bs_children[i - 1] = tbp;
 	}
-
 	/*
-	 * Fully valid pages in the cluster are already good and do not need
-	 * to be re-read from disk.  Replace the page with bogus_page
+	 * The cluster may have been terminated early, adjust the cluster
+	 * buffer size accordingly.  If no cluster could be formed,
+	 * deallocate the cluster save info.
 	 */
-	VM_OBJECT_WLOCK(bp->b_bufobj->bo_object);
-	for (j = 0; j < bp->b_npages; j++) {
-		VM_OBJECT_ASSERT_WLOCKED(bp->b_pages[j]->object);
-		if (bp->b_pages[j]->valid == VM_PAGE_BITS_ALL)
-			bp->b_pages[j] = bogus_page;
+	if (i <= run) {
+		if (i == 1) {
+			bp->b_saveaddr = b_save->bs_saveaddr;
+			bp->b_flags &= ~B_CALL;
+			bp->b_iodone = NULL;
+			free(b_save, M_SEGMENT);
+		}
+		allocbuf(bp, size * i);
 	}
-	VM_OBJECT_WUNLOCK(bp->b_bufobj->bo_object);
-	if (bp->b_bufsize > bp->b_kvasize)
-		panic("cluster_rbuild: b_bufsize(%ld) > b_kvasize(%d)\n",
-		    bp->b_bufsize, bp->b_kvasize);
+	return(bp);
+}
 
-	if (buf_mapped(bp)) {
-		pmap_qenter(trunc_page((vm_offset_t) bp->b_data),
-		    (vm_page_t *)bp->b_pages, bp->b_npages);
+/*
+ * Either get a new buffer or grow the existing one.
+ */
+struct buf *
+cluster_newbuf(vp, bp, flags, blkno, lblkno, size, run)
+	struct vnode *vp;
+	struct buf *bp;
+	long flags;
+	daddr_t blkno;
+	daddr_t lblkno;
+	long size;
+	int run;
+{
+	if (!bp) {
+		bp = getblk(vp, lblkno, size, 0, 0);
+		if (bp->b_flags & (B_DONE | B_DELWRI)) {
+			bp->b_blkno = blkno;
+			return(bp);
+		}
 	}
-	return (bp);
+	allocbuf(bp, run * size);
+	bp->b_blkno = blkno;
+	bp->b_iodone = cluster_callback;
+	bp->b_flags |= flags | B_CALL;
+	return(bp);
 }
 
 /*
@@ -560,82 +411,62 @@ clean_sbusy:
  * extra memory (if there were no empty buffer headers at allocbuf time)
  * that we will need to shift around.
  */
-static void
-cluster_callback(struct buf *bp)
+void
+cluster_callback(bp)
+	struct buf *bp;
 {
-	struct buf *nbp, *tbp;
+	struct cluster_save *b_save;
+	struct buf **bpp, *tbp;
+	long bsize;
+	caddr_t cp;
 	int error = 0;
 
 	/*
-	 * Must propagate errors to all the components.
+	 * Must propogate errors to all the components.
 	 */
-	if (bp->b_ioflags & BIO_ERROR)
+	if (bp->b_flags & B_ERROR)
 		error = bp->b_error;
 
-	if (buf_mapped(bp)) {
-		pmap_qremove(trunc_page((vm_offset_t) bp->b_data),
-		    bp->b_npages);
-	}
+	b_save = (struct cluster_save *)(bp->b_saveaddr);
+	bp->b_saveaddr = b_save->bs_saveaddr;
+
+	bsize = b_save->bs_bufsize;
+	cp = (char *)bp->b_data + bsize;
 	/*
 	 * Move memory from the large cluster buffer into the component
 	 * buffers and mark IO as done on these.
 	 */
-	for (tbp = TAILQ_FIRST(&bp->b_cluster.cluster_head);
-		tbp; tbp = nbp) {
-		nbp = TAILQ_NEXT(&tbp->b_cluster, cluster_entry);
+	for (bpp = b_save->bs_children; b_save->bs_nchildren--; ++bpp) {
+		tbp = *bpp;
+		pagemove(cp, tbp->b_data, bsize);
+		tbp->b_bufsize += bsize;
+		tbp->b_bcount = bsize;
 		if (error) {
-			tbp->b_ioflags |= BIO_ERROR;
+			tbp->b_flags |= B_ERROR;
 			tbp->b_error = error;
-		} else {
-			tbp->b_dirtyoff = tbp->b_dirtyend = 0;
-			tbp->b_flags &= ~B_INVAL;
-			tbp->b_ioflags &= ~BIO_ERROR;
-			/*
-			 * XXX the bdwrite()/bqrelse() issued during
-			 * cluster building clears B_RELBUF (see bqrelse()
-			 * comment).  If direct I/O was specified, we have
-			 * to restore it here to allow the buffer and VM
-			 * to be freed.
-			 */
-			if (tbp->b_flags & B_DIRECT)
-				tbp->b_flags |= B_RELBUF;
 		}
-		bufdone(tbp);
+		biodone(tbp);
+		bp->b_bufsize -= bsize;
+		cp += bsize;
 	}
-	pbrelvp(bp);
-	relpbuf(bp, &cluster_pbuf_freecnt);
-}
-
-/*
- *	cluster_wbuild_wb:
- *
- *	Implement modified write build for cluster.
- *
- *		write_behind = 0	write behind disabled
- *		write_behind = 1	write behind normal (default)
- *		write_behind = 2	write behind backed-off
- */
-
-static __inline int
-cluster_wbuild_wb(struct vnode *vp, long size, daddr_t start_lbn, int len,
-    int gbflags)
-{
-	int r = 0;
-
-	switch (write_behind) {
-	case 2:
-		if (start_lbn < len)
-			break;
-		start_lbn -= len;
-		/* FALLTHROUGH */
-	case 1:
-		r = cluster_wbuild(vp, size, start_lbn, len, gbflags);
-		/* FALLTHROUGH */
-	default:
-		/* FALLTHROUGH */
-		break;
+	/*
+	 * If there was excess memory in the cluster buffer,
+	 * slide it up adjacent to the remaining valid data.
+	 */
+	if (bp->b_bufsize != bsize) {
+		if (bp->b_bufsize < bsize)
+			panic("cluster_callback: too little memory");
+		pagemove(cp, (char *)bp->b_data + bsize, bp->b_bufsize - bsize);
 	}
-	return(r);
+	bp->b_bcount = bsize;
+	bp->b_iodone = NULL;
+	free(b_save, M_SEGMENT);
+	if (bp->b_flags & B_ASYNC)
+		brelse(bp);
+	else {
+		bp->b_flags &= ~B_WANTED;
+		wakeup((caddr_t)bp);
+	}
 }
 
 /*
@@ -649,83 +480,56 @@ cluster_wbuild_wb(struct vnode *vp, long size, daddr_t start_lbn, int len,
  *	4.	end of a cluster - asynchronously write cluster
  */
 void
-cluster_write(struct vnode *vp, struct buf *bp, u_quad_t filesize, int seqcount,
-    int gbflags)
+cluster_write(bp, filesize)
+        struct buf *bp;
+	u_quad_t filesize;
 {
-	daddr_t lbn;
-	int maxclen, cursize;
-	int lblocksize;
-	int async;
+        struct vnode *vp;
+        daddr_t lbn;
+        int maxclen, cursize;
 
-	if (!unmapped_buf_allowed)
-		gbflags &= ~GB_UNMAPPED;
-
-	if (vp->v_type == VREG) {
-		async = DOINGASYNC(vp);
-		lblocksize = vp->v_mount->mnt_stat.f_iosize;
-	} else {
-		async = 0;
-		lblocksize = bp->b_bufsize;
-	}
-	lbn = bp->b_lblkno;
-	KASSERT(bp->b_offset != NOOFFSET, ("cluster_write: no buffer offset"));
+        vp = bp->b_vp;
+        lbn = bp->b_lblkno;
 
 	/* Initialize vnode to beginning of file. */
 	if (lbn == 0)
 		vp->v_lasta = vp->v_clen = vp->v_cstart = vp->v_lastw = 0;
 
-	if (vp->v_clen == 0 || lbn != vp->v_lastw + 1 ||
-	    (bp->b_blkno != vp->v_lasta + btodb(lblocksize))) {
-		maxclen = vp->v_mount->mnt_iosize_max / lblocksize - 1;
+        if (vp->v_clen == 0 || lbn != vp->v_lastw + 1 ||
+	    (bp->b_blkno != vp->v_lasta + btodb(bp->b_bcount))) {
+		maxclen = MAXBSIZE / vp->v_mount->mnt_stat.f_iosize - 1;
 		if (vp->v_clen != 0) {
 			/*
 			 * Next block is not sequential.
 			 *
 			 * If we are not writing at end of file, the process
-			 * seeked to another point in the file since its last
-			 * write, or we have reached our maximum cluster size,
-			 * then push the previous cluster. Otherwise try
-			 * reallocating to make it sequential.
-			 *
-			 * Change to algorithm: only push previous cluster if
-			 * it was sequential from the point of view of the
-			 * seqcount heuristic, otherwise leave the buffer 
-			 * intact so we can potentially optimize the I/O
-			 * later on in the buf_daemon or update daemon
-			 * flush.
+			 * seeked to another point in the file since its
+			 * last write, or we have reached our maximum
+			 * cluster size, then push the previous cluster.
+			 * Otherwise try reallocating to make it sequential.
 			 */
 			cursize = vp->v_lastw - vp->v_cstart + 1;
-			if (((u_quad_t) bp->b_offset + lblocksize) != filesize ||
+			if ((lbn + 1) * bp->b_bcount != filesize ||
 			    lbn != vp->v_lastw + 1 || vp->v_clen <= cursize) {
-				if (!async && seqcount > 0) {
-					cluster_wbuild_wb(vp, lblocksize,
-					    vp->v_cstart, cursize, gbflags);
-				}
+				cluster_wbuild(vp, NULL, bp->b_bcount,
+				    vp->v_cstart, cursize, lbn);
 			} else {
 				struct buf **bpp, **endbp;
 				struct cluster_save *buflist;
 
-				buflist = cluster_collectbufs(vp, bp, gbflags);
+				buflist = cluster_collectbufs(vp, bp);
 				endbp = &buflist->bs_children
 				    [buflist->bs_nchildren - 1];
 				if (VOP_REALLOCBLKS(vp, buflist)) {
 					/*
-					 * Failed, push the previous cluster
-					 * if *really* writing sequentially
-					 * in the logical file (seqcount > 1),
-					 * otherwise delay it in the hopes that
-					 * the low level disk driver can
-					 * optimize the write ordering.
+					 * Failed, push the previous cluster.
 					 */
 					for (bpp = buflist->bs_children;
 					     bpp < endbp; bpp++)
 						brelse(*bpp);
 					free(buflist, M_SEGMENT);
-					if (seqcount > 1) {
-						cluster_wbuild_wb(vp, 
-						    lblocksize, vp->v_cstart, 
-						    cursize, gbflags);
-					}
+					cluster_wbuild(vp, NULL, bp->b_bcount,
+					    vp->v_cstart, cursize, lbn);
 				} else {
 					/*
 					 * Succeeded, keep building cluster.
@@ -741,14 +545,12 @@ cluster_write(struct vnode *vp, struct buf *bp, u_quad_t filesize, int seqcount,
 			}
 		}
 		/*
-		 * Consider beginning a cluster. If at end of file, make
-		 * cluster as large as possible, otherwise find size of
-		 * existing cluster.
+		 * Consider beginning a cluster.
+		 * If at end of file, make cluster as large as possible,
+		 * otherwise find size of existing cluster.
 		 */
-		if ((vp->v_type == VREG) &&
-			((u_quad_t) bp->b_offset + lblocksize) != filesize &&
-		    (bp->b_blkno == bp->b_lblkno) &&
-		    (VOP_BMAP(vp, lbn, NULL, &bp->b_blkno, &maxclen, NULL) ||
+		if ((lbn + 1) * bp->b_bcount != filesize &&
+		    (VOP_BMAP(vp, lbn, NULL, &bp->b_blkno, &maxclen) ||
 		     bp->b_blkno == -1)) {
 			bawrite(bp);
 			vp->v_clen = 0;
@@ -757,38 +559,28 @@ cluster_write(struct vnode *vp, struct buf *bp, u_quad_t filesize, int seqcount,
 			vp->v_lastw = lbn;
 			return;
 		}
-		vp->v_clen = maxclen;
-		if (!async && maxclen == 0) {	/* I/O not contiguous */
+                vp->v_clen = maxclen;
+                if (maxclen == 0) {		/* I/O not contiguous */
 			vp->v_cstart = lbn + 1;
-			bawrite(bp);
-		} else {	/* Wait for rest of cluster */
+                        bawrite(bp);
+                } else {			/* Wait for rest of cluster */
 			vp->v_cstart = lbn;
-			bdwrite(bp);
+                        bdwrite(bp);
 		}
 	} else if (lbn == vp->v_cstart + vp->v_clen) {
 		/*
-		 * At end of cluster, write it out if seqcount tells us we
-		 * are operating sequentially, otherwise let the buf or
-		 * update daemon handle it.
+		 * At end of cluster, write it out.
 		 */
-		bdwrite(bp);
-		if (seqcount > 1) {
-			cluster_wbuild_wb(vp, lblocksize, vp->v_cstart,
-			    vp->v_clen + 1, gbflags);
-		}
+		cluster_wbuild(vp, bp, bp->b_bcount, vp->v_cstart,
+		    vp->v_clen + 1, lbn);
 		vp->v_clen = 0;
 		vp->v_cstart = lbn + 1;
-	} else if (vm_page_count_severe()) {
+	} else
 		/*
-		 * We are low on memory, get it going NOW
-		 */
-		bawrite(bp);
-	} else {
-		/*
-		 * In the middle of a cluster, so just delay the I/O for now.
+		 * In the middle of a cluster, so just delay the
+		 * I/O for now.
 		 */
 		bdwrite(bp);
-	}
 	vp->v_lastw = lbn;
 	vp->v_lasta = bp->b_blkno;
 }
@@ -800,269 +592,165 @@ cluster_write(struct vnode *vp, struct buf *bp, u_quad_t filesize, int seqcount,
  * performed.  Check to see that it doesn't fall in the middle of
  * the current block (if last_bp == NULL).
  */
-int
-cluster_wbuild(struct vnode *vp, long size, daddr_t start_lbn, int len,
-    int gbflags)
+void
+cluster_wbuild(vp, last_bp, size, start_lbn, len, lbn)
+	struct vnode *vp;
+	struct buf *last_bp;
+	long size;
+	daddr_t start_lbn;
+	int len;
+	daddr_t	lbn;
 {
+	struct cluster_save *b_save;
 	struct buf *bp, *tbp;
-	struct bufobj *bo;
-	int i, j;
-	int totalwritten = 0;
-	int dbsize = btodb(size);
+	caddr_t	cp;
+	int i, s;
 
-	if (!unmapped_buf_allowed)
-		gbflags &= ~GB_UNMAPPED;
-
-	bo = &vp->v_bufobj;
-	while (len > 0) {
-		/*
-		 * If the buffer is not delayed-write (i.e. dirty), or it
-		 * is delayed-write but either locked or inval, it cannot
-		 * partake in the clustered write.
-		 */
-		BO_LOCK(bo);
-		if ((tbp = gbincore(&vp->v_bufobj, start_lbn)) == NULL ||
-		    (tbp->b_vflags & BV_BKGRDINPROG)) {
-			BO_UNLOCK(bo);
-			++start_lbn;
-			--len;
-			continue;
-		}
-		if (BUF_LOCK(tbp,
-		    LK_EXCLUSIVE | LK_NOWAIT | LK_INTERLOCK, BO_LOCKPTR(bo))) {
-			++start_lbn;
-			--len;
-			continue;
-		}
-		if ((tbp->b_flags & (B_INVAL | B_DELWRI)) != B_DELWRI) {
-			BUF_UNLOCK(tbp);
-			++start_lbn;
-			--len;
-			continue;
-		}
-		bremfree(tbp);
-		tbp->b_flags &= ~B_DONE;
-
-		/*
-		 * Extra memory in the buffer, punt on this buffer.
-		 * XXX we could handle this in most cases, but we would
-		 * have to push the extra memory down to after our max
-		 * possible cluster size and then potentially pull it back
-		 * up if the cluster was terminated prematurely--too much
-		 * hassle.
-		 */
-		if (((tbp->b_flags & (B_CLUSTEROK | B_MALLOC | B_VMIO)) != 
-		     (B_CLUSTEROK | B_VMIO)) ||
-		  (tbp->b_bcount != tbp->b_bufsize) ||
-		  (tbp->b_bcount != size) ||
-		  (len == 1) ||
-		  ((bp = (vp->v_vflag & VV_MD) != 0 ?
-		  trypbuf(&cluster_pbuf_freecnt) :
-		  getpbuf(&cluster_pbuf_freecnt)) == NULL)) {
-			totalwritten += tbp->b_bufsize;
-			bawrite(tbp);
-			++start_lbn;
-			--len;
-			continue;
-		}
-
-		/*
-		 * We got a pbuf to make the cluster in.
-		 * so initialise it.
-		 */
-		TAILQ_INIT(&bp->b_cluster.cluster_head);
-		bp->b_bcount = 0;
-		bp->b_bufsize = 0;
-		bp->b_npages = 0;
-		if (tbp->b_wcred != NOCRED)
-			bp->b_wcred = crhold(tbp->b_wcred);
-
-		bp->b_blkno = tbp->b_blkno;
-		bp->b_lblkno = tbp->b_lblkno;
-		bp->b_offset = tbp->b_offset;
-
-		/*
-		 * We are synthesizing a buffer out of vm_page_t's, but
-		 * if the block size is not page aligned then the starting
-		 * address may not be either.  Inherit the b_data offset
-		 * from the original buffer.
-		 */
-		if ((gbflags & GB_UNMAPPED) == 0 ||
-		    (tbp->b_flags & B_VMIO) == 0) {
-			bp->b_data = (char *)((vm_offset_t)bp->b_data |
-			    ((vm_offset_t)tbp->b_data & PAGE_MASK));
-		} else {
-			bp->b_data = unmapped_buf;
-		}
-		bp->b_flags |= B_CLUSTER | (tbp->b_flags & (B_VMIO |
-		    B_NEEDCOMMIT));
-		bp->b_iodone = cluster_callback;
-		pbgetvp(vp, bp);
-		/*
-		 * From this location in the file, scan forward to see
-		 * if there are buffers with adjacent data that need to
-		 * be written as well.
-		 */
-		for (i = 0; i < len; ++i, ++start_lbn) {
-			if (i != 0) { /* If not the first buffer */
-				/*
-				 * If the adjacent data is not even in core it
-				 * can't need to be written.
-				 */
-				BO_LOCK(bo);
-				if ((tbp = gbincore(bo, start_lbn)) == NULL ||
-				    (tbp->b_vflags & BV_BKGRDINPROG)) {
-					BO_UNLOCK(bo);
-					break;
-				}
-
-				/*
-				 * If it IS in core, but has different
-				 * characteristics, or is locked (which
-				 * means it could be undergoing a background
-				 * I/O or be in a weird state), then don't
-				 * cluster with it.
-				 */
-				if (BUF_LOCK(tbp,
-				    LK_EXCLUSIVE | LK_NOWAIT | LK_INTERLOCK,
-				    BO_LOCKPTR(bo)))
-					break;
-
-				if ((tbp->b_flags & (B_VMIO | B_CLUSTEROK |
-				    B_INVAL | B_DELWRI | B_NEEDCOMMIT))
-				    != (B_DELWRI | B_CLUSTEROK |
-				    (bp->b_flags & (B_VMIO | B_NEEDCOMMIT))) ||
-				    tbp->b_wcred != bp->b_wcred) {
-					BUF_UNLOCK(tbp);
-					break;
-				}
-
-				/*
-				 * Check that the combined cluster
-				 * would make sense with regard to pages
-				 * and would not be too large
-				 */
-				if ((tbp->b_bcount != size) ||
-				  ((bp->b_blkno + (dbsize * i)) !=
-				    tbp->b_blkno) ||
-				  ((tbp->b_npages + bp->b_npages) >
-				    (vp->v_mount->mnt_iosize_max / PAGE_SIZE))) {
-					BUF_UNLOCK(tbp);
-					break;
-				}
-
-				/*
-				 * Ok, it's passed all the tests,
-				 * so remove it from the free list
-				 * and mark it busy. We will use it.
-				 */
-				bremfree(tbp);
-				tbp->b_flags &= ~B_DONE;
-			} /* end of code for non-first buffers only */
-			/*
-			 * If the IO is via the VM then we do some
-			 * special VM hackery (yuck).  Since the buffer's
-			 * block size may not be page-aligned it is possible
-			 * for a page to be shared between two buffers.  We
-			 * have to get rid of the duplication when building
-			 * the cluster.
-			 */
-			if (tbp->b_flags & B_VMIO) {
-				vm_page_t m;
-
-				VM_OBJECT_WLOCK(tbp->b_bufobj->bo_object);
-				if (i == 0) {
-					vfs_drain_busy_pages(tbp);
-				} else { /* if not first buffer */
-					for (j = 0; j < tbp->b_npages; j += 1) {
-						m = tbp->b_pages[j];
-						if (vm_page_xbusied(m)) {
-							VM_OBJECT_WUNLOCK(
-							    tbp->b_object);
-							bqrelse(tbp);
-							goto finishcluster;
-						}
-					}
-				}
-				for (j = 0; j < tbp->b_npages; j += 1) {
-					m = tbp->b_pages[j];
-					vm_page_sbusy(m);
-					vm_object_pip_add(m->object, 1);
-					if ((bp->b_npages == 0) ||
-					  (bp->b_pages[bp->b_npages - 1] != m)) {
-						bp->b_pages[bp->b_npages] = m;
-						bp->b_npages++;
-					}
-				}
-				VM_OBJECT_WUNLOCK(tbp->b_bufobj->bo_object);
-			}
-			bp->b_bcount += size;
-			bp->b_bufsize += size;
-			/*
-			 * If any of the clustered buffers have their
-			 * B_BARRIER flag set, transfer that request to
-			 * the cluster.
-			 */
-			bp->b_flags |= (tbp->b_flags & B_BARRIER);
-			tbp->b_flags &= ~(B_DONE | B_BARRIER);
-			tbp->b_flags |= B_ASYNC;
-			tbp->b_ioflags &= ~BIO_ERROR;
-			tbp->b_iocmd = BIO_WRITE;
-			bundirty(tbp);
-			reassignbuf(tbp);		/* put on clean list */
-			bufobj_wref(tbp->b_bufobj);
-			BUF_KERNPROC(tbp);
-			buf_track(tbp, __func__);
-			TAILQ_INSERT_TAIL(&bp->b_cluster.cluster_head,
-				tbp, b_cluster.cluster_entry);
-		}
-	finishcluster:
-		if (buf_mapped(bp)) {
-			pmap_qenter(trunc_page((vm_offset_t) bp->b_data),
-			    (vm_page_t *)bp->b_pages, bp->b_npages);
-		}
-		if (bp->b_bufsize > bp->b_kvasize)
-			panic(
-			    "cluster_wbuild: b_bufsize(%ld) > b_kvasize(%d)\n",
-			    bp->b_bufsize, bp->b_kvasize);
-		totalwritten += bp->b_bufsize;
-		bp->b_dirtyoff = 0;
-		bp->b_dirtyend = bp->b_bufsize;
-		bawrite(bp);
-
-		len -= i;
+#ifdef DIAGNOSTIC
+	if (size != vp->v_mount->mnt_stat.f_iosize)
+		panic("cluster_wbuild: size %d != filesize %d\n",
+			size, vp->v_mount->mnt_stat.f_iosize);
+#endif
+redo:
+	while ((!incore(vp, start_lbn) || start_lbn == lbn) && len) {
+		++start_lbn;
+		--len;
 	}
-	return totalwritten;
+
+	/* Get more memory for current buffer */
+	if (len <= 1) {
+		if (last_bp) {
+			bawrite(last_bp);
+		} else if (len) {
+			bp = getblk(vp, start_lbn, size, 0, 0);
+			bawrite(bp);
+		}
+		return;
+	}
+
+	bp = getblk(vp, start_lbn, size, 0, 0);
+	if (!(bp->b_flags & B_DELWRI)) {
+		++start_lbn;
+		--len;
+		brelse(bp);
+		goto redo;
+	}
+
+	/*
+	 * Extra memory in the buffer, punt on this buffer.
+	 * XXX we could handle this in most cases, but we would have to
+	 * push the extra memory down to after our max possible cluster
+	 * size and then potentially pull it back up if the cluster was
+	 * terminated prematurely--too much hassle.
+	 */
+	if (bp->b_bcount != bp->b_bufsize) {
+		++start_lbn;
+		--len;
+		bawrite(bp);
+		goto redo;
+	}
+
+	--len;
+	b_save = malloc(sizeof(struct buf *) * len + sizeof(struct cluster_save),
+	    M_SEGMENT, M_WAITOK);
+	b_save->bs_bcount = bp->b_bcount;
+	b_save->bs_bufsize = bp->b_bufsize;
+	b_save->bs_nchildren = 0;
+	b_save->bs_children = (struct buf **)(b_save + 1);
+	b_save->bs_saveaddr = bp->b_saveaddr;
+	bp->b_saveaddr = (caddr_t) b_save;
+
+	bp->b_flags |= B_CALL;
+	bp->b_iodone = cluster_callback;
+	cp = (char *)bp->b_data + size;
+	for (++start_lbn, i = 0; i < len; ++i, ++start_lbn) {
+		/*
+		 * Block is not in core or the non-sequential block
+		 * ending our cluster was part of the cluster (in which
+		 * case we don't want to write it twice).
+		 */
+		if (!incore(vp, start_lbn) ||
+		    last_bp == NULL && start_lbn == lbn)
+			break;
+
+		/*
+		 * Get the desired block buffer (unless it is the final
+		 * sequential block whose buffer was passed in explictly
+		 * as last_bp).
+		 */
+		if (last_bp == NULL || start_lbn != lbn) {
+			tbp = getblk(vp, start_lbn, size, 0, 0);
+			if (!(tbp->b_flags & B_DELWRI)) {
+				brelse(tbp);
+				break;
+			}
+		} else
+			tbp = last_bp;
+
+		++b_save->bs_nchildren;
+
+		/* Move memory from children to parent */
+		if (tbp->b_blkno != (bp->b_blkno + btodb(bp->b_bufsize))) {
+			printf("Clustered Block: %d addr %x bufsize: %d\n",
+			    bp->b_lblkno, bp->b_blkno, bp->b_bufsize);
+			printf("Child Block: %d addr: %x\n", tbp->b_lblkno,
+			    tbp->b_blkno);
+			panic("Clustered write to wrong blocks");
+		}
+
+		pagemove(tbp->b_data, cp, size);
+		bp->b_bcount += size;
+		bp->b_bufsize += size;
+
+		tbp->b_bufsize -= size;
+		tbp->b_flags &= ~(B_READ | B_DONE | B_ERROR | B_DELWRI);
+		tbp->b_flags |= (B_ASYNC | B_AGE);
+		s = splbio();
+		reassignbuf(tbp, tbp->b_vp);		/* put on clean list */
+		++tbp->b_vp->v_numoutput;
+		splx(s);
+		b_save->bs_children[i] = tbp;
+
+		cp += size;
+	}
+
+	if (i == 0) {
+		/* None to cluster */
+		bp->b_saveaddr = b_save->bs_saveaddr;
+		bp->b_flags &= ~B_CALL;
+		bp->b_iodone = NULL;
+		free(b_save, M_SEGMENT);
+	}
+	bawrite(bp);
+	if (i < len) {
+		len -= i + 1;
+		start_lbn += 1;
+		goto redo;
+	}
 }
 
 /*
  * Collect together all the buffers in a cluster.
  * Plus add one additional buffer.
  */
-static struct cluster_save *
-cluster_collectbufs(struct vnode *vp, struct buf *last_bp, int gbflags)
+struct cluster_save *
+cluster_collectbufs(vp, last_bp)
+	struct vnode *vp;
+	struct buf *last_bp;
 {
 	struct cluster_save *buflist;
-	struct buf *bp;
-	daddr_t lbn;
+	daddr_t	lbn;
 	int i, len;
 
 	len = vp->v_lastw - vp->v_cstart + 1;
 	buflist = malloc(sizeof(struct buf *) * (len + 1) + sizeof(*buflist),
 	    M_SEGMENT, M_WAITOK);
 	buflist->bs_nchildren = 0;
-	buflist->bs_children = (struct buf **) (buflist + 1);
-	for (lbn = vp->v_cstart, i = 0; i < len; lbn++, i++) {
-		(void)bread_gb(vp, lbn, last_bp->b_bcount, NOCRED,
-		    gbflags, &bp);
-		buflist->bs_children[i] = bp;
-		if (bp->b_blkno == bp->b_lblkno)
-			VOP_BMAP(vp, bp->b_lblkno, NULL, &bp->b_blkno,
-				NULL, NULL);
-	}
-	buflist->bs_children[i] = bp = last_bp;
-	if (bp->b_blkno == bp->b_lblkno)
-		VOP_BMAP(vp, bp->b_lblkno, NULL, &bp->b_blkno, NULL, NULL);
+	buflist->bs_children = (struct buf **)(buflist + 1);
+	for (lbn = vp->v_cstart, i = 0; i < len; lbn++, i++)
+		    (void)bread(vp, lbn, last_bp->b_bcount, NOCRED,
+			&buflist->bs_children[i]);
+	buflist->bs_children[i] = last_bp;
 	buflist->bs_nchildren = i + 1;
 	return (buflist);
 }

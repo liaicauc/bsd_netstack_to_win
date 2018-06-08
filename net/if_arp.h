@@ -1,6 +1,4 @@
-/*-
- * SPDX-License-Identifier: BSD-3-Clause
- *
+/*
  * Copyright (c) 1986, 1993
  *	The Regents of the University of California.  All rights reserved.
  *
@@ -12,7 +10,11 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the University nor the names of its contributors
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *	This product includes software developed by the University of
+ *	California, Berkeley and its contributors.
+ * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
  *
@@ -29,11 +31,7 @@
  * SUCH DAMAGE.
  *
  *	@(#)if_arp.h	8.1 (Berkeley) 6/10/93
- * $FreeBSD$
  */
-
-#ifndef _NET_IF_ARP_H_
-#define	_NET_IF_ARP_H_
 
 /*
  * Address Resolution Protocol.
@@ -48,10 +46,7 @@
 struct	arphdr {
 	u_short	ar_hrd;		/* format of hardware address */
 #define ARPHRD_ETHER 	1	/* ethernet hardware format */
-#define ARPHRD_IEEE802	6	/* token-ring hardware format */
 #define ARPHRD_FRELAY 	15	/* frame relay hardware format */
-#define ARPHRD_IEEE1394	24	/* firewire hardware format */
-#define ARPHRD_INFINIBAND 32	/* infiniband hardware format */
 	u_short	ar_pro;		/* format of protocol address */
 	u_char	ar_hln;		/* length of hardware address */
 	u_char	ar_pln;		/* length of protocol address */
@@ -74,15 +69,6 @@ struct	arphdr {
 #endif
 };
 
-#define ar_sha(ap)	(((caddr_t)((ap)+1)) +   0)
-#define ar_spa(ap)	(((caddr_t)((ap)+1)) +   (ap)->ar_hln)
-#define ar_tha(ap)	(((caddr_t)((ap)+1)) +   (ap)->ar_hln + (ap)->ar_pln)
-#define ar_tpa(ap)	(((caddr_t)((ap)+1)) + 2*(ap)->ar_hln + (ap)->ar_pln)
-
-#define arphdr_len2(ar_hln, ar_pln)					\
-	(sizeof(struct arphdr) + 2*(ar_hln) + 2*(ar_pln))
-#define arphdr_len(ap)	(arphdr_len2((ap)->ar_hln, (ap)->ar_pln))
-
 /*
  * ARP ioctl request
  */
@@ -97,38 +83,3 @@ struct arpreq {
 #define	ATF_PERM	0x04	/* permanent entry */
 #define	ATF_PUBL	0x08	/* publish entry (respond for other host) */
 #define	ATF_USETRAILERS	0x10	/* has requested trailers */
-
-struct arpstat {
-	/* Normal things that happen: */
-	uint64_t txrequests;	/* # of ARP requests sent by this host. */
-	uint64_t txreplies;	/* # of ARP replies sent by this host. */
-	uint64_t rxrequests;	/* # of ARP requests received by this host. */
-	uint64_t rxreplies;	/* # of ARP replies received by this host. */
-	uint64_t received;	/* # of ARP packets received by this host. */
-
-	uint64_t arp_spares[4];	/* For either the upper or lower half. */
-	/* Abnormal event and error  counting: */
-	uint64_t dropped;	/* # of packets dropped waiting for a reply. */
-	uint64_t timeouts;	/* # of times with entries removed */
-				/* due to timeout. */
-	uint64_t dupips;	/* # of duplicate IPs detected. */
-};
-
-#ifdef _KERNEL
-#include <sys/counter.h>
-#include <net/vnet.h>
-
-VNET_PCPUSTAT_DECLARE(struct arpstat, arpstat);
-/*
- * In-kernel consumers can use these accessor macros directly to update
- * stats.
- */
-#define	ARPSTAT_ADD(name, val)	\
-    VNET_PCPUSTAT_ADD(struct arpstat, arpstat, name, (val))
-#define	ARPSTAT_SUB(name, val)	ARPSTAT_ADD(name, -(val))
-#define	ARPSTAT_INC(name)	ARPSTAT_ADD(name, 1)
-#define	ARPSTAT_DEC(name)	ARPSTAT_SUB(name, 1)
-
-#endif /* _KERNEL */
-
-#endif /* !_NET_IF_ARP_H_ */

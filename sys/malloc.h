@@ -1,10 +1,6 @@
-/*-
- * SPDX-License-Identifier: BSD-3-Clause
- *
+/*
  * Copyright (c) 1987, 1993
- *	The Regents of the University of California.
- * Copyright (c) 2005, 2009 Robert N. M. Watson
- * All rights reserved.
+ *	The Regents of the University of California.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -14,7 +10,11 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the University nor the names of its contributors
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *	This product includes software developed by the University of
+ *	California, Berkeley and its contributors.
+ * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
  *
@@ -31,208 +31,282 @@
  * SUCH DAMAGE.
  *
  *	@(#)malloc.h	8.5 (Berkeley) 5/3/95
- * $FreeBSD$
  */
 
 #ifndef _SYS_MALLOC_H_
 #define	_SYS_MALLOC_H_
 
-#include <sys/param.h>
-#ifdef _KERNEL
-#include <sys/systm.h>
-#endif
-#include <sys/queue.h>
-#include <sys/_lock.h>
-#include <sys/_mutex.h>
-#include <machine/_limits.h>
-
-#define	MINALLOCSIZE	UMA_SMALLEST_UNIT
+#define KMEMSTATS
 
 /*
- * flags to malloc.
+ * flags to malloc
  */
-#define	M_NOWAIT	0x0001		/* do not block */
-#define	M_WAITOK	0x0002		/* ok to block */
-#define	M_ZERO		0x0100		/* bzero the allocation */
-#define	M_NOVM		0x0200		/* don't ask VM for pages */
-#define	M_USE_RESERVE	0x0400		/* can alloc out of reserve memory */
-#define	M_NODUMP	0x0800		/* don't dump pages in this allocation */
-#define	M_FIRSTFIT	0x1000		/* Only for vmem, fast fit. */
-#define	M_BESTFIT	0x2000		/* Only for vmem, low fragmentation. */
-
-#define	M_MAGIC		877983977	/* time when first defined :-) */
-
-#ifdef INVARIANTS
-#define	M_ZERO_INVARIANTS		M_ZERO
-#else
-#define	M_ZERO_INVARIANTS		0
-#endif
-
+#define	M_WAITOK	0x0000
+#define	M_NOWAIT	0x0001
 
 /*
- * Two malloc type structures are present: malloc_type, which is used by a
- * type owner to declare the type, and malloc_type_internal, which holds
- * malloc-owned statistics and other ABI-sensitive fields, such as the set of
- * malloc statistics indexed by the compile-time MAXCPU constant.
- * Applications should avoid introducing dependence on the allocator private
- * data layout and size.
- *
- * The malloc_type ks_next field is protected by malloc_mtx.  Other fields in
- * malloc_type are static after initialization so unsynchronized.
- *
- * Statistics in malloc_type_stats are written only when holding a critical
- * section and running on the CPU associated with the index into the stat
- * array, but read lock-free resulting in possible (minor) races, which the
- * monitoring app should take into account.
+ * Types of memory to be allocated
  */
-struct malloc_type_stats {
-	uint64_t	mts_memalloced;	/* Bytes allocated on CPU. */
-	uint64_t	mts_memfreed;	/* Bytes freed on CPU. */
-	uint64_t	mts_numallocs;	/* Number of allocates on CPU. */
-	uint64_t	mts_numfrees;	/* number of frees on CPU. */
-	uint64_t	mts_size;	/* Bitmask of sizes allocated on CPU. */
-	uint64_t	_mts_reserved1;	/* Reserved field. */
-	uint64_t	_mts_reserved2;	/* Reserved field. */
-	uint64_t	_mts_reserved3;	/* Reserved field. */
-};
+#define	M_FREE		0	/* should be on free list */
+#define	M_MBUF		1	/* mbuf */
+#define	M_DEVBUF	2	/* device driver memory */
+#define	M_SOCKET	3	/* socket structure */
+#define	M_PCB		4	/* protocol control block */
+#define	M_RTABLE	5	/* routing tables */
+#define	M_HTABLE	6	/* IMP host tables */
+#define	M_FTABLE	7	/* fragment reassembly header */
+#define	M_ZOMBIE	8	/* zombie proc status */
+#define	M_IFADDR	9	/* interface address */
+#define	M_SOOPTS	10	/* socket options */
+#define	M_SONAME	11	/* socket name */
+#define	M_NAMEI		12	/* namei path name buffer */
+#define	M_GPROF		13	/* kernel profiling buffer */
+#define	M_IOCTLOPS	14	/* ioctl data buffer */
+#define	M_MAPMEM	15	/* mapped memory descriptors */
+#define	M_CRED		16	/* credentials */
+#define	M_PGRP		17	/* process group header */
+#define	M_SESSION	18	/* session header */
+#define	M_IOV		19	/* large iov's */
+#define	M_MOUNT		20	/* vfs mount struct */
+#define	M_FHANDLE	21	/* network file handle */
+#define	M_NFSREQ	22	/* NFS request header */
+#define	M_NFSMNT	23	/* NFS mount structure */
+#define	M_NFSNODE	24	/* NFS vnode private part */
+#define	M_VNODE		25	/* Dynamically allocated vnodes */
+#define	M_CACHE		26	/* Dynamically allocated cache entries */
+#define	M_DQUOT		27	/* UFS quota entries */
+#define	M_UFSMNT	28	/* UFS mount structure */
+#define	M_SHM		29	/* SVID compatible shared memory segments */
+#define	M_VMMAP		30	/* VM map structures */
+#define	M_VMMAPENT	31	/* VM map entry structures */
+#define	M_VMOBJ		32	/* VM object structure */
+#define	M_VMOBJHASH	33	/* VM object hash structure */
+#define	M_VMPMAP	34	/* VM pmap */
+#define	M_VMPVENT	35	/* VM phys-virt mapping entry */
+#define	M_VMPAGER	36	/* XXX: VM pager struct */
+#define	M_VMPGDATA	37	/* XXX: VM pager private data */
+#define	M_FILE		38	/* Open file structure */
+#define	M_FILEDESC	39	/* Open file descriptor table */
+#define	M_LOCKF		40	/* Byte-range locking structures */
+#define	M_PROC		41	/* Proc structures */
+#define	M_SUBPROC	42	/* Proc sub-structures */
+#define	M_SEGMENT	43	/* Segment for LFS */
+#define	M_LFSNODE	44	/* LFS vnode private part */
+#define	M_FFSNODE	45	/* FFS vnode private part */
+#define	M_MFSNODE	46	/* MFS vnode private part */
+#define	M_NQLEASE	47	/* Nqnfs lease */
+#define	M_NQMHOST	48	/* Nqnfs host address table */
+#define	M_NETADDR	49	/* Export host address structure */
+#define	M_NFSSVC	50	/* Nfs server structure */
+#define	M_NFSUID	51	/* Nfs uid mapping structure */
+#define	M_NFSD		52	/* Nfs server daemon structure */
+#define	M_IPMOPTS	53	/* internet multicast options */
+#define	M_IPMADDR	54	/* internet multicast address */
+#define	M_IFMADDR	55	/* link-level multicast address */
+#define	M_MRTABLE	56	/* multicast routing tables */
+#define M_ISOFSMNT	57	/* ISOFS mount structure */
+#define M_ISOFSNODE	58	/* ISOFS vnode private part */
+#define M_NFSRVDESC	59	/* NFS server socket descriptor */
+#define M_NFSDIROFF	60	/* NFS directory offset data */
+#define M_NFSBIGFH	61	/* NFS version 3 file handle */
+#define	M_TEMP		74	/* misc temporary data buffers */
+#define	M_LAST		75	/* Must be last type + 1 */
 
-/*
- * Index definitions for the mti_probes[] array.
- */
-#define DTMALLOC_PROBE_MALLOC		0
-#define DTMALLOC_PROBE_FREE		1
-#define DTMALLOC_PROBE_MAX		2
-
-struct malloc_type_internal {
-	uint32_t	mti_probes[DTMALLOC_PROBE_MAX];
-					/* DTrace probe ID array. */
-	u_char		mti_zone;
-	struct malloc_type_stats	mti_stats[MAXCPU];
-};
-
-/*
- * Public data structure describing a malloc type.  Private data is hung off
- * of ks_handle to avoid encoding internal malloc(9) data structures in
- * modules, which will statically allocate struct malloc_type.
- */
-struct malloc_type {
-	struct malloc_type *ks_next;	/* Next in global chain. */
-	u_long		 ks_magic;	/* Detect programmer error. */
-	const char	*ks_shortdesc;	/* Printable type name. */
-	void		*ks_handle;	/* Priv. data, was lo_class. */
-};
-
-/*
- * Statistics structure headers for user space.  The kern.malloc sysctl
- * exposes a structure stream consisting of a stream header, then a series of
- * malloc type headers and statistics structures (quantity maxcpus).  For
- * convenience, the kernel will provide the current value of maxcpus at the
- * head of the stream.
- */
-#define	MALLOC_TYPE_STREAM_VERSION	0x00000001
-struct malloc_type_stream_header {
-	uint32_t	mtsh_version;	/* Stream format version. */
-	uint32_t	mtsh_maxcpus;	/* Value of MAXCPU for stream. */
-	uint32_t	mtsh_count;	/* Number of records. */
-	uint32_t	_mtsh_pad;	/* Pad/reserved field. */
-};
-
-#define	MALLOC_MAX_NAME	32
-struct malloc_type_header {
-	char				mth_name[MALLOC_MAX_NAME];
-};
-
-#ifdef _KERNEL
-#define	MALLOC_DEFINE(type, shortdesc, longdesc)			\
-	struct malloc_type type[1] = {					\
-		{ NULL, M_MAGIC, shortdesc, NULL }			\
-	};								\
-	SYSINIT(type##_init, SI_SUB_KMEM, SI_ORDER_THIRD, malloc_init,	\
-	    type);							\
-	SYSUNINIT(type##_uninit, SI_SUB_KMEM, SI_ORDER_ANY,		\
-	    malloc_uninit, type)
-
-#define	MALLOC_DECLARE(type) \
-	extern struct malloc_type type[1]
-
-MALLOC_DECLARE(M_CACHE);
-MALLOC_DECLARE(M_DEVBUF);
-MALLOC_DECLARE(M_TEMP);
-
-/*
- * XXX this should be declared in <sys/uio.h>, but that tends to fail
- * because <sys/uio.h> is included in a header before the source file
- * has a chance to include <sys/malloc.h> to get MALLOC_DECLARE() defined.
- */
-MALLOC_DECLARE(M_IOV);
-
-extern struct mtx malloc_mtx;
-
-/*
- * Function type used when iterating over the list of malloc types.
- */
-typedef void malloc_type_list_func_t(struct malloc_type *, void *);
-
-void	contigfree(void *addr, unsigned long size, struct malloc_type *type);
-void	*contigmalloc(unsigned long size, struct malloc_type *type, int flags,
-	    vm_paddr_t low, vm_paddr_t high, unsigned long alignment,
-	    vm_paddr_t boundary) __malloc_like __result_use_check
-	    __alloc_size(1) __alloc_align(6);
-void	*contigmalloc_domain(unsigned long size, struct malloc_type *type,
-	    int domain, int flags, vm_paddr_t low, vm_paddr_t high,
-	    unsigned long alignment, vm_paddr_t boundary)
-	    __malloc_like __result_use_check __alloc_size(1) __alloc_align(6);
-void	free(void *addr, struct malloc_type *type);
-void	free_domain(void *addr, struct malloc_type *type);
-void	*malloc(size_t size, struct malloc_type *type, int flags) __malloc_like
-	    __result_use_check __alloc_size(1);
-#ifdef _KERNEL
-#define	malloc(size, type, flags) ({					\
-	void *_malloc_item;						\
-	size_t _size = (size);						\
-	if (__builtin_constant_p(size) && __builtin_constant_p(flags) &&\
-	    ((flags) & M_ZERO) != 0) {					\
-		_malloc_item = malloc(_size, type, (flags) &~ M_ZERO);	\
-		if (((flags) & M_WAITOK) != 0 || _malloc_item != NULL)	\
-			bzero(_malloc_item, _size);			\
-	} else {							\
-		_malloc_item = malloc(_size, type, flags);		\
-	}								\
-	_malloc_item;							\
-})
-#endif
-
-void	*malloc_domain(size_t size, struct malloc_type *type, int domain,
-	    int flags) __malloc_like __result_use_check __alloc_size(1);
-void	*mallocarray(size_t nmemb, size_t size, struct malloc_type *type,
-	    int flags) __malloc_like __result_use_check
-	    __alloc_size2(1, 2);
-void	malloc_init(void *);
-int	malloc_last_fail(void);
-void	malloc_type_allocated(struct malloc_type *type, unsigned long size);
-void	malloc_type_freed(struct malloc_type *type, unsigned long size);
-void	malloc_type_list(malloc_type_list_func_t *, void *);
-void	malloc_uninit(void *);
-void	*realloc(void *addr, size_t size, struct malloc_type *type, int flags)
-	    __result_use_check __alloc_size(2);
-void	*reallocf(void *addr, size_t size, struct malloc_type *type, int flags)
-	    __result_use_check __alloc_size(2);
-
-struct malloc_type *malloc_desc2type(const char *desc);
-
-/*
- * This is sqrt(SIZE_MAX+1), as s1*s2 <= SIZE_MAX
- * if both s1 < MUL_NO_OVERFLOW and s2 < MUL_NO_OVERFLOW
- */
-#define MUL_NO_OVERFLOW		(1UL << (sizeof(size_t) * 8 / 2))
-static inline bool
-WOULD_OVERFLOW(size_t nmemb, size_t size)
-{
-
-	return ((nmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) &&
-	    nmemb > 0 && __SIZE_T_MAX / nmemb < size);
+#define INITKMEMNAMES { \
+	"free",		/* 0 M_FREE */ \
+	"mbuf",		/* 1 M_MBUF */ \
+	"devbuf",	/* 2 M_DEVBUF */ \
+	"socket",	/* 3 M_SOCKET */ \
+	"pcb",		/* 4 M_PCB */ \
+	"routetbl",	/* 5 M_RTABLE */ \
+	"hosttbl",	/* 6 M_HTABLE */ \
+	"fragtbl",	/* 7 M_FTABLE */ \
+	"zombie",	/* 8 M_ZOMBIE */ \
+	"ifaddr",	/* 9 M_IFADDR */ \
+	"soopts",	/* 10 M_SOOPTS */ \
+	"soname",	/* 11 M_SONAME */ \
+	"namei",	/* 12 M_NAMEI */ \
+	"gprof",	/* 13 M_GPROF */ \
+	"ioctlops",	/* 14 M_IOCTLOPS */ \
+	"mapmem",	/* 15 M_MAPMEM */ \
+	"cred",		/* 16 M_CRED */ \
+	"pgrp",		/* 17 M_PGRP */ \
+	"session",	/* 18 M_SESSION */ \
+	"iov",		/* 19 M_IOV */ \
+	"mount",	/* 20 M_MOUNT */ \
+	"fhandle",	/* 21 M_FHANDLE */ \
+	"NFS req",	/* 22 M_NFSREQ */ \
+	"NFS mount",	/* 23 M_NFSMNT */ \
+	"NFS node",	/* 24 M_NFSNODE */ \
+	"vnodes",	/* 25 M_VNODE */ \
+	"namecache",	/* 26 M_CACHE */ \
+	"UFS quota",	/* 27 M_DQUOT */ \
+	"UFS mount",	/* 28 M_UFSMNT */ \
+	"shm",		/* 29 M_SHM */ \
+	"VM map",	/* 30 M_VMMAP */ \
+	"VM mapent",	/* 31 M_VMMAPENT */ \
+	"VM object",	/* 32 M_VMOBJ */ \
+	"VM objhash",	/* 33 M_VMOBJHASH */ \
+	"VM pmap",	/* 34 M_VMPMAP */ \
+	"VM pvmap",	/* 35 M_VMPVENT */ \
+	"VM pager",	/* 36 M_VMPAGER */ \
+	"VM pgdata",	/* 37 M_VMPGDATA */ \
+	"file",		/* 38 M_FILE */ \
+	"file desc",	/* 39 M_FILEDESC */ \
+	"lockf",	/* 40 M_LOCKF */ \
+	"proc",		/* 41 M_PROC */ \
+	"subproc",	/* 42 M_SUBPROC */ \
+	"LFS segment",	/* 43 M_SEGMENT */ \
+	"LFS node",	/* 44 M_LFSNODE */ \
+	"FFS node",	/* 45 M_FFSNODE */ \
+	"MFS node",	/* 46 M_MFSNODE */ \
+	"NQNFS Lease",	/* 47 M_NQLEASE */ \
+	"NQNFS Host",	/* 48 M_NQMHOST */ \
+	"Export Host",	/* 49 M_NETADDR */ \
+	"NFS srvsock",	/* 50 M_NFSSVC */ \
+	"NFS uid",	/* 51 M_NFSUID */ \
+	"NFS daemon",	/* 52 M_NFSD */ \
+	"ip_moptions",	/* 53 M_IPMOPTS */ \
+	"in_multi",	/* 54 M_IPMADDR */ \
+	"ether_multi",	/* 55 M_IFMADDR */ \
+	"mrt",		/* 56 M_MRTABLE */ \
+	"ISOFS mount",	/* 57 M_ISOFSMNT */ \
+	"ISOFS node",	/* 58 M_ISOFSNODE */ \
+	"NFSV3 srvdesc",/* 59 M_NFSRVDESC */ \
+	"NFSV3 diroff",	/* 60 M_NFSDIROFF */ \
+	"NFSV3 bigfh",	/* 61 M_NFSBIGFH */ \
+	NULL, NULL, \
+	NULL, NULL, NULL, NULL, NULL, \
+	NULL, NULL, NULL, NULL, NULL, \
+	"temp",		/* 74 M_TEMP */ \
 }
-#undef MUL_NO_OVERFLOW
-#endif /* _KERNEL */
 
+struct kmemstats {
+	long	ks_inuse;	/* # of packets of this type currently in use */
+	long	ks_calls;	/* total packets of this type ever allocated */
+	long 	ks_memuse;	/* total memory held in bytes */
+	u_short	ks_limblocks;	/* number of times blocked for hitting limit */
+	u_short	ks_mapblocks;	/* number of times blocked for kernel map */
+	long	ks_maxused;	/* maximum number ever used */
+	long	ks_limit;	/* most that are allowed to exist */
+	long	ks_size;	/* sizes of this thing that are allocated */
+	long	ks_spare;
+};
+
+/*
+ * Array of descriptors that describe the contents of each page
+ */
+struct kmemusage {
+	short ku_indx;		/* bucket index */
+	union {
+		u_short freecnt;/* for small allocations, free pieces in page */
+		u_short pagecnt;/* for large allocations, pages alloced */
+	} ku_un;
+};
+#define ku_freecnt ku_un.freecnt
+#define ku_pagecnt ku_un.pagecnt
+
+/*
+ * Set of buckets for each size of memory block that is retained
+ */
+struct kmembuckets {
+	caddr_t kb_next;	/* list of free blocks */
+	caddr_t kb_last;	/* last free block */
+	long	kb_calls;	/* total calls to allocate this size */
+	long	kb_total;	/* total number of blocks allocated */
+	long	kb_totalfree;	/* # of free elements in this bucket */
+	long	kb_elmpercl;	/* # of elements in this sized allocation */
+	long	kb_highwat;	/* high water mark */
+	long	kb_couldfree;	/* over high water mark and could free */
+};
+
+#ifdef KERNEL
+#define	MINALLOCSIZE	(1 << MINBUCKET)
+#define BUCKETINDX(size) \
+	((size) <= (MINALLOCSIZE * 128) \
+		? (size) <= (MINALLOCSIZE * 8) \
+			? (size) <= (MINALLOCSIZE * 2) \
+				? (size) <= (MINALLOCSIZE * 1) \
+					? (MINBUCKET + 0) \
+					: (MINBUCKET + 1) \
+				: (size) <= (MINALLOCSIZE * 4) \
+					? (MINBUCKET + 2) \
+					: (MINBUCKET + 3) \
+			: (size) <= (MINALLOCSIZE* 32) \
+				? (size) <= (MINALLOCSIZE * 16) \
+					? (MINBUCKET + 4) \
+					: (MINBUCKET + 5) \
+				: (size) <= (MINALLOCSIZE * 64) \
+					? (MINBUCKET + 6) \
+					: (MINBUCKET + 7) \
+		: (size) <= (MINALLOCSIZE * 2048) \
+			? (size) <= (MINALLOCSIZE * 512) \
+				? (size) <= (MINALLOCSIZE * 256) \
+					? (MINBUCKET + 8) \
+					: (MINBUCKET + 9) \
+				: (size) <= (MINALLOCSIZE * 1024) \
+					? (MINBUCKET + 10) \
+					: (MINBUCKET + 11) \
+			: (size) <= (MINALLOCSIZE * 8192) \
+				? (size) <= (MINALLOCSIZE * 4096) \
+					? (MINBUCKET + 12) \
+					: (MINBUCKET + 13) \
+				: (size) <= (MINALLOCSIZE * 16384) \
+					? (MINBUCKET + 14) \
+					: (MINBUCKET + 15))
+
+/*
+ * Turn virtual addresses into kmem map indicies
+ */
+#define kmemxtob(alloc)	(kmembase + (alloc) * NBPG)
+#define btokmemx(addr)	(((caddr_t)(addr) - kmembase) / NBPG)
+#define btokup(addr)	(&kmemusage[((caddr_t)(addr) - kmembase) >> CLSHIFT])
+
+/*
+ * Macro versions for the usual cases of malloc/free
+ */
+#if defined(KMEMSTATS) || defined(DIAGNOSTIC)
+#define	MALLOC(space, cast, size, type, flags) \
+	(space) = (cast)malloc((u_long)(size), type, flags)
+#define FREE(addr, type) free((caddr_t)(addr), type)
+
+#else /* do not collect statistics */
+#define	MALLOC(space, cast, size, type, flags) { \
+	register struct kmembuckets *kbp = &bucket[BUCKETINDX(size)]; \
+	long s = splimp(); \
+	if (kbp->kb_next == NULL) { \
+		(space) = (cast)malloc((u_long)(size), type, flags); \
+	} else { \
+		(space) = (cast)kbp->kb_next; \
+		kbp->kb_next = *(caddr_t *)(space); \
+	} \
+	splx(s); \
+}
+
+#define FREE(addr, type) { \
+	register struct kmembuckets *kbp; \
+	register struct kmemusage *kup = btokup(addr); \
+	long s = splimp(); \
+	if (1 << kup->ku_indx > MAXALLOCSAVE) { \
+		free((caddr_t)(addr), type); \
+	} else { \
+		kbp = &bucket[kup->ku_indx]; \
+		if (kbp->kb_next == NULL) \
+			kbp->kb_next = (caddr_t)(addr); \
+		else \
+			*(caddr_t *)(kbp->kb_last) = (caddr_t)(addr); \
+		*(caddr_t *)(addr) = NULL; \
+		kbp->kb_last = (caddr_t)(addr); \
+	} \
+	splx(s); \
+}
+#endif /* do not collect statistics */
+
+extern struct kmemstats kmemstats[];
+extern struct kmemusage *kmemusage;
+extern char *kmembase;
+extern struct kmembuckets bucket[];
+extern void *malloc __P((unsigned long size, int type, int flags));
+extern void free __P((void *addr, int type));
+#endif /* KERNEL */
 #endif /* !_SYS_MALLOC_H_ */

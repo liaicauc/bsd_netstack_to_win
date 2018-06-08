@@ -1,6 +1,4 @@
-/*-
- * SPDX-License-Identifier: BSD-3-Clause
- *
+/*
  * Copyright (c) 1981, 1984, 1993
  *	The Regents of the University of California.  All rights reserved.
  *
@@ -12,7 +10,11 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the University nor the names of its contributors
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *	This product includes software developed by the University of
+ *	California, Berkeley and its contributors.
+ * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
  *
@@ -29,59 +31,16 @@
  * SUCH DAMAGE.
  *
  *	@(#)msgbuf.h	8.1 (Berkeley) 6/2/93
- * $FreeBSD$
  */
 
-#ifndef _SYS_MSGBUF_H_
-#define	_SYS_MSGBUF_H_
-
-#include <sys/lock.h>
-#include <sys/mutex.h>
-
-struct msgbuf {
-	char	   *msg_ptr;		/* pointer to buffer */
-#define	MSG_MAGIC	0x063062
-	u_int	   msg_magic;
-	u_int	   msg_size;		/* size of buffer area */
-	u_int	   msg_wseq;		/* write sequence number */
-	u_int	   msg_rseq;		/* read sequence number */
-	u_int	   msg_cksum;		/* checksum of contents */
-	u_int	   msg_seqmod;		/* range for sequence numbers */
-	int	   msg_lastpri;		/* saved priority value */
-	u_int      msg_flags;
-#define MSGBUF_NEEDNL	0x01	/* set when newline needed */
-	struct mtx msg_lock;		/* mutex to protect the buffer */
+#define	MSG_BSIZE	(4096 - 3 * sizeof(long))
+struct	msgbuf {
+#define	MSG_MAGIC	0x063061
+	long	msg_magic;
+	long	msg_bufx;		/* write pointer */
+	long	msg_bufr;		/* read pointer */
+	char	msg_bufc[MSG_BSIZE];	/* buffer */
 };
-
-/* Normalise a sequence number or a difference between sequence numbers. */
-#define	MSGBUF_SEQNORM(mbp, seq)	(((seq) + (mbp)->msg_seqmod) % \
-    (mbp)->msg_seqmod)
-#define	MSGBUF_SEQ_TO_POS(mbp, seq)	((seq) % (mbp)->msg_size)
-/* Subtract sequence numbers.  Note that only positive values result. */
-#define	MSGBUF_SEQSUB(mbp, seq1, seq2)	(MSGBUF_SEQNORM((mbp), (seq1) - (seq2)))
-
-#ifdef _KERNEL
-extern int	msgbufsize;
-extern int	msgbuftrigger;
-extern struct	msgbuf *msgbufp;
-extern struct	mtx msgbuf_lock;
-
-void	msgbufinit(void *ptr, int size);
-void	msgbuf_addchar(struct msgbuf *mbp, int c);
-void	msgbuf_addstr(struct msgbuf *mbp, int pri, char *str, int filter_cr);
-void	msgbuf_clear(struct msgbuf *mbp);
-void	msgbuf_copy(struct msgbuf *src, struct msgbuf *dst);
-int	msgbuf_getbytes(struct msgbuf *mbp, char *buf, int buflen);
-int	msgbuf_getchar(struct msgbuf *mbp);
-int	msgbuf_getcount(struct msgbuf *mbp);
-void	msgbuf_init(struct msgbuf *mbp, void *ptr, int size);
-int	msgbuf_peekbytes(struct msgbuf *mbp, char *buf, int buflen,
-	    u_int *seqp);
-void	msgbuf_reinit(struct msgbuf *mbp, void *ptr, int size);
-
-#ifndef MSGBUF_SIZE
-#define	MSGBUF_SIZE	(32768 * 3)
+#ifdef KERNEL
+struct	msgbuf *msgbufp;
 #endif
-#endif /* KERNEL */
-
-#endif /* !_SYS_MSGBUF_H_ */

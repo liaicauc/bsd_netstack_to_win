@@ -1,6 +1,4 @@
-/*-
- * SPDX-License-Identifier: BSD-3-Clause
- *
+/*
  * Copyright (c) 1982, 1986, 1993
  *	The Regents of the University of California.  All rights reserved.
  *
@@ -12,7 +10,11 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the University nor the names of its contributors
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *	This product includes software developed by the University of
+ *	California, Berkeley and its contributors.
+ * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
  *
@@ -29,11 +31,7 @@
  * SUCH DAMAGE.
  *
  *	@(#)domain.h	8.1 (Berkeley) 6/2/93
- * $FreeBSD$
  */
-
-#ifndef _SYS_DOMAIN_H_
-#define _SYS_DOMAIN_H_
 
 /*
  * Structure per communications domain.
@@ -43,60 +41,24 @@
  * Forward structure declarations for function prototypes [sic].
  */
 struct	mbuf;
-struct	ifnet;
-struct	socket;
 
-struct domain {
+struct	domain {
 	int	dom_family;		/* AF_xxx */
 	char	*dom_name;
 	void	(*dom_init)		/* initialize domain data structures */
-		(void);
-	void	(*dom_destroy)		/* cleanup structures / state */
-		(void);
+		__P((void));
 	int	(*dom_externalize)	/* externalize access rights */
-		(struct mbuf *, struct mbuf **, int);
-	void	(*dom_dispose)		/* dispose of internalized rights */
-		(struct socket *);
+		__P((struct mbuf *));
+	int	(*dom_dispose)		/* dispose of internalized rights */
+		__P((struct mbuf *));
 	struct	protosw *dom_protosw, *dom_protoswNPROTOSW;
 	struct	domain *dom_next;
 	int	(*dom_rtattach)		/* initialize routing table */
-		(void **, int);
-	int	(*dom_rtdetach)		/* clean up routing table */
-		(void **, int);
-	void	*(*dom_ifattach)(struct ifnet *);
-	void	(*dom_ifdetach)(struct ifnet *, void *);
-	int	(*dom_ifmtu)(struct ifnet *);
-					/* af-dependent data on ifnet */
+		__P((void **, int));
+	int	dom_rtoffset;		/* an arg to rtattach, in bits */
+	int	dom_maxrtkey;		/* for routing layer */
 };
 
-#ifdef _KERNEL
-extern int	domain_init_status;
-extern struct	domain *domains;
-void		domain_add(void *);
-void		domain_init(void *);
-#ifdef VIMAGE
-void		vnet_domain_init(void *);
-void		vnet_domain_uninit(void *);
+#ifdef KERNEL
+struct	domain *domains;
 #endif
-
-#define	DOMAIN_SET(name)						\
-	SYSINIT(domain_add_ ## name, SI_SUB_PROTO_DOMAIN,		\
-	    SI_ORDER_FIRST, domain_add, & name ## domain);		\
-	SYSINIT(domain_init_ ## name, SI_SUB_PROTO_DOMAIN,		\
-	    SI_ORDER_SECOND, domain_init, & name ## domain);
-#ifdef VIMAGE
-#define	VNET_DOMAIN_SET(name)						\
-	SYSINIT(domain_add_ ## name, SI_SUB_PROTO_DOMAIN,		\
-	    SI_ORDER_FIRST, domain_add, & name ## domain);		\
-	VNET_SYSINIT(vnet_domain_init_ ## name, SI_SUB_PROTO_DOMAIN,	\
-	    SI_ORDER_SECOND, vnet_domain_init, & name ## domain);	\
-	VNET_SYSUNINIT(vnet_domain_uninit_ ## name,			\
-	    SI_SUB_PROTO_DOMAIN, SI_ORDER_SECOND, vnet_domain_uninit,	\
-	    & name ## domain)
-#else /* !VIMAGE */
-#define	VNET_DOMAIN_SET(name)	DOMAIN_SET(name)
-#endif /* VIMAGE */
-
-#endif /* _KERNEL */
-
-#endif /* !_SYS_DOMAIN_H_ */

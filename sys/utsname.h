@@ -1,6 +1,4 @@
 /*-
- * SPDX-License-Identifier: BSD-3-Clause
- *
  * Copyright (c) 1994
  *	The Regents of the University of California.  All rights reserved.
  *
@@ -15,7 +13,11 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the University nor the names of its contributors
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *	This product includes software developed by the University of
+ *	California, Berkeley and its contributors.
+ * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
  *
@@ -32,40 +34,23 @@
  * SUCH DAMAGE.
  *
  *	@(#)utsname.h	8.1 (Berkeley) 1/4/94
- * $FreeBSD$
  */
 
 #ifndef	_SYS_UTSNAME_H
 #define	_SYS_UTSNAME_H
 
-#ifdef _KERNEL
-#define	SYS_NMLN	32		/* uname(2) for the FreeBSD 1.1 ABI. */
-#endif
-
-#ifndef SYS_NMLN
-#define	SYS_NMLN	256		/* User can override. */
-#endif
-
 struct utsname {
-	char	sysname[SYS_NMLN];	/* Name of this OS. */
-	char	nodename[SYS_NMLN];	/* Name of this network node. */
-	char	release[SYS_NMLN];	/* Release level. */
-	char	version[SYS_NMLN];	/* Version level. */
-	char	machine[SYS_NMLN];	/* Hardware type. */
+	char	sysname[256];	/* Name of this OS. */
+	char	nodename[256];	/* Name of this network node. */
+	char	release[256];	/* Release level. */
+	char	version[256];	/* Version level. */
+	char	machine[256];	/* Hardware type. */
 };
 
 #include <sys/cdefs.h>
 
-#ifndef _KERNEL
 __BEGIN_DECLS
-int	__xuname(int, void *);		/* Variable record size. */
+int	uname __P((struct utsname *));
 __END_DECLS
-
-static __inline int
-uname(struct utsname *name)
-{
-	return __xuname(SYS_NMLN, (void *)name);
-}
-#endif	/* _KERNEL */
 
 #endif	/* !_SYS_UTSNAME_H */

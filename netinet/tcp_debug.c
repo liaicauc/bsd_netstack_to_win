@@ -1,9 +1,6 @@
-/*-
- * SPDX-License-Identifier: BSD-3-Clause
- *
+/*
  * Copyright (c) 1982, 1986, 1993
- *	The Regents of the University of California.
- * All rights reserved.
+ *	The Regents of the University of California.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -13,7 +10,11 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the University nor the names of its contributors
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *	This product includes software developed by the University of
+ *	California, Berkeley and its contributors.
+ * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
  *
@@ -32,13 +33,6 @@
  *	@(#)tcp_debug.c	8.1 (Berkeley) 6/10/93
  */
 
-#include <sys/cdefs.h>
-__FBSDID("$FreeBSD$");
-
-#include "opt_inet.h"
-#include "opt_inet6.h"
-#include "opt_tcpdebug.h"
-
 #ifdef TCPDEBUG
 /* load symbolic names */
 #define PRUREQUESTS
@@ -49,138 +43,82 @@ __FBSDID("$FreeBSD$");
 
 #include <sys/param.h>
 #include <sys/systm.h>
-#include <sys/kernel.h>
-#include <sys/lock.h>
 #include <sys/mbuf.h>
-#include <sys/mutex.h>
-#include <sys/protosw.h>
 #include <sys/socket.h>
+#include <sys/socketvar.h>
+#include <sys/protosw.h>
+#include <sys/errno.h>
+
+#include <net/route.h>
+#include <net/if.h>
 
 #include <netinet/in.h>
 #include <netinet/in_systm.h>
 #include <netinet/ip.h>
-#ifdef INET6
-#include <netinet/ip6.h>
-#endif
+#include <netinet/in_pcb.h>
 #include <netinet/ip_var.h>
 #include <netinet/tcp.h>
 #include <netinet/tcp_fsm.h>
+#include <netinet/tcp_seq.h>
 #include <netinet/tcp_timer.h>
 #include <netinet/tcp_var.h>
 #include <netinet/tcpip.h>
 #include <netinet/tcp_debug.h>
 
 #ifdef TCPDEBUG
-static int		tcpconsdebug = 0;
+int	tcpconsdebug = 0;
 #endif
-
 /*
- * Global ring buffer of TCP debugging state.  Each entry captures a snapshot
- * of TCP connection state at any given moment.  tcp_debx addresses at the
- * next available slot.  There is no explicit export of this data structure;
- * it will be read via /dev/kmem by debugging tools.
- */
-static struct tcp_debug	tcp_debug[TCP_NDEBUG];
-static int		tcp_debx;
-
-/*
- * All global state is protected by tcp_debug_mtx; tcp_trace() is split into
- * two parts, one of which saves connection and other state into the global
- * array (locked by tcp_debug_mtx).
- */
-struct mtx		tcp_debug_mtx;
-MTX_SYSINIT(tcp_debug_mtx, &tcp_debug_mtx, "tcp_debug_mtx", MTX_DEF);
-
-/*
- * Save TCP state at a given moment; optionally, both tcpcb and TCP packet
- * header state will be saved.
+ * Tcp debug routines
  */
 void
-tcp_trace(short act, short ostate, struct tcpcb *tp, void *ipgen,
-    struct tcphdr *th, int req)
+tcp_trace(act, ostate, tp, ti, req)
+	short act, ostate;
+	struct tcpcb *tp;
+	struct tcpiphdr *ti;
+	int req;
 {
-#ifdef INET6
-	int isipv6;
-#endif /* INET6 */
 	tcp_seq seq, ack;
 	int len, flags;
-	struct tcp_debug *td;
+	struct tcp_debug *td = &tcp_debug[tcp_debx++];
 
-	mtx_lock(&tcp_debug_mtx);
-	td = &tcp_debug[tcp_debx++];
 	if (tcp_debx == TCP_NDEBUG)
 		tcp_debx = 0;
-	bzero(td, sizeof(*td));
-#ifdef INET6
-	isipv6 = (ipgen != NULL && ((struct ip *)ipgen)->ip_v == 6) ? 1 : 0;
-#endif /* INET6 */
-	td->td_family =
-#ifdef INET6
-	    (isipv6 != 0) ? AF_INET6 :
-#endif
-	    AF_INET;
-#ifdef INET
 	td->td_time = iptime();
-#endif
 	td->td_act = act;
 	td->td_ostate = ostate;
 	td->td_tcb = (caddr_t)tp;
-	if (tp != NULL)
+	if (tp)
 		td->td_cb = *tp;
-	if (ipgen != NULL) {
-		switch (td->td_family) {
-#ifdef INET
-		case AF_INET:
-			bcopy(ipgen, &td->td_ti.ti_i, sizeof(td->td_ti.ti_i));
-			break;
-#endif
-#ifdef INET6
-		case AF_INET6:
-			bcopy(ipgen, td->td_ip6buf, sizeof(td->td_ip6buf));
-			break;
-#endif
-		}
-	}
-	if (th != NULL) {
-		switch (td->td_family) {
-#ifdef INET
-		case AF_INET:
-			td->td_ti.ti_t = *th;
-			break;
-#endif
-#ifdef INET6
-		case AF_INET6:
-			td->td_ti6.th = *th;
-			break;
-#endif
-		}
-	}
+	else
+		bzero((caddr_t)&td->td_cb, sizeof (*tp));
+	if (ti)
+		td->td_ti = *ti;
+	else
+		bzero((caddr_t)&td->td_ti, sizeof (*ti));
 	td->td_req = req;
-	mtx_unlock(&tcp_debug_mtx);
 #ifdef TCPDEBUG
 	if (tcpconsdebug == 0)
 		return;
-	if (tp != NULL)
-		printf("%p %s:", tp, tcpstates[ostate]);
+	if (tp)
+		printf("%x %s:", tp, tcpstates[ostate]);
 	else
 		printf("???????? ");
 	printf("%s ", tanames[act]);
 	switch (act) {
+
 	case TA_INPUT:
 	case TA_OUTPUT:
 	case TA_DROP:
-		if (ipgen == NULL || th == NULL)
+		if (ti == 0)
 			break;
-		seq = th->th_seq;
-		ack = th->th_ack;
-		len =
-#ifdef INET6
-		    isipv6 ? ntohs(((struct ip6_hdr *)ipgen)->ip6_plen) :
-#endif
-		    ntohs(((struct ip *)ipgen)->ip_len);
+		seq = ti->ti_seq;
+		ack = ti->ti_ack;
+		len = ti->ti_len;
 		if (act == TA_OUTPUT) {
 			seq = ntohl(seq);
 			ack = ntohl(ack);
+			len = ntohs((u_short)len);
 		}
 		if (act == TA_OUTPUT)
 			len -= sizeof (struct tcphdr);
@@ -188,17 +126,14 @@ tcp_trace(short act, short ostate, struct tcpcb *tp, void *ipgen,
 			printf("[%x..%x)", seq, seq+len);
 		else
 			printf("%x", seq);
-		printf("@%x, urp=%x", ack, th->th_urp);
-		flags = th->th_flags;
+		printf("@%x, urp=%x", ack, ti->ti_urp);
+		flags = ti->ti_flags;
 		if (flags) {
+#ifndef lint
 			char *cp = "<";
-#define pf(f) {					\
-	if (th->th_flags & TH_##f) {		\
-		printf("%s%s", cp, #f);		\
-		cp = ",";			\
-	}					\
-}
+#define pf(f) { if (ti->ti_flags&TH_/**/f) { printf("%s%s", cp, "f"); cp = ","; } }
 			pf(SYN); pf(ACK); pf(FIN); pf(RST); pf(PUSH); pf(URG);
+#endif
 			printf(">");
 		}
 		break;
@@ -209,17 +144,16 @@ tcp_trace(short act, short ostate, struct tcpcb *tp, void *ipgen,
 			printf("<%s>", tcptimers[req>>8]);
 		break;
 	}
-	if (tp != NULL)
+	if (tp)
 		printf(" -> %s", tcpstates[tp->t_state]);
 	/* print out internal state of tp !?! */
 	printf("\n");
-	if (tp == NULL)
+	if (tp == 0)
 		return;
-	printf(
-	"\trcv_(nxt,wnd,up) (%lx,%lx,%lx) snd_(una,nxt,max) (%lx,%lx,%lx)\n",
-	    (u_long)tp->rcv_nxt, (u_long)tp->rcv_wnd, (u_long)tp->rcv_up,
-	    (u_long)tp->snd_una, (u_long)tp->snd_nxt, (u_long)tp->snd_max);
-	printf("\tsnd_(wl1,wl2,wnd) (%lx,%lx,%lx)\n",
-	    (u_long)tp->snd_wl1, (u_long)tp->snd_wl2, (u_long)tp->snd_wnd);
+	printf("\trcv_(nxt,wnd,up) (%x,%x,%x) snd_(una,nxt,max) (%x,%x,%x)\n",
+	    tp->rcv_nxt, tp->rcv_wnd, tp->rcv_up, tp->snd_una, tp->snd_nxt,
+	    tp->snd_max);
+	printf("\tsnd_(wl1,wl2,wnd) (%x,%x,%x)\n",
+	    tp->snd_wl1, tp->snd_wl2, tp->snd_wnd);
 #endif /* TCPDEBUG */
 }

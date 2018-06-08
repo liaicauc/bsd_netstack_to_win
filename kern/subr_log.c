@@ -1,6 +1,4 @@
-/*-
- * SPDX-License-Identifier: BSD-3-Clause
- *
+/*
  * Copyright (c) 1982, 1986, 1993
  *	The Regents of the University of California.  All rights reserved.
  *
@@ -12,7 +10,11 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the University nor the names of its contributors
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *	This product includes software developed by the University of
+ *	California, Berkeley and its contributors.
+ * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
  *
@@ -28,285 +30,209 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	@(#)subr_log.c	8.1 (Berkeley) 6/10/93
+ *	@(#)subr_log.c	8.3 (Berkeley) 2/14/95
  */
 
 /*
  * Error log buffer for kernel printf's.
  */
 
-#include <sys/cdefs.h>
-__FBSDID("$FreeBSD$");
-
 #include <sys/param.h>
 #include <sys/systm.h>
-#include <sys/conf.h>
 #include <sys/proc.h>
 #include <sys/vnode.h>
-#include <sys/filio.h>
-#include <sys/ttycom.h>
+#include <sys/ioctl.h>
 #include <sys/msgbuf.h>
-#include <sys/signalvar.h>
-#include <sys/kernel.h>
-#include <sys/poll.h>
-#include <sys/filedesc.h>
-#include <sys/sysctl.h>
+#include <sys/file.h>
 
 #define LOG_RDPRI	(PZERO + 1)
 
 #define LOG_ASYNC	0x04
+#define LOG_RDWAIT	0x08
 
-static	d_open_t	logopen;
-static	d_close_t	logclose;
-static	d_read_t	logread;
-static	d_ioctl_t	logioctl;
-static	d_poll_t	logpoll;
-static	d_kqfilter_t	logkqfilter;
-
-static	void logtimeout(void *arg);
-
-static struct cdevsw log_cdevsw = {
-	.d_version =	D_VERSION,
-	.d_open =	logopen,
-	.d_close =	logclose,
-	.d_read =	logread,
-	.d_ioctl =	logioctl,
-	.d_poll =	logpoll,
-	.d_kqfilter =	logkqfilter,
-	.d_name =	"log",
-};
-
-static int	logkqread(struct knote *note, long hint);
-static void	logkqdetach(struct knote *note);
-
-static struct filterops log_read_filterops = {
-	.f_isfd =	1,
-	.f_attach =	NULL,
-	.f_detach =	logkqdetach,
-	.f_event =	logkqread,
-};
-
-static struct logsoftc {
+struct logsoftc {
 	int	sc_state;		/* see above for possibilities */
 	struct	selinfo sc_selp;	/* process waiting on select call */
-	struct  sigio *sc_sigio;	/* information for async I/O */
-	struct	callout sc_callout;	/* callout to wakeup syslog  */
+	int	sc_pgid;		/* process/group for async I/O */
 } logsoftc;
 
-int			log_open;	/* also used in log() */
-static struct cv	log_wakeup;
-struct mtx		msgbuf_lock;
-MTX_SYSINIT(msgbuf_lock, &msgbuf_lock, "msgbuf lock", MTX_DEF);
-
-/* Times per second to check for a pending syslog wakeup. */
-static int	log_wakeups_per_second = 5;
-SYSCTL_INT(_kern, OID_AUTO, log_wakeups_per_second, CTLFLAG_RW,
-    &log_wakeups_per_second, 0, "");
+int	log_open;			/* also used in log() */
 
 /*ARGSUSED*/
-static	int
-logopen(struct cdev *dev, int flags, int mode, struct thread *td)
+int
+logopen(dev, flags, mode, p)
+	dev_t dev;
+	int flags, mode;
+	struct proc *p;
 {
+	register struct msgbuf *mbp = msgbufp;
 
-	if (log_wakeups_per_second < 1) {
-		printf("syslog wakeup is less than one.  Adjusting to 1.\n");
-		log_wakeups_per_second = 1;
-	}
-
-	mtx_lock(&msgbuf_lock);
-	if (log_open) {
-		mtx_unlock(&msgbuf_lock);
+	if (log_open)
 		return (EBUSY);
-	}
 	log_open = 1;
-	callout_reset_sbt(&logsoftc.sc_callout,
-	    SBT_1S / log_wakeups_per_second, 0, logtimeout, NULL, C_PREL(1));
-	mtx_unlock(&msgbuf_lock);
+	logsoftc.sc_pgid = p->p_pid;		/* signal process only */
+	/*
+	 * Potential race here with putchar() but since putchar should be
+	 * called by autoconf, msg_magic should be initialized by the time
+	 * we get here.
+	 */
+	if (mbp->msg_magic != MSG_MAGIC) {
+		register int i;
 
-	fsetown(td->td_proc->p_pid, &logsoftc.sc_sigio);	/* signal process only */
+		mbp->msg_magic = MSG_MAGIC;
+		mbp->msg_bufx = mbp->msg_bufr = 0;
+		for (i=0; i < MSG_BSIZE; i++)
+			mbp->msg_bufc[i] = 0;
+	}
 	return (0);
 }
 
 /*ARGSUSED*/
-static	int
-logclose(struct cdev *dev, int flag, int mode, struct thread *td)
+int
+logclose(dev, flag, mode, p)
+	dev_t dev;
+	int flag, mode;
+	struct proc *p;
 {
 
-	funsetown(&logsoftc.sc_sigio);
-
-	mtx_lock(&msgbuf_lock);
-	callout_stop(&logsoftc.sc_callout);
-	logsoftc.sc_state = 0;
 	log_open = 0;
-	mtx_unlock(&msgbuf_lock);
-
+	logsoftc.sc_state = 0;
 	return (0);
 }
 
 /*ARGSUSED*/
-static	int
-logread(struct cdev *dev, struct uio *uio, int flag)
+int
+logread(dev, uio, flag)
+	dev_t dev;
+	struct uio *uio;
+	int flag;
 {
-	char buf[128];
-	struct msgbuf *mbp = msgbufp;
-	int error = 0, l;
+	register struct msgbuf *mbp = msgbufp;
+	register long l;
+	register int s;
+	int error = 0;
 
-	mtx_lock(&msgbuf_lock);
-	while (msgbuf_getcount(mbp) == 0) {
+	s = splhigh();
+	while (mbp->msg_bufr == mbp->msg_bufx) {
 		if (flag & IO_NDELAY) {
-			mtx_unlock(&msgbuf_lock);
+			splx(s);
 			return (EWOULDBLOCK);
 		}
-		if ((error = cv_wait_sig(&log_wakeup, &msgbuf_lock)) != 0) {
-			mtx_unlock(&msgbuf_lock);
+		logsoftc.sc_state |= LOG_RDWAIT;
+		if (error = tsleep((caddr_t)mbp, LOG_RDPRI | PCATCH,
+		    "klog", 0)) {
+			splx(s);
 			return (error);
 		}
 	}
+	splx(s);
+	logsoftc.sc_state &= ~LOG_RDWAIT;
 
 	while (uio->uio_resid > 0) {
-		l = imin(sizeof(buf), uio->uio_resid);
-		l = msgbuf_getbytes(mbp, buf, l);
+		l = mbp->msg_bufx - mbp->msg_bufr;
+		if (l < 0)
+			l = MSG_BSIZE - mbp->msg_bufr;
+		l = min(l, uio->uio_resid);
 		if (l == 0)
 			break;
-		mtx_unlock(&msgbuf_lock);
-		error = uiomove(buf, l, uio);
-		if (error || uio->uio_resid == 0)
-			return (error);
-		mtx_lock(&msgbuf_lock);
+		error = uiomove((caddr_t)&mbp->msg_bufc[mbp->msg_bufr],
+			(int)l, uio);
+		if (error)
+			break;
+		mbp->msg_bufr += l;
+		if (mbp->msg_bufr < 0 || mbp->msg_bufr >= MSG_BSIZE)
+			mbp->msg_bufr = 0;
 	}
-	mtx_unlock(&msgbuf_lock);
 	return (error);
 }
 
 /*ARGSUSED*/
-static	int
-logpoll(struct cdev *dev, int events, struct thread *td)
+int
+logselect(dev, rw, p)
+	dev_t dev;
+	int rw;
+	struct proc *p;
 {
-	int revents = 0;
+	int s = splhigh();
 
-	if (events & (POLLIN | POLLRDNORM)) {
-		mtx_lock(&msgbuf_lock);
-		if (msgbuf_getcount(msgbufp) > 0)
-			revents |= events & (POLLIN | POLLRDNORM);
-		else
-			selrecord(td, &logsoftc.sc_selp);
-		mtx_unlock(&msgbuf_lock);
+	switch (rw) {
+
+	case FREAD:
+		if (msgbufp->msg_bufr != msgbufp->msg_bufx) {
+			splx(s);
+			return (1);
+		}
+		selrecord(p, &logsoftc.sc_selp);
+		break;
 	}
-	return (revents);
-}
-
-static int
-logkqfilter(struct cdev *dev, struct knote *kn)
-{
-
-	if (kn->kn_filter != EVFILT_READ)
-		return (EINVAL);
-
-	kn->kn_fop = &log_read_filterops;
-	kn->kn_hook = NULL;
-
-	mtx_lock(&msgbuf_lock);
-	knlist_add(&logsoftc.sc_selp.si_note, kn, 1);
-	mtx_unlock(&msgbuf_lock);
+	splx(s);
 	return (0);
 }
 
-static int
-logkqread(struct knote *kn, long hint)
+void
+logwakeup()
 {
-
-	mtx_assert(&msgbuf_lock, MA_OWNED);
-	kn->kn_data = msgbuf_getcount(msgbufp);
-	return (kn->kn_data != 0);
-}
-
-static void
-logkqdetach(struct knote *kn)
-{
-
-	mtx_lock(&msgbuf_lock);
-	knlist_remove(&logsoftc.sc_selp.si_note, kn, 1);
-	mtx_unlock(&msgbuf_lock);
-}
-
-static void
-logtimeout(void *arg)
-{
+	struct proc *p;
 
 	if (!log_open)
 		return;
-	if (msgbuftrigger == 0)
-		goto done;
-	msgbuftrigger = 0;
-	selwakeuppri(&logsoftc.sc_selp, LOG_RDPRI);
-	KNOTE_LOCKED(&logsoftc.sc_selp.si_note, 0);
-	if ((logsoftc.sc_state & LOG_ASYNC) && logsoftc.sc_sigio != NULL)
-		pgsigio(&logsoftc.sc_sigio, SIGIO, 0);
-	cv_broadcastpri(&log_wakeup, LOG_RDPRI);
-done:
-	if (log_wakeups_per_second < 1) {
-		printf("syslog wakeup is less than one.  Adjusting to 1.\n");
-		log_wakeups_per_second = 1;
+	selwakeup(&logsoftc.sc_selp);
+	if (logsoftc.sc_state & LOG_ASYNC) {
+		if (logsoftc.sc_pgid < 0)
+			gsignal(-logsoftc.sc_pgid, SIGIO); 
+		else if (p = pfind(logsoftc.sc_pgid))
+			psignal(p, SIGIO);
 	}
-	callout_reset_sbt(&logsoftc.sc_callout,
-	    SBT_1S / log_wakeups_per_second, 0, logtimeout, NULL, C_PREL(1));
+	if (logsoftc.sc_state & LOG_RDWAIT) {
+		wakeup((caddr_t)msgbufp);
+		logsoftc.sc_state &= ~LOG_RDWAIT;
+	}
 }
 
 /*ARGSUSED*/
-static	int
-logioctl(struct cdev *dev, u_long com, caddr_t data, int flag, struct thread *td)
+int
+logioctl(dev, com, data, flag, p)
+	dev_t dev;
+	u_long com;
+	caddr_t data;
+	int flag;
+	struct proc *p;
 {
+	long l;
+	int s;
 
 	switch (com) {
 
 	/* return number of characters immediately available */
 	case FIONREAD:
-		*(int *)data = msgbuf_getcount(msgbufp);
+		s = splhigh();
+		l = msgbufp->msg_bufx - msgbufp->msg_bufr;
+		splx(s);
+		if (l < 0)
+			l += MSG_BSIZE;
+		*(int *)data = l;
 		break;
 
 	case FIONBIO:
 		break;
 
 	case FIOASYNC:
-		mtx_lock(&msgbuf_lock);
 		if (*(int *)data)
 			logsoftc.sc_state |= LOG_ASYNC;
 		else
 			logsoftc.sc_state &= ~LOG_ASYNC;
-		mtx_unlock(&msgbuf_lock);
 		break;
 
-	case FIOSETOWN:
-		return (fsetown(*(int *)data, &logsoftc.sc_sigio));
-
-	case FIOGETOWN:
-		*(int *)data = fgetown(&logsoftc.sc_sigio);
-		break;
-
-	/* This is deprecated, FIOSETOWN should be used instead. */
 	case TIOCSPGRP:
-		return (fsetown(-(*(int *)data), &logsoftc.sc_sigio));
+		logsoftc.sc_pgid = *(int *)data;
+		break;
 
-	/* This is deprecated, FIOGETOWN should be used instead */
 	case TIOCGPGRP:
-		*(int *)data = -fgetown(&logsoftc.sc_sigio);
+		*(int *)data = logsoftc.sc_pgid;
 		break;
 
 	default:
-		return (ENOTTY);
+		return (-1);
 	}
 	return (0);
 }
-
-static void
-log_drvinit(void *unused)
-{
-
-	cv_init(&log_wakeup, "klog");
-	callout_init_mtx(&logsoftc.sc_callout, &msgbuf_lock, 0);
-	knlist_init_mtx(&logsoftc.sc_selp.si_note, &msgbuf_lock);
-	make_dev_credf(MAKEDEV_ETERNAL, &log_cdevsw, 0, NULL, UID_ROOT,
-	    GID_WHEEL, 0600, "klog");
-}
-
-SYSINIT(logdev,SI_SUB_DRIVERS,SI_ORDER_MIDDLE,log_drvinit,NULL);

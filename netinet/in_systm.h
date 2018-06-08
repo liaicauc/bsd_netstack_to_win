@@ -1,6 +1,4 @@
-/*-
- * SPDX-License-Identifier: BSD-3-Clause
- *
+/*
  * Copyright (c) 1982, 1986, 1993
  *	The Regents of the University of California.  All rights reserved.
  *
@@ -12,7 +10,11 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the University nor the names of its contributors
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *	This product includes software developed by the University of
+ *	California, Berkeley and its contributors.
+ * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
  *
@@ -29,11 +31,7 @@
  * SUCH DAMAGE.
  *
  *	@(#)in_systm.h	8.1 (Berkeley) 6/10/93
- * $FreeBSD$
  */
-
-#ifndef _NETINET_IN_SYSTM_H_
-#define _NETINET_IN_SYSTM_H_
 
 /*
  * Miscellaneous internetwork
@@ -46,23 +44,13 @@
  * Internally the system keeps counters in the headers with the bytes
  * swapped so that VAX instructions will work on them.  It reverses
  * the bytes before transmission at each protocol level.  The n_ types
- * represent the types with the bytes in ``high-ender'' order. Network
- * byte order is usually referered to as big-endian these days rather
- * than high-ender, which sadly invokes an Orson Scott Card novel, or
- * worse, the movie.
+ * represent the types with the bytes in ``high-ender'' order.
  */
-typedef u_int16_t n_short;		/* short as received from the net */
-typedef u_int32_t n_long;		/* long as received from the net */
+typedef u_short n_short;		/* short as received from the net */
+typedef u_long	n_long;			/* long as received from the net */
 
-typedef	u_int32_t n_time;		/* ms since 00:00 UTC, byte rev */
+typedef	u_long	n_time;			/* ms since 00:00 GMT, byte rev */
 
-#ifdef _KERNEL
-struct inpcb;
-struct ucred;
-
-int	cr_canseeinpcb(struct ucred *cred, struct inpcb *inp);
-
-uint32_t	 iptime(void);
-#endif
-
+#ifdef KERNEL
+n_time	 iptime __P((void));
 #endif

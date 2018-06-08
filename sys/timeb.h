@@ -1,6 +1,4 @@
 /*-
- * SPDX-License-Identifier: BSD-3-Clause
- *
  * Copyright (c) 1991, 1993
  *	The Regents of the University of California.  All rights reserved.
  * (c) UNIX System Laboratories, Inc.
@@ -17,7 +15,11 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the University nor the names of its contributors
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *	This product includes software developed by the University of
+ *	California, Berkeley and its contributors.
+ * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
  *
@@ -34,22 +36,7 @@
  * SUCH DAMAGE.
  *
  *	@(#)timeb.h	8.2 (Berkeley) 1/21/94
- * $FreeBSD$
  */
-
-#ifndef _SYS_TIMEB_H_
-#define _SYS_TIMEB_H_
-
-#ifdef __GNUC__
-#warning "this file includes <sys/timeb.h> which is deprecated"
-#endif
-
-#include <sys/_types.h>
-
-#ifndef _TIME_T_DECLARED
-typedef	__time_t	time_t;
-#define	_TIME_T_DECLARED
-#endif
 
 /* The ftime(2) system call structure -- deprecated. */
 struct timeb {
@@ -58,13 +45,3 @@ struct timeb {
 	short	timezone;		/* minutes west of CUT */
 	short	dstflag;		/* DST == non-zero */
 };
-
-#ifndef _KERNEL
-#include <sys/cdefs.h>
-
-__BEGIN_DECLS
-int ftime(struct timeb *);
-__END_DECLS
-#endif /* _KERNEL */
-
-#endif /* !_SYS_TIMEB_H_ */

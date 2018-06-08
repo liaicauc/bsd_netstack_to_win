@@ -1,0 +1,4 @@
+---- _BSD_SIZE_T_ Matches (3 in 1 files) ----
+Types.h (sys):#ifdef	_BSD_SIZE_T_
+Types.h (sys):typedef	_BSD_SIZE_T_	size_t;
+Types.h (sys):#undef	_BSD_SIZE_T_

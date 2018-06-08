@@ -1,6 +1,4 @@
-/*-
- * SPDX-License-Identifier: BSD-3-Clause
- *
+/*
  * Copyright (c) 1988, 1992, 1993
  *	The Regents of the University of California.  All rights reserved.
  *
@@ -12,7 +10,11 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the University nor the names of its contributors
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *	This product includes software developed by the University of
+ *	California, Berkeley and its contributors.
+ * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
  *
@@ -31,9 +33,6 @@
  *	@(#)in_cksum.c	8.1 (Berkeley) 6/10/93
  */
 
-#include <sys/cdefs.h>
-__FBSDID("$FreeBSD$");
-
 #include <sys/param.h>
 #include <sys/mbuf.h>
 
@@ -48,11 +47,13 @@ __FBSDID("$FreeBSD$");
 #define REDUCE {l_util.l = sum; sum = l_util.s[0] + l_util.s[1]; ADDCARRY(sum);}
 
 int
-in_cksum(struct mbuf *m, int len)
+in_cksum(m, len)
+	register struct mbuf *m;
+	register int len;
 {
-	u_short *w;
-	int sum = 0;
-	int mlen = 0;
+	register u_short *w;
+	register int sum = 0;
+	register int mlen = 0;
 	int byte_swapped = 0;
 
 	union {
@@ -74,7 +75,7 @@ in_cksum(struct mbuf *m, int len)
 			 * of a word spanning between this mbuf and the
 			 * last mbuf.
 			 *
-			 * s_util.c[0] is already saved when scanning previous
+			 * s_util.c[0] is already saved when scanning previous 
 			 * mbuf.
 			 */
 			s_util.c[1] = *(char *)w;
@@ -90,7 +91,7 @@ in_cksum(struct mbuf *m, int len)
 		/*
 		 * Force to even boundary.
 		 */
-		if ((1 & (uintptr_t) w) && (mlen > 0)) {
+		if ((1 & (int) w) && (mlen > 0)) {
 			REDUCE;
 			sum <<= 8;
 			s_util.c[0] = *(u_char *)w;

@@ -80,11 +80,11 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level1</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>./</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>__LP64__;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>INET;KERNEL;__LP64__;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -411,11 +411,56 @@
     <ClCompile Include="netinet\tcp_usrreq.c" />
     <ClCompile Include="netinet\toecore.c" />
     <ClCompile Include="netinet\udp_usrreq.c" />
+    <ClCompile Include="net\bpf.c" />
+    <ClCompile Include="net\bpf_filter.c" />
+    <ClCompile Include="net\if.c" />
+    <ClCompile Include="net\if_ethersubr.c" />
+    <ClCompile Include="net\if_loop.c" />
+    <ClCompile Include="net\if_sl.c" />
+    <ClCompile Include="net\radix.c" />
+    <ClCompile Include="net\raw_cb.c" />
+    <ClCompile Include="net\raw_usrreq.c" />
+    <ClCompile Include="net\route.c" />
+    <ClCompile Include="net\rtsock.c" />
+    <ClCompile Include="net\slcompress.c" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="i386\include\tags" />
     <None Include="kern\Make.tags.inc" />
+    <None Include="net\tags" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="i386\include\ansi.h" />
+    <ClInclude Include="i386\include\cpu.h" />
+    <ClInclude Include="i386\include\dbg.h" />
+    <ClInclude Include="i386\include\dkio.h" />
+    <ClInclude Include="i386\include\endian.h" />
+    <ClInclude Include="i386\include\exec.h" />
+    <ClInclude Include="i386\include\float.h" />
+    <ClInclude Include="i386\include\frame.h" />
+    <ClInclude Include="i386\include\limits.h" />
+    <ClInclude Include="i386\include\mtpr.h" />
+    <ClInclude Include="i386\include\npx.h" />
+    <ClInclude Include="i386\include\param.h" />
+    <ClInclude Include="i386\include\pcb.h" />
+    <ClInclude Include="i386\include\pmap.h" />
+    <ClInclude Include="i386\include\proc.h" />
+    <ClInclude Include="i386\include\profile.h" />
+    <ClInclude Include="i386\include\psl.h" />
+    <ClInclude Include="i386\include\pte.h" />
+    <ClInclude Include="i386\include\ptrace.h" />
+    <ClInclude Include="i386\include\reg.h" />
+    <ClInclude Include="i386\include\reloc.h" />
+    <ClInclude Include="i386\include\remote-sl.h" />
+    <ClInclude Include="i386\include\segments.h" />
+    <ClInclude Include="i386\include\signal.h" />
+    <ClInclude Include="i386\include\specialreg.h" />
+    <ClInclude Include="i386\include\stdarg.h" />
+    <ClInclude Include="i386\include\trap.h" />
+    <ClInclude Include="i386\include\tss.h" />
+    <ClInclude Include="i386\include\types.h" />
+    <ClInclude Include="i386\include\varargs.h" />
+    <ClInclude Include="i386\include\vmparam.h" />
     <ClInclude Include="netinet\cc\cc.h" />
     <ClInclude Include="netinet\cc\cc_cubic.h" />
     <ClInclude Include="netinet\cc\cc_module.h" />
@@ -494,6 +539,21 @@
     <ClInclude Include="netinet\udp.h" />
     <ClInclude Include="netinet\udplite.h" />
     <ClInclude Include="netinet\udp_var.h" />
+    <ClInclude Include="net\bpf.h" />
+    <ClInclude Include="net\bpfdesc.h" />
+    <ClInclude Include="net\bpf_compat.h" />
+    <ClInclude Include="net\if.h" />
+    <ClInclude Include="net\if_arp.h" />
+    <ClInclude Include="net\if_dl.h" />
+    <ClInclude Include="net\if_llc.h" />
+    <ClInclude Include="net\if_slvar.h" />
+    <ClInclude Include="net\if_types.h" />
+    <ClInclude Include="net\netisr.h" />
+    <ClInclude Include="net\radix.h" />
+    <ClInclude Include="net\raw_cb.h" />
+    <ClInclude Include="net\route.h" />
+    <ClInclude Include="net\slcompress.h" />
+    <ClInclude Include="net\slip.h" />
     <ClInclude Include="sys\aac_ioctl.h" />
     <ClInclude Include="sys\acct.h" />
     <ClInclude Include="sys\acl.h" />

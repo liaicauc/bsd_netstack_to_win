@@ -1,6 +1,4 @@
-/*-
- * SPDX-License-Identifier: BSD-3-Clause
- *
+/*
  * Copyright (c) 1982, 1986, 1988, 1993, 1994
  *	The Regents of the University of California.  All rights reserved.
  *
@@ -12,7 +10,11 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the University nor the names of its contributors
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *	This product includes software developed by the University of
+ *	California, Berkeley and its contributors.
+ * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
  *
@@ -29,11 +31,7 @@
  * SUCH DAMAGE.
  *
  *	@(#)reboot.h	8.3 (Berkeley) 12/13/94
- * $FreeBSD$
  */
-
-#ifndef _SYS_REBOOT_H_
-#define	_SYS_REBOOT_H_
 
 /*
  * Arguments to reboot system call.  These are passed to
@@ -51,20 +49,39 @@
 #define	RB_RDONLY	0x080	/* mount root fs read-only */
 #define	RB_DUMP		0x100	/* dump kernel memory before reboot */
 #define	RB_MINIROOT	0x200	/* mini-root present in memory at boot time */
-#define	RB_VERBOSE	0x800	/* print all potentially useful info */
-#define	RB_SERIAL	0x1000	/* use serial port as console */
-#define	RB_CDROM	0x2000	/* use cdrom as root */
-#define	RB_POWEROFF	0x4000	/* turn the power off if possible */
-#define	RB_GDB		0x8000	/* use GDB remote debugger instead of DDB */
-#define	RB_MUTE		0x10000	/* start up with the console muted */
-#define	RB_SELFTEST	0x20000	/* don't complete the boot; do selftest */
-#define	RB_RESERVED1	0x40000	/* reserved for internal use of boot blocks */
-#define	RB_RESERVED2	0x80000	/* reserved for internal use of boot blocks */
-#define	RB_PAUSE	0x100000 /* pause after each output line during probe */
-#define	RB_REROOT	0x200000 /* unmount the rootfs and mount it again */
-#define	RB_POWERCYCLE	0x400000 /* Power cycle if possible */
-#define	RB_MULTIPLE	0x20000000	/* use multiple consoles */
 
-#define	RB_BOOTINFO	0x80000000	/* have `struct bootinfo *' arg */
+/*
+ * Constants for converting boot-style device number to type,
+ * adaptor (uba, mba, etc), unit number and partition number.
+ * Type (== major device number) is in the low byte
+ * for backward compatibility.  Except for that of the "magic
+ * number", each mask applies to the shifted value.
+ * Format:
+ *	 (4) (4) (4) (4)  (8)     (8)
+ *	--------------------------------
+ *	|MA | AD| CT| UN| PART  | TYPE |
+ *	--------------------------------
+ */
+#define	B_ADAPTORSHIFT		24
+#define	B_ADAPTORMASK		0x0f
+#define	B_ADAPTOR(val)		(((val) >> B_ADAPTORSHIFT) & B_ADAPTORMASK)
+#define B_CONTROLLERSHIFT	20
+#define B_CONTROLLERMASK	0xf
+#define	B_CONTROLLER(val)	(((val)>>B_CONTROLLERSHIFT) & B_CONTROLLERMASK)
+#define B_UNITSHIFT		16
+#define B_UNITMASK		0xf
+#define	B_UNIT(val)		(((val) >> B_UNITSHIFT) & B_UNITMASK)
+#define B_PARTITIONSHIFT	8
+#define B_PARTITIONMASK		0xff
+#define	B_PARTITION(val)	(((val) >> B_PARTITIONSHIFT) & B_PARTITIONMASK)
+#define	B_TYPESHIFT		0
+#define	B_TYPEMASK		0xff
+#define	B_TYPE(val)		(((val) >> B_TYPESHIFT) & B_TYPEMASK)
 
-#endif
+#define	B_MAGICMASK	0xf0000000
+#define	B_DEVMAGIC	0xa0000000
+
+#define MAKEBOOTDEV(type, adaptor, controller, unit, partition) \
+	(((type) << B_TYPESHIFT) | ((adaptor) << B_ADAPTORSHIFT) | \
+	((controller) << B_CONTROLLERSHIFT) | ((unit) << B_UNITSHIFT) | \
+	((partition) << B_PARTITIONSHIFT) | B_DEVMAGIC)

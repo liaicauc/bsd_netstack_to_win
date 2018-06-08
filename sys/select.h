@@ -1,6 +1,4 @@
 /*-
- * SPDX-License-Identifier: BSD-3-Clause
- *
  * Copyright (c) 1992, 1993
  *	The Regents of the University of California.  All rights reserved.
  *
@@ -12,7 +10,11 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the University nor the names of its contributors
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *	This product includes software developed by the University of
+ *	California, Berkeley and its contributors.
+ * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
  *
@@ -28,83 +30,27 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * $FreeBSD$
+ *	@(#)select.h	8.2 (Berkeley) 1/4/94
  */
 
 #ifndef _SYS_SELECT_H_
 #define	_SYS_SELECT_H_
 
-#include <sys/cdefs.h>
-#include <sys/_types.h>
-
-#include <sys/_sigset.h>
-#include <sys/_timeval.h>
-#include <sys/timespec.h>
-
-typedef	unsigned long	__fd_mask;
-#if __BSD_VISIBLE
-typedef	__fd_mask	fd_mask;
-#endif
-
-#ifndef _SIGSET_T_DECLARED
-#define	_SIGSET_T_DECLARED
-typedef	__sigset_t	sigset_t;
-#endif
-
 /*
- * Select uses bit masks of file descriptors in longs.  These macros
- * manipulate such bit fields (the filesystem macros use chars).
- * FD_SETSIZE may be defined by the user, but the default here should
- * be enough for most uses.
+ * Used to maintain information about processes that wish to be
+ * notified when I/O becomes possible.
  */
-#ifndef	FD_SETSIZE
-#define	FD_SETSIZE	1024
+struct selinfo {
+	pid_t	si_pid;		/* process to be notified */
+	short	si_flags;	/* see below */
+};
+#define	SI_COLL	0x0001		/* collision occurred */
+
+#ifdef KERNEL
+struct proc;
+
+void	selrecord __P((struct proc *selector, struct selinfo *));
+void	selwakeup __P((struct selinfo *));
 #endif
 
-#define	_NFDBITS	(sizeof(__fd_mask) * 8)	/* bits per mask */
-#if __BSD_VISIBLE
-#define	NFDBITS		_NFDBITS
-#endif
-
-#ifndef _howmany
-#define	_howmany(x, y)	(((x) + ((y) - 1)) / (y))
-#endif
-
-typedef	struct fd_set {
-	__fd_mask	__fds_bits[_howmany(FD_SETSIZE, _NFDBITS)];
-} fd_set;
-#if __BSD_VISIBLE
-#define	fds_bits	__fds_bits
-#endif
-
-#define	__fdset_mask(n)	((__fd_mask)1 << ((n) % _NFDBITS))
-#define	FD_CLR(n, p)	((p)->__fds_bits[(n)/_NFDBITS] &= ~__fdset_mask(n))
-#if __BSD_VISIBLE
-#define	FD_COPY(f, t)	(void)(*(t) = *(f))
-#endif
-#define	FD_ISSET(n, p)	(((p)->__fds_bits[(n)/_NFDBITS] & __fdset_mask(n)) != 0)
-#define	FD_SET(n, p)	((p)->__fds_bits[(n)/_NFDBITS] |= __fdset_mask(n))
-#define	FD_ZERO(p) do {					\
-	fd_set *_p;					\
-	__size_t _n;					\
-							\
-	_p = (p);					\
-	_n = _howmany(FD_SETSIZE, _NFDBITS);		\
-	while (_n > 0)					\
-		_p->__fds_bits[--_n] = 0;		\
-} while (0)
-
-#ifndef _KERNEL
-
-__BEGIN_DECLS
-int pselect(int, fd_set *__restrict, fd_set *__restrict, fd_set *__restrict,
-	const struct timespec *__restrict, const sigset_t *__restrict);
-#ifndef _SELECT_DECLARED
-#define	_SELECT_DECLARED
-/* XXX missing restrict type-qualifier */
-int	select(int, fd_set *, fd_set *, fd_set *, struct timeval *);
-#endif
-__END_DECLS
-#endif /* !_KERNEL */
-
-#endif /* _SYS_SELECT_H_ */
+#endif /* !_SYS_SELECT_H_ */
