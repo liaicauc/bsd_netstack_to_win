@@ -84,9 +84,6 @@
     <ClCompile Include="kern\kern_ctf.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="kern\kern_descrip.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="kern\kern_dtrace.c">
       <Filter>Source Files</Filter>
     </ClCompile>

@@ -161,8 +161,8 @@ in_pcbconnect(inp, nam)
 	register struct inpcb *inp;
 	struct mbuf *nam;
 {
-	struct in_ifaddr *ia;
-	struct sockaddr_in *ifaddr;
+	struct in_ifaddr *ia = NULL;
+	struct sockaddr_in *ifaddr = NULL;
 	register struct sockaddr_in *sin = mtod(nam, struct sockaddr_in *);
 
 	if (nam->m_len != sizeof (*sin))

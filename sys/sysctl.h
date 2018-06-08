@@ -183,7 +183,7 @@ struct kinfo_proc {
 			segsz_t	vm_ssize;	/* stack size */
 		} e_vm;
 #else
-		struct	vmspace e_vm;		/* address space */
+//		struct	vmspace e_vm;		/* address space */
 #endif
 		pid_t	e_ppid;			/* parent process id */
 		pid_t	e_pgid;			/* process group id */

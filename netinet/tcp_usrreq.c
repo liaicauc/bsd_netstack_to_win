@@ -76,8 +76,8 @@ tcp_usrreq(so, req, m, nam, control)
 	int req;
 	struct mbuf *m, *nam, *control;
 {
-	register struct inpcb *inp;
-	register struct tcpcb *tp;
+	register struct inpcb *inp = NULL;
+	register struct tcpcb *tp = NULL;
 	int s;
 	int error = 0;
 	int ostate;

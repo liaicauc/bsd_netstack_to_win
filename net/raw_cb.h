@@ -1,5 +1,5 @@
-/*-
- * Copyright (c) 1990, 1993
+/*
+ * Copyright (c) 1980, 1986, 1993
  *	The Regents of the University of California.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,39 +30,40 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	@(#)types.h	8.3 (Berkeley) 1/5/94
+ *	@(#)raw_cb.h	8.1 (Berkeley) 6/10/93
  */
-
-#ifndef	_MACHTYPES_H_
-#define	_MACHTYPES_H_
-
-#if !defined(_ANSI_SOURCE) && !defined(_POSIX_SOURCE)
-typedef struct _physadr {
-	int r[1];
-} *physadr;
-
-typedef struct label_t {
-	int val[6];
-} label_t;
-#endif
-
-typedef unsigned int size_t;
-typedef	unsigned long	vm_offset_t;
-typedef	unsigned long	vm_size_t;
 
 /*
- * Basic integral types.  Omit the typedef if
- * not possible for a machine/compiler combination.
+ * Raw protocol interface control block.  Used
+ * to tie a socket to the generic raw interface.
  */
-typedef	__signed char		   int8_t;
-typedef	unsigned char		 u_int8_t;
-typedef	short			  int16_t;
-typedef	unsigned short		u_int16_t;
-typedef	int			  int32_t;
-typedef	unsigned int		u_int32_t;
-typedef	long long		  int64_t;
-typedef	unsigned long long	u_int64_t;
+struct rawcb {
+	struct	rawcb *rcb_next;	/* doubly linked list */
+	struct	rawcb *rcb_prev;
+	struct	socket *rcb_socket;	/* back pointer to socket */
+	struct	sockaddr *rcb_faddr;	/* destination address */
+	struct	sockaddr *rcb_laddr;	/* socket's address */
+	struct	sockproto rcb_proto;	/* protocol family, protocol */
+};
 
+#define	sotorawcb(so)		((struct rawcb *)(so)->so_pcb)
 
+/*
+ * Nominal space allocated to a raw socket.
+ */
+#define	RAWSNDQ		8192
+#define	RAWRCVQ		8192
 
-#endif	/* _MACHTYPES_H_ */
+#ifdef KERNEL
+struct rawcb rawcb;			/* head of list */
+
+int	 raw_attach __P((struct socket *, int));
+void	 raw_ctlinput __P((int, struct sockaddr *));
+void	 raw_detach __P((struct rawcb *));
+void	 raw_disconnect __P((struct rawcb *));
+void	 raw_init __P((void));
+void	 raw_input __P((struct mbuf *,
+	    struct sockproto *, struct sockaddr *, struct sockaddr *));
+int	 raw_usrreq __P((struct socket *,
+	    int, struct mbuf *, struct mbuf *, struct mbuf *));
+#endif

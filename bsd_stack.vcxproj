@@ -135,7 +135,6 @@
     <ClCompile Include="kern\kern_cpu.c" />
     <ClCompile Include="kern\kern_cpuset.c" />
     <ClCompile Include="kern\kern_ctf.c" />
-    <ClCompile Include="kern\kern_descrip.c" />
     <ClCompile Include="kern\kern_dtrace.c" />
     <ClCompile Include="kern\kern_dump.c" />
     <ClCompile Include="kern\kern_environment.c" />

@@ -48,11 +48,16 @@
 void	pffasttimo __P((void *));
 void	pfslowtimo __P((void *));
 
+
 #define	ADDDOMAIN(x)	{ \
-	extern struct domain __CONCAT(x,domain); \
-	__CONCAT(x,domain.dom_next) = domains; \
-	domains = &__CONCAT(x,domain); \
+    extern struct domain x##domain; \
+    x##domain.dom_next = domains; \
+    domains = &x##domain; \
 }
+//extern struct domain __CONCAT(x,domain); \
+	//__CONCAT(x,domain.dom_next) = domains; \
+	//domains = &__CONCAT(x,domain); \
+//}
 
 void
 domaininit()
@@ -62,8 +67,8 @@ domaininit()
 
 #undef unix
 #ifndef lint
-	ADDDOMAIN(unix);
-	ADDDOMAIN(route);
+	//	ADDDOMAIN(unix);
+	//	ADDDOMAIN(route);
 #ifdef INET
 	ADDDOMAIN(inet);
 #endif
@@ -76,7 +81,7 @@ domaininit()
 #ifdef CCITT
 	ADDDOMAIN(ccitt);
 #endif
-#include "imp.h"
+	//#include "imp.h"
 #if NIMP > 0
 	ADDDOMAIN(imp);
 #endif
@@ -90,16 +95,15 @@ domaininit()
 				(*pr->pr_init)();
 	}
 
-if (max_linkhdr < 16)		/* XXX */
-max_linkhdr = 16;
+	if (max_linkhdr < 16)		/* XXX */
+		max_linkhdr = 16;
 	max_hdr = max_linkhdr + max_protohdr;
 	max_datalen = MHLEN - max_hdr;
 	timeout(pffasttimo, NULL, 1);
 	timeout(pfslowtimo, NULL, 1);
 }
 
-struct protosw *
-pffindtype(family, type)
+struct protosw *pffindtype(family, type)
 	int family, type;
 {
 	register struct domain *dp;
@@ -117,7 +121,7 @@ found:
 }
 
 struct protosw *
-pffindproto(family, protocol, type)
+	pffindproto(family, protocol, type)
 	int family, protocol, type;
 {
 	register struct domain *dp;

@@ -223,7 +223,7 @@ tcp_input(m, iphlen)
 	int len, tlen, off;
 	register struct tcpcb *tp = 0;
 	register int tiflags;
-	struct socket *so;
+	struct socket *so = NULL;
 	int todrop, acked, ourfinisacked, needoutput = 0;
 	short ostate;
 	struct in_addr laddr;

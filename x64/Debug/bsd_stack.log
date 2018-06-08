@@ -1,12 +1,2 @@
-﻿  uipc_domain.c
-d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack\bsd_stack\sys\sysctl.h(186): error C2079: 'e_vm' uses undefined struct 'vmspace'
-d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack\bsd_stack\kern\uipc_domain.c(65): error C2146: syntax error: missing ';' before identifier 'domain'
-d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack\bsd_stack\kern\uipc_domain.c(65): error C2065: 'domain': undeclared identifier
-d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack\bsd_stack\kern\uipc_domain.c(65): error C2224: left of '.dom_next' must have struct/union type
-d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack\bsd_stack\kern\uipc_domain.c(66): error C2146: syntax error: missing ';' before identifier 'domain'
-d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack\bsd_stack\kern\uipc_domain.c(66): error C2065: 'domain': undeclared identifier
-d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack\bsd_stack\kern\uipc_domain.c(66): error C2224: left of '.dom_next' must have struct/union type
-d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack\bsd_stack\kern\uipc_domain.c(68): error C2146: syntax error: missing ';' before identifier 'domain'
-d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack\bsd_stack\kern\uipc_domain.c(68): error C2065: 'domain': undeclared identifier
-d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack\bsd_stack\kern\uipc_domain.c(68): error C2224: left of '.dom_next' must have struct/union type
-d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack\bsd_stack\kern\uipc_domain.c(79): fatal error C1083: Cannot open include file: 'imp.h': No such file or directory
+﻿  raw_ip.c
+d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack\bsd_stack\netinet\raw_ip.c(280): warning C4311: 'type cast': pointer truncation from 'mbuf *' to 'int'
