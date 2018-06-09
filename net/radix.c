@@ -40,7 +40,6 @@
 #include <sys/param.h>
 #ifdef	KERNEL
 #include <sys/systm.h>
-#include <sys/malloc.h>
 #define	M_DONTWAIT M_NOWAIT
 #include <sys/domain.h>
 #else

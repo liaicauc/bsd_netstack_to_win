@@ -52,7 +52,6 @@
 #include <sys/file.h>
 #include <sys/vnode.h>
 #include <sys/syslog.h>
-#include <sys/malloc.h>
 #include <sys/resourcevar.h>
 #include <sys/ptrace.h>
 

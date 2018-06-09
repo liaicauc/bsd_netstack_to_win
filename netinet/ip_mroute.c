@@ -55,7 +55,6 @@ int	ip_mrtproto;				/* for netstat only */
 #include <sys/param.h>
 #include <sys/errno.h>
 #include <sys/ioctl.h>
-#include <sys/malloc.h>
 #include <sys/mbuf.h>
 #include <sys/protosw.h>
 #include <sys/socket.h>

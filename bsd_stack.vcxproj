@@ -679,7 +679,6 @@
     <ClInclude Include="sys\lock_profile.h" />
     <ClInclude Include="sys\loginclass.h" />
     <ClInclude Include="sys\mac.h" />
-    <ClInclude Include="sys\malloc.h" />
     <ClInclude Include="sys\mbuf.h" />
     <ClInclude Include="sys\mchain.h" />
     <ClInclude Include="sys\md4.h" />

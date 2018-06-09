@@ -48,7 +48,6 @@
 #include <sys/uio.h>
 #include <sys/kernel.h>
 #include <sys/stat.h>
-#include <sys/malloc.h>
 #ifdef KTRACE
 #include <sys/ktrace.h>
 #endif

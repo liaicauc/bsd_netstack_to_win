@@ -1,7 +1,1 @@
-﻿  uipc_socket2.c
-d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack\bsd_stack\kern\uipc_socket2.c(746): warning C4311: 'type cast': pointer truncation from 'caddr_t' to 'u_long'
-d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack\bsd_stack\kern\uipc_socket2.c(746): warning C4311: 'type cast': pointer truncation from 'mbuf *' to 'u_long'
-d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack\bsd_stack\kern\uipc_socket2.c(751): warning C4311: 'type cast': pointer truncation from 'caddr_t' to 'u_long'
-d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack\bsd_stack\kern\uipc_socket2.c(751): warning C4311: 'type cast': pointer truncation from 'mbuf *' to 'u_long'
-d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack\bsd_stack\kern\uipc_socket2.c(776): warning C4311: 'type cast': pointer truncation from 'caddr_t' to 'u_long'
-d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack\bsd_stack\kern\uipc_socket2.c(776): warning C4311: 'type cast': pointer truncation from 'mbuf *' to 'u_long'
+﻿  init_main.c

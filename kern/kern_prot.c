@@ -49,7 +49,6 @@
 #include <sys/proc.h>
 #include <sys/timeb.h>
 #include <sys/times.h>
-#include <sys/malloc.h>
 
 #include <sys/mount.h>
 #include <sys/syscallargs.h>

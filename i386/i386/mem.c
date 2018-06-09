@@ -49,7 +49,6 @@
 #include <sys/buf.h>
 #include <sys/systm.h>
 #include <sys/uio.h>
-#include <sys/malloc.h>
 
 #include <machine/cpu.h>
 

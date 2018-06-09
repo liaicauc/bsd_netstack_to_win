@@ -42,7 +42,6 @@
 #include <sys/namei.h>
 #include <sys/vnode.h>
 #include <sys/ktrace.h>
-#include <sys/malloc.h>
 #include <sys/syslog.h>
 
 #include <sys/mount.h>

@@ -41,13 +41,10 @@
 #include <sys/param.h>
 #include <sys/systm.h>
 #include <sys/proc.h>
-#include <sys/malloc.h>
 #include <sys/buf.h>
 #include <sys/vnode.h>
 #include <sys/user.h>
-
 #include <machine/cpu.h>
-
 #include <vm/vm.h>
 #include <vm/vm_kern.h>
 

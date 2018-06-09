@@ -45,7 +45,6 @@
 #include <machine/cpu.h>
 
 #ifdef GPROF
-#include <sys/malloc.h>
 #include <sys/gmon.h>
 
 /*

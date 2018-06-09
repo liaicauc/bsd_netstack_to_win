@@ -49,7 +49,6 @@
 #include <sys/file.h>
 #include <sys/clist.h>
 #include <sys/callout.h>
-#include <sys/malloc.h>
 #include <sys/mbuf.h>
 #include <sys/msgbuf.h>
 #include <sys/ioctl.h>

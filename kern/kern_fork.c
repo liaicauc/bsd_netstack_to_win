@@ -43,7 +43,6 @@
 #include <sys/map.h>
 #include <sys/filedesc.h>
 #include <sys/kernel.h>
-#include <sys/malloc.h>
 #include <sys/proc.h>
 #include <sys/resourcevar.h>
 #include <sys/vnode.h>

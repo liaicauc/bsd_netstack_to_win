@@ -36,9 +36,6 @@
 #include <sys/param.h>
 #include <sys/systm.h>
 #include <sys/proc.h>
-
-#include <sys/malloc.h>
-#include <sys/map.h>
 #define MBTYPES
 #include <sys/mbuf.h>
 #include <sys/kernel.h>
@@ -47,9 +44,8 @@
 #include <sys/protosw.h>
 
 //#include <vm/vm.h>
-
-//liai todo chage mb_map to malloc
 //extern	vm_map_t mb_map;
+
 struct	mbuf *mbutl;
 char	*mclrefcnt;
 
@@ -60,7 +56,7 @@ mbinit()
 
 	//s = splimp();
 	//if (m_clalloc(max(4096/CLBYTES, 1), M_DONTWAIT) == 0)
-	if (m_clalloc(1, M_DONTWAIT) == 0)
+	if (m_clalloc(1, 0) == 0)
 		goto bad;
 	//splx(s);
 	return;
@@ -68,7 +64,6 @@ bad:
 	panic("mbinit");
 }
 
-#if 1
 /*
  * Allocate some number of mbuf clusters
  * and place on cluster free list.
@@ -107,6 +102,8 @@ m_clalloc(ncl, nowait)
 	return (1);
 }
 
+
+
 /*
  * When MGET failes, ask protocols to free space when short of memory,
  * then re-attempt to allocate an mbuf.
@@ -124,6 +121,8 @@ m_retry(i, t)
 	return (m);
 }
 
+
+
 /*
  * As above; retry an MGETHDR.
  */
@@ -139,6 +138,7 @@ m_retryhdr(i, t)
 #undef m_retryhdr
 	return (m);
 }
+
 
 void
 m_reclaim()
@@ -197,17 +197,18 @@ struct mbuf *
 m_free(m)
 	struct mbuf *m;
 {
-	register struct mbuf *n;
+	register struct mbuf *n = NULL;
 
 	MFREE(m, n);
 	return (n);
 }
 
+#if 1
 void
 m_freem(m)
 	register struct mbuf *m;
 {
-	register struct mbuf *n;
+	register struct mbuf *n = NULL;
 
 	if (m == NULL)
 		return;
@@ -665,3 +666,4 @@ m_devget(buf, totlen, off0, ifp, copy)
 	return (top);
 }
 #endif
+

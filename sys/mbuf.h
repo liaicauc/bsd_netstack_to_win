@@ -32,10 +32,13 @@
  *
  *	@(#)mbuf.h	8.5 (Berkeley) 2/19/95
  */
-
+#if 0
+#define M_WAITOK
 #ifndef M_WAITOK
 #include <sys/malloc.h>
 #endif
+#endif
+
 
 /*
  * Mbufs are of a single size, MSIZE (machine/machparam.h), which
@@ -141,8 +144,10 @@ struct mbuf {
 #define MT_OOBDATA	15	/* expedited data  */
 
 /* flags to m_get/MGET */
-#define	M_DONTWAIT	M_NOWAIT
-#define	M_WAIT		M_WAITOK
+//#define	M_DONTWAIT	M_NOWAIT
+//	#define	M_WAIT		M_WAITOK
+#define	M_DONTWAIT	0
+#define	M_WAIT		1
 
 /*
  * mbuf utility macros:
@@ -151,11 +156,26 @@ struct mbuf {
  * prevents a section of code from from being interrupted by network
  * drivers.
  */
+ #if 0
 #define	MBUFLOCK(code) \
 	{ int ms = splimp(); \
 	  { code } \
 	  splx(ms); \
 	}
+#endif
+
+#define	MBUFLOCK(code) \
+    { \
+	  { code } \
+	}
+//liai 
+//MALLOC((m), struct mbuf *, MSIZE, mbtypes[type], (how));
+void* malloc(unsigned int size);
+void free(caddr_t m);
+
+#define	MALLOC(space, cast, size, type, flags) (space) = (cast)malloc((u_long)(size))
+#define FREE(m, mtype) (void)free((m))
+
 
 /*
  * mbuf allocation/deallocation macros:
@@ -167,6 +187,20 @@ struct mbuf {
  * allocates an mbuf and initializes it to contain a packet header
  * and internal data.
  */
+ #define	MGET(m, how, type) { \
+	MALLOC((m), struct mbuf *, MSIZE, mbtypes[type], (how)); \
+	if (m) { \
+		(m)->m_type = (type); \
+		mbstat.m_mtypes[type]++; \
+		(m)->m_next = (struct mbuf *)NULL; \
+		(m)->m_nextpkt = (struct mbuf *)NULL; \
+		(m)->m_data = (m)->m_dat; \
+		(m)->m_flags = 0; \
+	} else \
+		(m) = m_retry((how), (type)); \
+}
+
+#if 0
 #define	MGET(m, how, type) { \
 	MALLOC((m), struct mbuf *, MSIZE, mbtypes[type], (how)); \
 	if (m) { \
@@ -179,12 +213,13 @@ struct mbuf {
 	} else \
 		(m) = m_retry((how), (type)); \
 }
+#endif
 
 #define	MGETHDR(m, how, type) { \
 	MALLOC((m), struct mbuf *, MSIZE, mbtypes[type], (how)); \
 	if (m) { \
 		(m)->m_type = (type); \
-		MBUFLOCK(mbstat.m_mtypes[type]++;) \
+		mbstat.m_mtypes[type]++; \
 		(m)->m_next = (struct mbuf *)NULL; \
 		(m)->m_nextpkt = (struct mbuf *)NULL; \
 		(m)->m_data = (m)->m_pktdat; \
@@ -192,6 +227,7 @@ struct mbuf {
 	} else \
 		(m) = m_retryhdr((how), (type)); \
 }
+
 
 /*
  * Mbuf cluster macros.
@@ -380,25 +416,26 @@ void	m_reclaim __P((void));
 
 #ifdef MBTYPES
 int mbtypes[] = {				/* XXX */
-	M_FREE,		/* MT_FREE	0	   should be on free list */
-	M_MBUF,		/* MT_DATA	1	   dynamic (data) allocation */
-	M_MBUF,		/* MT_HEADER	2	   packet header */
-	M_SOCKET,	/* MT_SOCKET	3	   socket structure */
-	M_PCB,		/* MT_PCB	4	   protocol control block */
-	M_RTABLE,	/* MT_RTABLE	5	   routing tables */
-	M_HTABLE,	/* MT_HTABLE	6	   IMP host tables */
+	0,		/* MT_FREE	0	   should be on free list */
+	1,		/* MT_DATA	1	   dynamic (data) allocation */
+	2,		/* MT_HEADER	2	   packet header */
+	3,	/* MT_SOCKET	3	   socket structure */
+	4,		/* MT_PCB	4	   protocol control block */
+	5,	/* MT_RTABLE	5	   routing tables */
+	6,	/* MT_HTABLE	6	   IMP host tables */
 	0,		/* MT_ATABLE	7	   address resolution tables */
-	M_MBUF,		/* MT_SONAME	8	   socket name */
+	8,		/* MT_SONAME	8	   socket name */
 	0,		/* 		9 */
-	M_SOOPTS,	/* MT_SOOPTS	10	   socket options */
-	M_FTABLE,	/* MT_FTABLE	11	   fragment reassembly header */
-	M_MBUF,		/* MT_RIGHTS	12	   access rights */
-	M_IFADDR,	/* MT_IFADDR	13	   interface address */
-	M_MBUF,		/* MT_CONTROL	14	   extra-data protocol message */
-	M_MBUF,		/* MT_OOBDATA	15	   expedited data  */
+	10,	/* MT_SOOPTS	10	   socket options */
+	11,	/* MT_FTABLE	11	   fragment reassembly header */
+	12,		/* MT_RIGHTS	12	   access rights */
+	13,	/* MT_IFADDR	13	   interface address */
+	14,		/* MT_CONTROL	14	   extra-data protocol message */
+	15,		/* MT_OOBDATA	15	   expedited data  */
 #ifdef DATAKIT
 	25, 26, 27, 28, 29, 30, 31, 32		/* datakit ugliness */
 #endif
 };
 #endif
+
 #endif

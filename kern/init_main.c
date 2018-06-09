@@ -39,11 +39,24 @@
  */
 
 //liai todo create our windows thread here
+#include <sys/param.h>
+#include <sys/systm.h>
+
+#include <sys/proc.h>
+//#include <sys/map.h>
+#define MBTYPES
+#include <sys/mbuf.h>
+#include <sys/kernel.h>
+#include <sys/syslog.h>
+#include <sys/domain.h>
+#include <sys/protosw.h>
+
 void main()
 {
 
 }
-#if 0
+
+#if  0
 #include <sys/param.h>
 #include <sys/filedesc.h>
 #include <sys/errno.h>
@@ -65,11 +78,11 @@ void main()
 #include <sys/user.h>
 #include <sys/syscallargs.h>
 
-#include <ufs/ufs/quota.h>
+//#include <ufs/ufs/quota.h>
 
 #include <machine/cpu.h>
 
-#include <vm/vm.h>
+//#include <vm/vm.h>
 
 #ifdef HPFPLIB
 char	copyright[] =

@@ -44,7 +44,6 @@
 #include <sys/file.h>
 #include <ufs/ufs/quota.h>
 #include <sys/uio.h>
-#include <sys/malloc.h>
 #include <sys/mbuf.h>
 #include <sys/ioctl.h>
 #include <sys/tty.h>

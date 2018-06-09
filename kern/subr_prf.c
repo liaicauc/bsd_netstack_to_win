@@ -51,7 +51,6 @@
 #include <sys/tty.h>
 #include <sys/tprintf.h>
 #include <sys/syslog.h>
-#include <sys/malloc.h>
 
 /*
  * Note that stdarg.h and the ANSI style va_start macro is used for both
