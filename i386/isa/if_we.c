@@ -257,13 +257,13 @@ westop(unit)
 	/*
 	 * Shutdown DS8390
 	 */
-	s = splimp();
+	//s = splimp();
 	wecmd.cs_byte = inb(sc->we_io_nic_addr + WD_P0_COMMAND);
 	wecmd.cs_stp = 1;
 	wecmd.cs_sta = 0;
 	wecmd.cs_ps = 0;
 	outb(sc->we_io_nic_addr + WD_P0_COMMAND, wecmd.cs_byte);
-	(void) splx(s);
+	//(void) splx(s);
 }
 
 wewatchdog(unit) {
@@ -565,7 +565,7 @@ weioctl(ifp, cmd, data)
 {
 	struct we_softc *sc = &we_softc[ifp->if_unit];
 	struct ifaddr *ifa = (struct ifaddr *)data;
-	int s = splimp(), error = 0;
+	//int s = splimp(), error = 0;
  
 	switch (cmd) {
  
@@ -608,7 +608,7 @@ weioctl(ifp, cmd, data)
 		error = EINVAL;
  
 	}
-	(void) splx(s);
+	//(void) splx(s);
 	return (error);
 }
 #endif
@@ -624,7 +624,7 @@ weioctl(ifp, cmd, data)
 	register struct ifaddr *ifa = (struct ifaddr *)data;
 	struct we_softc *sc = &we_softc[ifp->if_unit];
 	struct ifreq *ifr = (struct ifreq *)data;
-	int s = splimp(), error = 0;
+	//int s = splimp(), error = 0;
 
 
 	switch (cmd) {
@@ -688,7 +688,7 @@ weioctl(ifp, cmd, data)
 	default:
 		error = EINVAL;
 	}
-	splx(s);
+	//splx(s);
 	return (error);
 }
 /*

@@ -153,9 +153,6 @@
     <ClCompile Include="kern\kern_loginclass.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="kern\kern_malloc.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="kern\kern_mbuf.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -207,9 +204,6 @@
     <ClCompile Include="kern\kern_rctl.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="kern\kern_resource.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="kern\kern_rmlock.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -229,9 +223,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="kern\kern_shutdown.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="kern\kern_sig.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="kern\kern_switch.c">
@@ -513,12 +504,6 @@
     <ClCompile Include="kern\sysv_shm.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="kern\tty.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="kern\tty_compat.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="kern\tty_info.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -529,9 +514,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="kern\tty_pts.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="kern\tty_tty.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="kern\tty_ttydisc.c">
@@ -582,15 +564,6 @@
     <ClCompile Include="kern\vfs_aio.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="kern\vfs_bio.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="kern\vfs_cache.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="kern\vfs_cluster.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="kern\vfs_default.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -603,25 +576,10 @@
     <ClCompile Include="kern\vfs_hash.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="kern\vfs_init.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="kern\vfs_lookup.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="kern\vfs_mount.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="kern\vfs_mountroot.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="kern\vfs_subr.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="kern\vfs_syscalls.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="kern\vfs_vnops.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="netinet\cc\cc.c">
@@ -943,6 +901,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="net\slcompress.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\uipc_socket2.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

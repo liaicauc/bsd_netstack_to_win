@@ -212,14 +212,14 @@ apxinit(unit)
 	int unit;
 {
 	struct ifnet *ifp = &apx_softc[unit].apx_if;
-	int s = splimp();
+	//int s = splimp();
 
 	ifp->if_flags &= ~(IFF_RUNNING|IFF_OACTIVE);
 	if (apxreset(unit) && (ifp->if_flags & IFF_UP)) {
 		ifp->if_flags |= IFF_RUNNING;
 		(void)apxstart(ifp);
 	}
-	splx(s);
+	//splx(s);
 	return 0;
 }
 
@@ -535,7 +535,7 @@ apxioctl(ifp, cmd, data)
 	caddr_t data;
 {
 	register struct ifaddr *ifa = (struct ifaddr *)data;
-	int s = splimp(), error = 0;
+	//int s = splimp(), error = 0;
 	struct apx_softc *apx = &apx_softc[ifp->if_unit];
 
 	switch (cmd) {
@@ -570,7 +570,7 @@ apxioctl(ifp, cmd, data)
 			error = EINVAL;
 
 	}
-	splx(s);
+	//splx(s);
 	return (error);
 }
 
@@ -591,7 +591,7 @@ register struct mbuf *m;
 struct sockaddr *dst;
 struct rtentry *rt;
 {
-	int s = splimp(), error = 0;
+	//int s = splimp(), error = 0;
 	static char pppheader[4] = { -1, 3, 0, 0x21 };
 	/*
 	 * Queue message on interface, and start output if interface
@@ -600,7 +600,7 @@ struct rtentry *rt;
 	ifp->if_opackets++;
 	M_PREPEND(m, sizeof pppheader, M_DONTWAIT);
 	if (m == 0) {
-		splx(s);
+		//splx(s);
 		return ENOBUFS;
 	}
 	bcopy(pppheader, mtod(m, caddr_t), sizeof pppheader);
@@ -613,7 +613,7 @@ struct rtentry *rt;
 		if ((ifp->if_flags & IFF_OACTIVE) == 0)
 			(*ifp->if_start)(ifp);
 	}
-	splx(s);
+	//splx(s);
 	return (error);
 }
 #endif /* NAPX */

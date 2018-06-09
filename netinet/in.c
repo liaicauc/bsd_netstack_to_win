@@ -403,7 +403,7 @@ in_ifinit(ifp, ia, sin, scrub)
 {
 	register u_long i = ntohl(sin->sin_addr.s_addr);
 	struct sockaddr_in oldaddr;
-	int s = splimp(), flags = RTF_UP, error, ether_output();
+	//int s = splimp(), flags = RTF_UP, error, ether_output();
 
 	oldaddr = ia->ia_addr;
 	ia->ia_addr = *sin;

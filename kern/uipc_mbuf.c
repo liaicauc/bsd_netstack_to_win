@@ -58,10 +58,11 @@ mbinit()
 {
 	int s;
 
-	s = splimp();
-	if (m_clalloc(max(4096/CLBYTES, 1), M_DONTWAIT) == 0)
+	//s = splimp();
+	//if (m_clalloc(max(4096/CLBYTES, 1), M_DONTWAIT) == 0)
+	if (m_clalloc(1, M_DONTWAIT) == 0)
 		goto bad;
-	splx(s);
+	//splx(s);
 	return;
 bad:
 	panic("mbinit");
@@ -144,13 +145,13 @@ m_reclaim()
 {
 	register struct domain *dp;
 	register struct protosw *pr;
-	int s = splimp();
+	//int s = splimp();
 
 	for (dp = domains; dp; dp = dp->dom_next)
 		for (pr = dp->dom_protosw; pr < dp->dom_protoswNPROTOSW; pr++)
 			if (pr->pr_drain)
 				(*pr->pr_drain)();
-	splx(s);
+	//splx(s);
 	mbstat.m_drain++;
 }
 

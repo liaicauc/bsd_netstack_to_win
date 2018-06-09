@@ -361,9 +361,9 @@ arpintr()
 	int s;
 
 	while (arpintrq.ifq_head) {
-		s = splimp();
+		//s = splimp();
 		IF_DEQUEUE(&arpintrq, m);
-		splx(s);
+		//splx(s);
 		if (m == 0 || (m->m_flags & M_PKTHDR) == 0)
 			panic("arpintr");
 		if (m->m_len >= sizeof(struct arphdr) &&

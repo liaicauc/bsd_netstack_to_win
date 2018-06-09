@@ -271,20 +271,20 @@ ether_output(ifp, m0, dst, rt0)
  	bcopy((caddr_t)edst, (caddr_t)eh->ether_dhost, sizeof (edst));
  	bcopy((caddr_t)ac->ac_enaddr, (caddr_t)eh->ether_shost,
 	    sizeof(eh->ether_shost));
-	s = splimp();
+	//s = splimp();
 	/*
 	 * Queue message on interface, and start output if interface
 	 * not yet active.
 	 */
 	if (IF_QFULL(&ifp->if_snd)) {
 		IF_DROP(&ifp->if_snd);
-		splx(s);
+		//splx(s);
 		senderr(ENOBUFS);
 	}
 	IF_ENQUEUE(&ifp->if_snd, m);
 	if ((ifp->if_flags & IFF_OACTIVE) == 0)
 		(*ifp->if_start)(ifp);
-	splx(s);
+	//splx(s);
 	ifp->if_obytes += len + sizeof (struct ether_header);
 	if (m->m_flags & M_MCAST)
 		ifp->if_omcasts++;
@@ -449,13 +449,13 @@ ether_input(ifp, eh, m)
 #endif /* ISO || LLC */
 	}
 
-	s = splimp();
+	//s = splimp();
 	if (IF_QFULL(inq)) {
 		IF_DROP(inq);
 		m_freem(m);
 	} else
 		IF_ENQUEUE(inq, m);
-	splx(s);
+	//splx(s);
 }
 
 /*
@@ -519,7 +519,7 @@ ether_addmulti(ifr, ac)
 	struct sockaddr_in *sin;
 	u_char addrlo[6];
 	u_char addrhi[6];
-	int s = splimp();
+	//int s = splimp();
 
 	switch (ifr->ifr_addr.sa_family) {
 
@@ -548,7 +548,7 @@ ether_addmulti(ifr, ac)
 #endif
 
 	default:
-		splx(s);
+		//splx(s);
 		return (EAFNOSUPPORT);
 	}
 
@@ -556,7 +556,7 @@ ether_addmulti(ifr, ac)
 	 * Verify that we have valid Ethernet multicast addresses.
 	 */
 	if ((addrlo[0] & 0x01) != 1 || (addrhi[0] & 0x01) != 1) {
-		splx(s);
+		//splx(s);
 		return (EINVAL);
 	}
 	/*
@@ -568,7 +568,7 @@ ether_addmulti(ifr, ac)
 		 * Found it; just increment the reference count.
 		 */
 		++enm->enm_refcount;
-		splx(s);
+		//splx(s);
 		return (0);
 	}
 	/*
@@ -577,7 +577,7 @@ ether_addmulti(ifr, ac)
 	 */
 	enm = (struct ether_multi *)malloc(sizeof(*enm), M_IFMADDR, M_NOWAIT);
 	if (enm == NULL) {
-		splx(s);
+		//splx(s);
 		return (ENOBUFS);
 	}
 	bcopy(addrlo, enm->enm_addrlo, 6);
@@ -587,7 +587,7 @@ ether_addmulti(ifr, ac)
 	enm->enm_next = ac->ac_multiaddrs;
 	ac->ac_multiaddrs = enm;
 	ac->ac_multicnt++;
-	splx(s);
+	//splx(s);
 	/*
 	 * Return ENETRESET to inform the driver that the list has changed
 	 * and its reception filter should be adjusted accordingly.
@@ -608,7 +608,7 @@ ether_delmulti(ifr, ac)
 	struct sockaddr_in *sin;
 	u_char addrlo[6];
 	u_char addrhi[6];
-	int s = splimp();
+	//int s = splimp();
 
 	switch (ifr->ifr_addr.sa_family) {
 
@@ -637,7 +637,7 @@ ether_delmulti(ifr, ac)
 #endif
 
 	default:
-		splx(s);
+		//splx(s);
 		return (EAFNOSUPPORT);
 	}
 
@@ -646,14 +646,14 @@ ether_delmulti(ifr, ac)
 	 */
 	ETHER_LOOKUP_MULTI(addrlo, addrhi, ac, enm);
 	if (enm == NULL) {
-		splx(s);
+		//splx(s);
 		return (ENXIO);
 	}
 	if (--enm->enm_refcount != 0) {
 		/*
 		 * Still some claims to this record.
 		 */
-		splx(s);
+		//splx(s);
 		return (0);
 	}
 	/*
@@ -666,7 +666,7 @@ ether_delmulti(ifr, ac)
 	*p = (*p)->enm_next;
 	free(enm, M_IFMADDR);
 	ac->ac_multicnt--;
-	splx(s);
+	//splx(s);
 	/*
 	 * Return ENETRESET to inform the driver that the list has changed
 	 * and its reception filter should be adjusted accordingly.

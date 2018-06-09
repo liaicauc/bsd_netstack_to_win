@@ -346,11 +346,11 @@ ecinit(unit)
 		else if (ifa->ifa_addr && ifa->ifa_addr->sa_family != AF_LINK)
 			break;
 	if ((ifp->if_flags & IFF_RUNNING) == 0) {
-		s = splimp();
+		//s = splimp();
 		ifp->if_flags |= IFF_RUNNING;
 		ecreset(unit);
 	        (void) ecstart(ifp);
-		splx(s);
+		//splx(s);
 	}
 	return 0;
 }
@@ -655,7 +655,7 @@ ecioctl(ifp, cmd, data)
 {
 	register struct ifaddr *ifa = (struct ifaddr *)data;
 	struct ec_softc *ec = &ec_softc[ifp->if_unit];
-	int s = splimp(), error = 0;
+	//int s = splimp(), error = 0;
 
 	switch (cmd) {
 
@@ -715,7 +715,7 @@ ecioctl(ifp, cmd, data)
 	default:
 		error = EINVAL;
 	}
-	splx(s);
+	//splx(s);
 	return (error);
 }
 

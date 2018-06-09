@@ -125,7 +125,7 @@ neprobe(dvp)
 #endif
 
 	nec = dvp->id_iobase;
-	s = splimp();
+	//s = splimp();
 
 	/* Reset the bastard */
 	val = inb(nec+ne_reset);
@@ -305,7 +305,7 @@ neinit(unit)
  	if (ifp->if_addrlist == (struct ifaddr *)0) return;
 	if (ifp->if_flags & IFF_RUNNING) return;
 
-	s = splimp();
+	//s = splimp();
 
 	/* set physical address on ethernet */
 	outb (nec+ds_cmd, DSCM_NODMA|DSCM_PG1|DSCM_STOP);
@@ -726,7 +726,7 @@ neioctl(ifp, cmd, data)
 	register struct ifaddr *ifa = (struct ifaddr *)data;
 	struct ne_softc *ns = &ne_softc[ifp->if_unit];
 	struct ifreq *ifr = (struct ifreq *)data;
-	int s = splimp(), error = 0;
+	//int s = splimp(), error = 0;
 
 
 	switch (cmd) {

@@ -418,7 +418,7 @@ if_slowtimo(arg)
 	void *arg;
 {
 	register struct ifnet *ifp;
-	int s = splimp();
+	//int s = splimp();
 
 	for (ifp = ifnet; ifp; ifp = ifp->if_next) {
 		if (ifp->if_timer == 0 || --ifp->if_timer)
@@ -426,7 +426,7 @@ if_slowtimo(arg)
 		if (ifp->if_watchdog)
 			(*ifp->if_watchdog)(ifp->if_unit);
 	}
-	splx(s);
+	//splx(s);
 	timeout(if_slowtimo, (void *)0, hz / IFNET_SLOWHZ);
 }
 
@@ -508,14 +508,14 @@ ifioctl(so, cmd, data, p)
 		if (error = suser(p->p_ucred, &p->p_acflag))
 			return (error);
 		if (ifp->if_flags & IFF_UP && (ifr->ifr_flags & IFF_UP) == 0) {
-			int s = splimp();
+			//int s = splimp();
 			if_down(ifp);
-			splx(s);
+			//splx(s);
 		}
 		if (ifr->ifr_flags & IFF_UP && (ifp->if_flags & IFF_UP) == 0) {
-			int s = splimp();
+			//int s = splimp();
 			if_up(ifp);
-			splx(s);
+			//splx(s);
 		}
 		ifp->if_flags = (ifp->if_flags & IFF_CANTCHANGE) |
 			(ifr->ifr_flags &~ IFF_CANTCHANGE);
