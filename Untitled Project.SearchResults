@@ -1,3 +1,0 @@
----- MBTYPES Matches (2 in 2 files) ----
-Mbuf.h (sys):#ifdef MBTYPES
-Uipc_mbuf.c (kern):#define MBTYPES

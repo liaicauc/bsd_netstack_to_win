@@ -33,40 +33,43 @@
  *	@(#)uipc_mbuf.c	8.4 (Berkeley) 2/14/95
  */
 
+//	#include <sys/param.h>
+//	#include <sys/systm.h>
+//	#include <sys/proc.h>
+//	#define MBTYPES
+//	#include <sys/mbuf.h>
+//	#include <sys/kernel.h>
+//	#include <sys/syslog.h>
+//	#include <sys/domain.h>
+//	#include <sys/protosw.h>
+//	//#include <vm/vm.h>
+//	//extern	vm_map_t mb_map;
 #include "stdio.h"
-void main()
-{
-	int * p = calloc();
-	printf("hello world");
-}
 
-#if 0
-#include <sys/param.h>
-#include <sys/systm.h>
-#include <sys/proc.h>
-#define MBTYPES
-#include <sys/mbuf.h>
-#include <sys/kernel.h>
-#include <sys/syslog.h>
-#include <sys/domain.h>
-#include <sys/protosw.h>
-
-//#include <vm/vm.h>
-//extern	vm_map_t mb_map;
 
 struct	mbuf *mbutl;
 char	*mclrefcnt;
+
+#include "stdio.h"
+#include "sys/param.h"
+#include "sys/types.h"
+#include <sys/mbuf.h>
+#include <kern/interfaces.h>
+#include <kern/log.h>
+
+void main()
+{
+	int i = m_clalloc(1, 0);
+	printf("hello world");
+}
 
 void
 mbinit()
 {
 	int s;
 
-	//s = splimp();
-	//if (m_clalloc(max(4096/CLBYTES, 1), M_DONTWAIT) == 0)
 	if (m_clalloc(1, 0) == 0)
 		goto bad;
-	//splx(s);
 	return;
 bad:
 	panic("mbinit");
@@ -147,7 +150,13 @@ m_retryhdr(i, t)
 	return (m);
 }
 
-
+//liai todo
+// clear #if 0 after domain was added
+void m_reclaim()
+{
+	
+}
+#if 0
 void
 m_reclaim()
 {
@@ -162,7 +171,7 @@ m_reclaim()
 	//splx(s);
 	mbstat.m_drain++;
 }
-
+#endif
 /*
  * Space allocation routines.
  * These are also available as macros
@@ -673,6 +682,4 @@ m_devget(buf, totlen, off0, ifp, copy)
 	}
 	return (top);
 }
-#endif
-
 #endif

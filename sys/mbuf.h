@@ -39,6 +39,12 @@
 #endif
 #endif
 
+/*the adaptation for OS*/
+typedef	char *		caddr_t;
+#define	MSIZE		128		/* size of an mbuf */
+#define	MCLBYTES	1024
+#define	MCLSHIFT	10
+#define	MCLOFSET	(MCLBYTES - 1)
 
 /*
  * Mbufs are of a single size, MSIZE (machine/machparam.h), which

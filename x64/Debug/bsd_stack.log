@@ -1,1 +1,38 @@
-﻿  init_main.c
+﻿Build started 6/10/2018 3:15:52 PM.
+     1>Project "D:\BSD_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\bsd_stack.vcxproj" on node 2 (Build target(s)).
+     1>InitializeBuildStatus:
+         Touching "x64\Debug\bsd_stack.tlog\unsuccessfulbuild".
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\CL.exe /c /I./ /ZI /nologo /W1 /WX- /sdl /Od /D INET /D KERNEL /D __LP64__ /D _MBCS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"x64\Debug\\" /Fd"x64\Debug\vc140.pdb" /FR"x64\Debug\\" /Gd /TP /errorReport:prompt kern\interfaces.h
+         Skipping... (no relevant changes detected)
+         interfaces.h
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\CL.exe /c /I./ /ZI /nologo /W1 /WX- /sdl /Od /D INET /D KERNEL /D __LP64__ /D _MBCS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"x64\Debug\\" /Fd"x64\Debug\vc140.pdb" /FR"x64\Debug\\" /Gd /TC /errorReport:prompt kern\uipc_mbuf.c
+         uipc_mbuf.c
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(219): warning C4311: 'type cast': pointer truncation from 'caddr_t' to 'u_long'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(219): warning C4311: 'type cast': pointer truncation from 'mbuf *' to 'u_long'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(219): warning C4133: 'function': incompatible types - from 'mbuf *' to 'caddr_t'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(233): warning C4311: 'type cast': pointer truncation from 'caddr_t' to 'u_long'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(233): warning C4311: 'type cast': pointer truncation from 'mbuf *' to 'u_long'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(233): warning C4133: 'function': incompatible types - from 'mbuf *' to 'caddr_t'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(323): warning C4311: 'type cast': pointer truncation from 'caddr_t' to 'u_long'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(323): warning C4311: 'type cast': pointer truncation from 'mbuf *' to 'u_long'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(600): warning C4311: 'type cast': pointer truncation from 'caddr_t' to 'u_long'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(600): warning C4311: 'type cast': pointer truncation from 'mbuf *' to 'u_long'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(656): warning C4311: 'type cast': pointer truncation from 'caddr_t' to 'u_long'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(656): warning C4311: 'type cast': pointer truncation from 'mbuf *' to 'u_long'
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"D:\BSD_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\x64\Debug\bsd_stack.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG:FASTLINK /PDB:"D:\BSD_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\x64\Debug\bsd_stack.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\BSD_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\x64\Debug\bsd_stack.lib" /MACHINE:X64 x64\Debug\interfaces.obj
+         x64\Debug\log.obj
+         x64\Debug\uipc_mbuf.obj
+         bsd_stack.vcxproj -> D:\BSD_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\x64\Debug\bsd_stack.exe
+         bsd_stack.vcxproj -> D:\BSD_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\x64\Debug\bsd_stack.pdb (Partial PDB)
+       BscMake:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\bscmake.exe /nologo /o"D:\BSD_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\x64\Debug\bsd_stack.bsc" /n x64\Debug\interfaces.sbr x64\Debug\log.sbr x64\Debug\uipc_mbuf.sbr
+       FinalizeBuildStatus:
+         Deleting file "x64\Debug\bsd_stack.tlog\unsuccessfulbuild".
+         Touching "x64\Debug\bsd_stack.tlog\bsd_stack.lastbuildstate".
+     1>Done Building Project "D:\BSD_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\bsd_stack.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.79
