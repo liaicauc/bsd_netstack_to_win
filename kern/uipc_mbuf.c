@@ -33,6 +33,14 @@
  *	@(#)uipc_mbuf.c	8.4 (Berkeley) 2/14/95
  */
 
+#include "stdio.h"
+void main()
+{
+	int * p = calloc();
+	printf("hello world");
+}
+
+#if 0
 #include <sys/param.h>
 #include <sys/systm.h>
 #include <sys/proc.h>
@@ -667,3 +675,4 @@ m_devget(buf, totlen, off0, ifp, copy)
 }
 #endif
 
+#endif
