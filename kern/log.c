@@ -1,3 +1,4 @@
+#include "stdio.h"
 
 void log(int level, char *msg)
 {
@@ -6,5 +7,6 @@ void log(int level, char *msg)
 
 void panic(char *msg)
 {
+    printf(msg);
 	return;
 }

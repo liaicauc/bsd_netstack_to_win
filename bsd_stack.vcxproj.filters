@@ -30,6 +30,9 @@
     <ClCompile Include="kern\interfaces.h">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="kern\interfaces.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="netinet\cc\cc.h">

@@ -118,6 +118,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="kern\interfaces.c" />
     <ClCompile Include="kern\interfaces.h" />
     <ClCompile Include="kern\log.c" />
     <ClCompile Include="kern\uipc_mbuf.c" />

@@ -59,6 +59,7 @@ lmin(a, b)
 {
 	return (a < b ? a : b);
 }
+#if 0
 static __inline u_int
 max(a, b)
 	u_int a, b;
@@ -71,6 +72,8 @@ min(a, b)
 {
 	return (a < b ? a : b);
 }
+#endif
+
 static __inline u_long
 ulmax(a, b)
 	u_long a, b;

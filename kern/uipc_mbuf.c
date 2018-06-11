@@ -44,11 +44,6 @@
 //	#include <sys/protosw.h>
 //	//#include <vm/vm.h>
 //	//extern	vm_map_t mb_map;
-#include "stdio.h"
-
-
-struct	mbuf *mbutl;
-char	*mclrefcnt;
 
 #include "stdio.h"
 #include "sys/param.h"
@@ -57,12 +52,9 @@ char	*mclrefcnt;
 #include <kern/interfaces.h>
 #include <kern/log.h>
 
-void main()
-{
-	int i = m_clalloc(1, 0);
-	printf("hello world");
-}
-
+struct	mbuf *mbutl;
+char	*mclrefcnt;
+    
 void
 mbinit()
 {
@@ -78,7 +70,7 @@ bad:
 /*
  * Allocate some number of mbuf clusters
  * and place on cluster free list.
- * Must be called at splimp.
+ * Must be called at splimp. liai changed it
  */
 /* ARGSUSED */
 int
@@ -92,7 +84,6 @@ m_clalloc(ncl, nowait)
 	int npg;
 
 	npg = ncl * CLSIZE;
-    //liai todo it can't be called 
     //p = (caddr_t)kmem_malloc(mb_map, ctob(npg), !nowait);
 	p = malloc(4096);
 	if (p == NULL) {
@@ -112,8 +103,6 @@ m_clalloc(ncl, nowait)
 	mbstat.m_clusters += ncl;
 	return (1);
 }
-
-
 
 /*
  * When MGET failes, ask protocols to free space when short of memory,
@@ -220,7 +209,6 @@ m_free(m)
 	return (n);
 }
 
-#if 1
 void
 m_freem(m)
 	register struct mbuf *m;
@@ -655,7 +643,9 @@ m_devget(buf, totlen, off0, ifp, copy)
 		if (len >= MINCLSIZE) {
 			MCLGET(m, M_DONTWAIT);
 			if (m->m_flags & M_EXT)
+			{
 				m->m_len = len = min(len, MCLBYTES);
+			}
 			else
 				len = m->m_len;
 		} else {
@@ -682,4 +672,18 @@ m_devget(buf, totlen, off0, ifp, copy)
 	}
 	return (top);
 }
-#endif
+
+void *liai_malloc(u_long size)
+{
+    return malloc(size);
+}
+
+void main()
+{
+    struct mbuf *m = NULL;
+    
+	mbinit();
+	m = m_get(0, 1);
+
+    return;
+}

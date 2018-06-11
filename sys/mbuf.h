@@ -179,7 +179,8 @@ struct mbuf {
 void* malloc(unsigned int size);
 void free(caddr_t m);
 
-#define	MALLOC(space, cast, size, type, flags) (space) = (cast)malloc((u_long)(size))
+extern void *liai_malloc(u_long size);
+#define	MALLOC(space, cast, size, type, flags) (space) = (cast)liai_malloc((u_long)(size))
 #define FREE(m, mtype) (void)free((m))
 
 
@@ -193,25 +194,12 @@ void free(caddr_t m);
  * allocates an mbuf and initializes it to contain a packet header
  * and internal data.
  */
+ #if 1
  #define	MGET(m, how, type) { \
 	MALLOC((m), struct mbuf *, MSIZE, mbtypes[type], (how)); \
 	if (m) { \
 		(m)->m_type = (type); \
 		mbstat.m_mtypes[type]++; \
-		(m)->m_next = (struct mbuf *)NULL; \
-		(m)->m_nextpkt = (struct mbuf *)NULL; \
-		(m)->m_data = (m)->m_dat; \
-		(m)->m_flags = 0; \
-	} else \
-		(m) = m_retry((how), (type)); \
-}
-
-#if 0
-#define	MGET(m, how, type) { \
-	MALLOC((m), struct mbuf *, MSIZE, mbtypes[type], (how)); \
-	if (m) { \
-		(m)->m_type = (type); \
-		MBUFLOCK(mbstat.m_mtypes[type]++;) \
 		(m)->m_next = (struct mbuf *)NULL; \
 		(m)->m_nextpkt = (struct mbuf *)NULL; \
 		(m)->m_data = (m)->m_dat; \

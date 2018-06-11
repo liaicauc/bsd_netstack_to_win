@@ -40,11 +40,9 @@
 
 #ifndef _SYS_TYPES_H_
 #define	_SYS_TYPES_H_
-
 /* Machine type dependent parameters. */
 #include <machine/ansi.h>
 #include <machine/types.h>
-
 #ifndef _POSIX_SOURCE
 typedef	unsigned char	u_char;
 typedef	unsigned short	u_short;
