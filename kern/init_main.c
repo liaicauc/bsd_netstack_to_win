@@ -53,9 +53,19 @@ of California by American Telephone and Telegraph
 #include <sys/domain.h>
 #include <sys/protosw.h>
 
+//liai todo relpace liai_malloc after tesing
+void *liai_malloc(u_long size)
+{
+	return malloc(size);
+}
+
 void main()
 {
 	mbinit();
+	//ifinit();
+	//domaininit();
+	
+	return;
 }
 
 #if  0

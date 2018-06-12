@@ -33,6 +33,18 @@
     <ClCompile Include="kern\interfaces.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="net\if.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="net\if_loop.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\init_main.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dev\winpcap_intf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="netinet\cc\cc.h">

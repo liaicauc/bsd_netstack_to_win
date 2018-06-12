@@ -109,10 +109,12 @@ typedef	_BSD_SSIZE_T_	ssize_t;
 #undef	_BSD_SSIZE_T_
 #endif
 
-//#ifdef	_BSD_TIME_T_
-//typedef	_BSD_TIME_T_	time_t;
-//#undef	_BSD_TIME_T_
-//#endif
+#if 0
+#ifdef	_bsd_time_t_
+typedef	_bsd_time_t_	time_t;
+#undef	_bsd_time_t_
+#endif
+#endif
 
 #ifndef _POSIX_SOURCE
 #define	NBBY	8		/* number of bits in a byte */

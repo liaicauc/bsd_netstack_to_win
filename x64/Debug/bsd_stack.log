@@ -1,24 +1,11 @@
-﻿Build started 6/11/2018 11:54:11 AM.
-     1>Project "D:\BSD_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\bsd_stack.vcxproj" on node 2 (Build target(s)).
-     1>InitializeBuildStatus:
-         Creating "x64\Debug\bsd_stack.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
-       ClCompile:
-         All outputs are up-to-date.
-         All outputs are up-to-date.
-       Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"D:\BSD_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\x64\Debug\bsd_stack.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG:FASTLINK /PDB:"D:\BSD_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\x64\Debug\bsd_stack.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\BSD_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\x64\Debug\bsd_stack.lib" /MACHINE:X64 x64\Debug\interfaces.obj
-         x64\Debug\interfaces.obj
-         x64\Debug\log.obj
-         x64\Debug\uipc_mbuf.obj
-         bsd_stack.vcxproj -> D:\BSD_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\x64\Debug\bsd_stack.exe
-         bsd_stack.vcxproj -> D:\BSD_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\x64\Debug\bsd_stack.pdb (Partial PDB)
-       BscMake:
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\bscmake.exe /nologo /o"D:\BSD_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\x64\Debug\bsd_stack.bsc" /n x64\Debug\interfaces.sbr x64\Debug\interfaces.sbr x64\Debug\log.sbr x64\Debug\uipc_mbuf.sbr
-       FinalizeBuildStatus:
-         Deleting file "x64\Debug\bsd_stack.tlog\unsuccessfulbuild".
-         Touching "x64\Debug\bsd_stack.tlog\bsd_stack.lastbuildstate".
-     1>Done Building Project "D:\BSD_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\bsd_stack.vcxproj" (Build target(s)).
+﻿Build started 6/12/2018 9:53:07 AM.
+     1>Project "D:\BSD_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\bsd_stack.vcxproj" on node 2 (ClCompile target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\CL.exe /c /I./ /ZI /nologo /W1 /WX- /sdl /Od /D INET /D KERNEL /D __LP64__ /D _MBCS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"x64\Debug\\" /Fd"x64\Debug\vc140.pdb" /FR"x64\Debug\\" /Gd /TC /errorReport:prompt dev\winpcap_intf.c
+         winpcap_intf.c
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\dev\winpcap_intf.c(1): fatal error C1083: Cannot open include file: 'pcap.h': No such file or directory
+     1>Done Building Project "D:\BSD_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\bsd_stack.vcxproj" (ClCompile target(s)) -- FAILED.
 
-Build succeeded.
+Build FAILED.
 
-Time Elapsed 00:00:00.75
+Time Elapsed 00:00:00.13

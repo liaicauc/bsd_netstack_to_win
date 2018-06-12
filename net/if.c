@@ -103,6 +103,7 @@ sprint_d(n, buf, buflen)
 	} while (n != 0);
 	return (cp);
 }
+
 /*
  * Attach an interface to the
  * list of "active" interfaces.
@@ -127,10 +128,10 @@ if_attach(ifp)
 	if (ifnet_addrs == 0 || if_index >= if_indexlim) {
 		unsigned n = (if_indexlim <<= 1) * sizeof(ifa);
 		struct ifaddr **q = (struct ifaddr **)
-					malloc(n, M_IFADDR, M_WAITOK);
+					malloc(n);
 		if (ifnet_addrs) {
 			bcopy((caddr_t)ifnet_addrs, (caddr_t)q, n/2);
-			free((caddr_t)ifnet_addrs, M_IFADDR);
+			free((caddr_t)ifnet_addrs);
 		}
 		ifnet_addrs = q;
 	}
@@ -149,7 +150,7 @@ if_attach(ifp)
 	if (socksize < sizeof(*sdl))
 		socksize = sizeof(*sdl);
 	ifasize = sizeof(*ifa) + 2 * socksize;
-	if (ifa = (struct ifaddr *)malloc(ifasize, M_IFADDR, M_WAITOK)) {
+	if (ifa = (struct ifaddr *)malloc(ifasize)) {
 		bzero((caddr_t)ifa, ifasize);
 		sdl = (struct sockaddr_dl *)(ifa + 1);
 		sdl->sdl_len = socksize;
@@ -670,5 +671,3 @@ ifconf(cmd, data)
 	ifc->ifc_len -= space;
 	return (error);
 }
-
-

@@ -118,10 +118,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="dev\winpcap_intf.c" />
+    <ClCompile Include="kern\init_main.c" />
     <ClCompile Include="kern\interfaces.c" />
     <ClCompile Include="kern\interfaces.h" />
     <ClCompile Include="kern\log.c" />
     <ClCompile Include="kern\uipc_mbuf.c" />
+    <ClCompile Include="net\if.c" />
+    <ClCompile Include="net\if_loop.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="i386\include\ansi.h" />

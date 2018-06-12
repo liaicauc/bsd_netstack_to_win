@@ -672,18 +672,3 @@ m_devget(buf, totlen, off0, ifp, copy)
 	}
 	return (top);
 }
-
-void *liai_malloc(u_long size)
-{
-    return malloc(size);
-}
-
-void main()
-{
-    struct mbuf *m = NULL;
-    
-	mbinit();
-	m = m_get(0, 1);
-
-    return;
-}
