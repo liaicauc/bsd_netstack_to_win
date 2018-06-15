@@ -390,6 +390,8 @@ in_ifscrub(ifp, ia)
 	ia->ia_flags &= ~IFA_ROUTE;
 }
 
+//liai todo analysize this later    
+#if 0
 /*
  * Initialize an interface's internet address
  * and routing table entry.
@@ -477,7 +479,7 @@ in_ifinit(ifp, ia, sin, scrub)
 	}
 	return (error);
 }
-
+#endif
 
 /*
  * Return 1 if the address might be a local broadcast address.

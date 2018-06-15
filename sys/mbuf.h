@@ -40,7 +40,6 @@
 #endif
 
 /*the adaptation for OS*/
-typedef	char *		caddr_t;
 #define	MSIZE		128		/* size of an mbuf */
 #define	MCLBYTES	1024
 #define	MCLSHIFT	10
@@ -176,8 +175,6 @@ struct mbuf {
 	}
 //liai 
 //MALLOC((m), struct mbuf *, MSIZE, mbtypes[type], (how));
-void* malloc(unsigned int size);
-void free(caddr_t m);
 
 extern void *liai_malloc(u_long size);
 #define	MALLOC(space, cast, size, type, flags) (space) = (cast)liai_malloc((u_long)(size))

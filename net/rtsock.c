@@ -1,38 +1,3 @@
-/*
- * Copyright (c) 1988, 1991, 1993
- *	The Regents of the University of California.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgement:
- *	This product includes software developed by the University of
- *	California, Berkeley and its contributors.
- * 4. Neither the name of the University nor the names of its contributors
- *    may be used to endorse or promote products derived from this software
- *    without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- *
- *	@(#)rtsock.c	8.6 (Berkeley) 2/11/95
- */
-
 #include <sys/param.h>
 #include <sys/systm.h>
 #include <sys/proc.h>
@@ -45,7 +10,7 @@
 #include <net/if.h>
 #include <net/route.h>
 #include <net/raw_cb.h>
-
+#if 0
 struct	sockaddr route_dst = { 2, PF_ROUTE, };
 struct	sockaddr route_src = { 2, PF_ROUTE, };
 struct	sockproto route_proto = { PF_ROUTE, };
@@ -103,7 +68,7 @@ route_usrreq(so, req, m, nam, control)
 	if (req == PRU_ATTACH && rp) {
 		int af = rp->rcb_proto.sp_protocol;
 		if (error) {
-			free((caddr_t)rp, M_PCB);
+			free((caddr_t)rp);
 			splx(s);
 			return (error);
 		}
@@ -523,9 +488,9 @@ again:
 		if (rw->w_needed <= 0 && rw->w_where) {
 			if (rw->w_tmemsize < len) {
 				if (rw->w_tmem)
-					free(rw->w_tmem, M_RTABLE);
+					free(rw->w_tmem);
 				if (rw->w_tmem = (caddr_t)
-						malloc(len, M_RTABLE, M_NOWAIT))
+						malloc(len))
 					rw->w_tmemsize = len;
 			}
 			if (rw->w_tmem) {
@@ -805,7 +770,7 @@ sysctl_rtable(name, namelen, where, given, new, newlen)
 	}
 	splx(s);
 	if (w.w_tmem)
-		free(w.w_tmem, M_RTABLE);
+		free(w.w_tmem);
 	w.w_needed += w.w_given;
 	if (where) {
 		*given = w.w_where - where;
@@ -821,6 +786,7 @@ sysctl_rtable(name, namelen, where, given, new, newlen)
  * Definitions of protocols supported in the ROUTE domain.
  */
 
+//liai todo open it 
 extern	struct domain routedomain;		/* or at least forward */
 
 struct protosw routesw[] = {
@@ -835,3 +801,5 @@ struct protosw routesw[] = {
 struct domain routedomain =
     { PF_ROUTE, "route", route_init, 0, 0,
       routesw, &routesw[sizeof(routesw)/sizeof(routesw[0])] };
+#endif
+

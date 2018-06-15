@@ -1,0 +1,3 @@
+---- if_init Matches (2 in 2 files) ----
+If.h (net):	int	(*if_init)		/* init routine */
+If_wp.c (dev):	ifp->if_init = wpinit;

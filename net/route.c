@@ -99,7 +99,8 @@ rtalloc1(dst, report)
 	register struct radix_node *rn;
 	struct rtentry *newrt = 0;
 	struct rt_addrinfo info;
-	int  s = splnet(), err = 0, msgtype = RTM_MISS;
+    int err = 0, msgtype = RTM_MISS;
+	//int  s = splnet();
 
 	if (rnh && (rn = rnh->rnh_matchaddr((caddr_t)dst, rnh)) &&
 	    ((rn->rn_flags & RNF_ROOT) == 0)) {
@@ -126,7 +127,7 @@ rtalloc1(dst, report)
 			rt_missmsg(msgtype, &info, 0, err);
 		}
 	}
-	splx(s);
+	//splx(s);
 	return (newrt);
 }
 
@@ -160,8 +161,9 @@ ifafree(ifa)
 {
 	if (ifa == NULL)
 		panic("ifafree");
-	if (ifa->ifa_refcnt == 0)
-		free(ifa, M_IFADDR);
+	if (ifa->ifa_refcnt == 0) {
+		Free(ifa);
+	}
 	else
 		ifa->ifa_refcnt--;
 }
@@ -261,6 +263,7 @@ out:
 	info.rti_info[RTAX_NETMASK] = netmask;
 	info.rti_info[RTAX_AUTHOR] = src;
 	rt_missmsg(RTM_REDIRECT, &info, flags, error);
+    return 0;
 }
 
 /*
@@ -329,7 +332,8 @@ rtrequest(req, dst, gateway, netmask, flags, ret_nrt)
 	struct sockaddr *dst, *gateway, *netmask;
 	struct rtentry **ret_nrt;
 {
-	int s = splnet(); int error = 0;
+	//int s = splnet(); 
+	int error = 0;
 	register struct rtentry *rt;
 	register struct radix_node *rn;
 	register struct radix_node_head *rnh;
@@ -415,7 +419,7 @@ rtrequest(req, dst, gateway, netmask, flags, ret_nrt)
 		break;
 	}
 bad:
-	splx(s);
+	//splx(s);
 	return (error);
 }
 

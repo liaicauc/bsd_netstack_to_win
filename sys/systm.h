@@ -130,9 +130,9 @@ void	printf __P((const char *, ...));
 int	sprintf __P((char *buf, const char *, ...));
 void	ttyprintf __P((struct tty *, const char *, ...));
 
-void	bcopy __P((const void *from, void *to, u_int len));
+//void	bcopy __P((const void *from, void *to, u_int len));
 void	ovbcopy __P((const void *from, void *to, u_int len));
-void	bzero __P((void *buf, u_int len));
+//void	bzero __P((void *buf, u_int len));
 
 int	copystr __P((void *kfaddr, void *kdaddr, u_int len, u_int *done));
 int	copyinstr __P((void *udaddr, void *kaddr, u_int len, u_int *done));
@@ -152,6 +152,7 @@ int	suword __P((void *base, int word));
 int	suiword __P((void *base, int word));
 
 int	hzto __P((struct timeval *tv));
+void	timerinit();
 void	timeout __P((void (*func)(void *), void *arg, int ticks));
 void	untimeout __P((void (*func)(void *), void *arg));
 void	realitexpire __P((void *));

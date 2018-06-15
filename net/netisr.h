@@ -59,6 +59,8 @@
 #define	NETISR_CCITT	10		/* same as AF_CCITT */
 #define	NETISR_ARP	18		/* same as AF_LINK */
 
+//liai todo implement setsoftnet()
+#define setsoftnet() 0
 #define	schednetisr(anisr)	{ netisr |= 1<<(anisr); setsoftnet(); }
 
 #ifdef i386

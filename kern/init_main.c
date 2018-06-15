@@ -52,21 +52,40 @@ of California by American Telephone and Telegraph
 #include <sys/syslog.h>
 #include <sys/domain.h>
 #include <sys/protosw.h>
+#include <sys/device.h>
 
-//liai todo relpace liai_malloc after tesing
+extern void wpattach();
+
+struct pdevinit pdevinit[] =
+{
+	{ wpattach, 1 },
+	{ 0, 0 }
+};
+
+//liai todo for debugging purpose relpace liai_malloc after tesing
 void *liai_malloc(u_long size)
 {
 	return malloc(size);
 }
 
-void main()
+
+void main1()
 {
+    struct pdevinit *pdev;
+    
 	mbinit();
-	//ifinit();
+   
+  	for (pdev = pdevinit; pdev->pdev_attach != NULL; pdev++)
+		(*pdev->pdev_attach)(pdev->pdev_count);
+    
+    ifinit();
 	//domaininit();
-	
+
+    //winpacap_intf int & start the loop
+    //wpstartup();
 	return;
 }
+
 
 #if  0
 #include <sys/param.h>

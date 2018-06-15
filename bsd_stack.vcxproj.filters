@@ -27,22 +27,49 @@
     <ClCompile Include="kern\log.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="kern\interfaces.h">
+    <ClCompile Include="kern\init_main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="kern\interfaces.c">
+    <ClCompile Include="dev\winpcap_intf.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="net\if.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="net\if_loop.c">
+    <ClCompile Include="net\if_wp.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="kern\init_main.c">
+    <ClCompile Include="libkern\timeout.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="dev\winpcap_intf.c">
+    <ClCompile Include="net\if_ethersubr.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="net\route.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="net\radix.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="net\rtsock.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kern\uipc_domain.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\in_proto.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test\stubs.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netinet\ip_input.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test\main.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test\vars.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1374,6 +1401,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="kern\log.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="kern\interfaces.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="net\if_wp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

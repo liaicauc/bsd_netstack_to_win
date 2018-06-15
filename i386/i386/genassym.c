@@ -56,6 +56,7 @@ static char sccsid[] = "@(#)genassym.c	8.2 (Berkeley) 9/23/93";
 #include <vm/vm.h>
 #include <sys/user.h>
 
+#if 0
 main()
 {
 	struct proc *p = (struct proc *)0;
@@ -158,3 +159,5 @@ main()
 	printf("#define\tENAMETOOLONG %d\n", ENAMETOOLONG);
 	exit(0);
 }
+#endif
+

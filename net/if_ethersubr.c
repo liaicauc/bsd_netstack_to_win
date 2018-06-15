@@ -145,101 +145,6 @@ ether_output(ifp, m0, dst, rt0)
 		type = ETHERTYPE_IP;
 		break;
 #endif
-#ifdef NS
-	case AF_NS:
-		type = ETHERTYPE_NS;
- 		bcopy((caddr_t)&(((struct sockaddr_ns *)dst)->sns_addr.x_host),
-		    (caddr_t)edst, sizeof (edst));
-		if (!bcmp((caddr_t)edst, (caddr_t)&ns_thishost, sizeof(edst)))
-			return (looutput(ifp, m, dst, rt));
-		/* If broadcasting on a simplex interface, loopback a copy */
-		if ((m->m_flags & M_BCAST) && (ifp->if_flags & IFF_SIMPLEX))
-			mcopy = m_copy(m, 0, (int)M_COPYALL);
-		break;
-#endif
-#ifdef	ISO
-	case AF_ISO: {
-		int	snpalen;
-		struct	llc *l;
-		register struct sockaddr_dl *sdl;
-
-		if (rt && (sdl = (struct sockaddr_dl *)rt->rt_gateway) &&
-		    sdl->sdl_family == AF_LINK && sdl->sdl_alen > 0) {
-			bcopy(LLADDR(sdl), (caddr_t)edst, sizeof(edst));
-		} else if (error =
-			    iso_snparesolve(ifp, (struct sockaddr_iso *)dst,
-					    (char *)edst, &snpalen))
-			goto bad; /* Not Resolved */
-		/* If broadcasting on a simplex interface, loopback a copy */
-		if (*edst & 1)
-			m->m_flags |= (M_BCAST|M_MCAST);
-		if ((m->m_flags & M_BCAST) && (ifp->if_flags & IFF_SIMPLEX) &&
-		    (mcopy = m_copy(m, 0, (int)M_COPYALL))) {
-			M_PREPEND(mcopy, sizeof (*eh), M_DONTWAIT);
-			if (mcopy) {
-				eh = mtod(mcopy, struct ether_header *);
-				bcopy((caddr_t)edst,
-				      (caddr_t)eh->ether_dhost, sizeof (edst));
-				bcopy((caddr_t)ac->ac_enaddr,
-				      (caddr_t)eh->ether_shost, sizeof (edst));
-			}
-		}
-		M_PREPEND(m, 3, M_DONTWAIT);
-		if (m == NULL)
-			return (0);
-		type = m->m_pkthdr.len;
-		l = mtod(m, struct llc *);
-		l->llc_dsap = l->llc_ssap = LLC_ISO_LSAP;
-		l->llc_control = LLC_UI;
-		len += 3;
-		IFDEBUG(D_ETHER)
-			int i;
-			printf("unoutput: sending pkt to: ");
-			for (i=0; i<6; i++)
-				printf("%x ", edst[i] & 0xff);
-			printf("\n");
-		ENDDEBUG
-		} break;
-#endif /* ISO */
-#ifdef	LLC
-/*	case AF_NSAP: */
-	case AF_CCITT: {
-		register struct sockaddr_dl *sdl = 
-			(struct sockaddr_dl *) rt -> rt_gateway;
-
-		if (sdl && sdl->sdl_family == AF_LINK
-		    && sdl->sdl_alen > 0) {
-			bcopy(LLADDR(sdl), (char *)edst,
-				sizeof(edst));
-		} else goto bad; /* Not a link interface ? Funny ... */
-		if ((ifp->if_flags & IFF_SIMPLEX) && (*edst & 1) &&
-		    (mcopy = m_copy(m, 0, (int)M_COPYALL))) {
-			M_PREPEND(mcopy, sizeof (*eh), M_DONTWAIT);
-			if (mcopy) {
-				eh = mtod(mcopy, struct ether_header *);
-				bcopy((caddr_t)edst,
-				      (caddr_t)eh->ether_dhost, sizeof (edst));
-				bcopy((caddr_t)ac->ac_enaddr,
-				      (caddr_t)eh->ether_shost, sizeof (edst));
-			}
-		}
-		type = m->m_pkthdr.len;
-#ifdef LLC_DEBUG
-		{
-			int i;
-			register struct llc *l = mtod(m, struct llc *);
-
-			printf("ether_output: sending LLC2 pkt to: ");
-			for (i=0; i<6; i++)
-				printf("%x ", edst[i] & 0xff);
-			printf(" len 0x%x dsap 0x%x ssap 0x%x control 0x%x\n", 
-			       type & 0xff, l->llc_dsap & 0xff, l->llc_ssap &0xff,
-			       l->llc_control & 0xff);
-
-		}
-#endif /* LLC_DEBUG */
-		} break;
-#endif /* LLC */	
 
 	case AF_UNSPEC:
 		eh = (struct ether_header *)dst->sa_data;
@@ -252,10 +157,10 @@ ether_output(ifp, m0, dst, rt0)
 			dst->sa_family);
 		senderr(EAFNOSUPPORT);
 	}
-
-
-	if (mcopy)
-		(void) looutput(ifp, mcopy, dst, rt);
+    
+    //liai todo open it once loop interface was added
+	//if (mcopy)
+		//(void) looutput(ifp, mcopy, dst, rt);
 	/*
 	 * Add local net header.  If no space in first mbuf,
 	 * allocate another.
@@ -574,7 +479,7 @@ ether_addmulti(ifr, ac)
 	 * New address or range; malloc a new multicast record
 	 * and link it into the interface's multicast list.
 	 */
-	enm = (struct ether_multi *)malloc(sizeof(*enm), M_IFMADDR, M_NOWAIT);
+	enm = (struct ether_multi *)malloc(sizeof(*enm));
 	if (enm == NULL) {
 		//splx(s);
 		return (ENOBUFS);
@@ -663,7 +568,7 @@ ether_delmulti(ifr, ac)
 	     p = &(*p)->enm_next)
 		continue;
 	*p = (*p)->enm_next;
-	free(enm, M_IFMADDR);
+	free((caddr_t)enm);
 	ac->ac_multicnt--;
 	//splx(s);
 	/*

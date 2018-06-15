@@ -83,13 +83,16 @@
       <WarningLevel>Level1</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>INET;KERNEL;__LP64__;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>./;dev/winpcap/</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>INET;KERNEL;__LP64__;_MBCS;%(PreprocessorDefinitions);</PreprocessorDefinitions>
       <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Bscmake>
       <PreserveSbr>true</PreserveSbr>
     </Bscmake>
+    <Link>
+      <AdditionalDependencies>D:\BSD_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\dev\winpcap\Lib\x64\wpcap.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -120,12 +123,21 @@
   <ItemGroup>
     <ClCompile Include="dev\winpcap_intf.c" />
     <ClCompile Include="kern\init_main.c" />
-    <ClCompile Include="kern\interfaces.c" />
-    <ClCompile Include="kern\interfaces.h" />
     <ClCompile Include="kern\log.c" />
+    <ClCompile Include="kern\uipc_domain.c" />
     <ClCompile Include="kern\uipc_mbuf.c" />
+    <ClCompile Include="libkern\timeout.c" />
+    <ClCompile Include="netinet\in_proto.c" />
+    <ClCompile Include="netinet\ip_input.c" />
     <ClCompile Include="net\if.c" />
-    <ClCompile Include="net\if_loop.c" />
+    <ClCompile Include="net\if_ethersubr.c" />
+    <ClCompile Include="net\if_wp.c" />
+    <ClCompile Include="net\radix.c" />
+    <ClCompile Include="net\route.c" />
+    <ClCompile Include="net\rtsock.c" />
+    <ClCompile Include="test\main.c" />
+    <ClCompile Include="test\stubs.c" />
+    <ClCompile Include="test\vars.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="i386\include\ansi.h" />
@@ -159,6 +171,7 @@
     <ClInclude Include="i386\include\types.h" />
     <ClInclude Include="i386\include\varargs.h" />
     <ClInclude Include="i386\include\vmparam.h" />
+    <ClInclude Include="kern\interfaces.h" />
     <ClInclude Include="kern\log.h" />
     <ClInclude Include="netinet\cc\cc.h" />
     <ClInclude Include="netinet\cc\cc_cubic.h" />
@@ -247,6 +260,7 @@
     <ClInclude Include="net\if_llc.h" />
     <ClInclude Include="net\if_slvar.h" />
     <ClInclude Include="net\if_types.h" />
+    <ClInclude Include="net\if_wp.h" />
     <ClInclude Include="net\netisr.h" />
     <ClInclude Include="net\radix.h" />
     <ClInclude Include="net\raw_cb.h" />

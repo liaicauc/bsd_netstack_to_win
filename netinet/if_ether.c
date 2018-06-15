@@ -1,43 +1,3 @@
-/*
- * Copyright (c) 1982, 1986, 1988, 1993
- *	The Regents of the University of California.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgement:
- *	This product includes software developed by the University of
- *	California, Berkeley and its contributors.
- * 4. Neither the name of the University nor the names of its contributors
- *    may be used to endorse or promote products derived from this software
- *    without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- *
- *	@(#)if_ether.c	8.2 (Berkeley) 9/26/94
- */
-
-/*
- * Ethernet address resolution protocol.
- * TODO:
- *	add "inuse/lock" bit (or ref. count) along with valid bit
- */
 
 #include <sys/param.h>
 #include <sys/systm.h>
@@ -100,7 +60,7 @@ static void
 arptimer(ignored_arg)
 	void *ignored_arg;
 {
-	int s = splnet();
+	//int s = splnet();
 	register struct llinfo_arp *la = llinfo_arp.la_next;
 
 	timeout(arptimer, (caddr_t)0, arpt_prune * hz);
@@ -110,7 +70,7 @@ arptimer(ignored_arg)
 		if (rt->rt_expire && rt->rt_expire <= time.tv_sec)
 			arptfree(la->la_prev); /* timer has expired, clear */
 	}
-	splx(s);
+	//splx(s);
 }
 
 /*
@@ -122,6 +82,7 @@ arp_rtrequest(req, rt, sa)
 	register struct rtentry *rt;
 	struct sockaddr *sa;
 {
+    #if 1
 	register struct sockaddr *gate = rt->rt_gateway;
 	register struct llinfo_arp *la = (struct llinfo_arp *)rt->rt_llinfo;
 	static struct sockaddr_dl null_sdl = {sizeof(null_sdl), AF_LINK};
@@ -219,6 +180,7 @@ arp_rtrequest(req, rt, sa)
 			m_freem(la->la_hold);
 		Free((caddr_t)la);
 	}
+    #endif
 }
 
 /*

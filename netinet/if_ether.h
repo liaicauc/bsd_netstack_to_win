@@ -58,6 +58,9 @@ struct	ether_header {
 #define	ETHERMTU	1500
 #define	ETHERMIN	(60-14)
 
+#define	MAC_ADDRESS_LEN	6
+
+
 #ifdef KERNEL
 /*
  * Macro to map an IP multicast address to an Ethernet multicast address.
