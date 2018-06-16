@@ -1,5 +1,8 @@
 #include <pcap.h>
 
+
+//ip_input test stub
+#if 0
 main()
 {
 	pcap_if_t *alldevs;
@@ -33,3 +36,4 @@ main()
 	/* We don't need any more the device list. Free it */
 	pcap_freealldevs(alldevs);
 }
+#endif

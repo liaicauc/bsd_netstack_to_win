@@ -2,6 +2,7 @@
 #include <sys/systm.h>
 #include <sys/mbuf.h>
 #include <sys/socket.h>
+#include <sys/sockio.h>
 
 #include <net/if.h>
 #include <net/netisr.h>
@@ -21,7 +22,8 @@
 extern char lh_mac_address[6];
 extern char lh_ip_address[4];
 
-struct wp_softc wp_softc = {0};
+extern struct wp_softc wp_softc;
+extern struct ifnet *ifnet;
 
 int wpinit()
 {
@@ -91,7 +93,6 @@ int wpreset()
 	return 0;
 }
 
-#define SIOCSIFADDR 12
 int wpioctl(ifp, cmd, data)
 	register struct ifnet *ifp;
 	int cmd;

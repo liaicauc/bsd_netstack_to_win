@@ -2,8 +2,9 @@
 #include <stdio.h>
 
 int hz = 1000;
+HANDLE hTimerQueue;
 
-void timeout(void(*ftn) (void *), void *arg, register int ticks)
+init_timer()
 {
 	HANDLE hTimer = NULL;
 	HANDLE hTimerQueue = CreateTimerQueue();
@@ -13,7 +14,11 @@ void timeout(void(*ftn) (void *), void *arg, register int ticks)
 		printf("CreateTimerQueue failed (%d)\n", GetLastError());
 		return;
 	}
+}
 
+void timeout(void(*ftn) (void *), void *arg, register int ticks)
+{
+	HANDLE hTimer = NULL;
 	if (!CreateTimerQueueTimer(&hTimer, hTimerQueue,
 		(WAITORTIMERCALLBACK)ftn, arg, ticks, 0, 0))
 	{

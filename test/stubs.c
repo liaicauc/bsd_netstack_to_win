@@ -19,15 +19,24 @@
 #include <netinet/in_var.h>
 #include <netinet/ip.h>
 #include <netinet/if_ether.h>
+#include <test/vars.h>
+
+//liai todo
+void m_reclaim()
+{
+	
+}
 
 int
 arpresolve(
-register struct arpcom *ac,
-register struct rtentry *rt,
-struct mbuf *m,
-register struct sockaddr *dst,
-register unsigned char *desten)
+    register struct arpcom *ac,
+    register struct rtentry *rt,
+    struct mbuf *m,
+    register struct sockaddr *dst,
+    register unsigned char *desten)
 {
+    char dhost[6] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05};
+    bcopy(dhost, desten, 6);   
 	return 1;
 }
 

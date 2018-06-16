@@ -1,22 +1,9 @@
-#include <sys/param.h>
-#include <sys/systm.h>
+#include "stdio.h"
+#include "sys/param.h"
+#include "sys/types.h"
 #include <sys/mbuf.h>
-#include <sys/socket.h>
-#include <sys/sockio.h>
-
-#include <net/if.h>
-#include <net/netisr.h>
-#include <net/route.h>
-
-#ifdef INET
-#include <netinet/in.h>
-#include <netinet/in_systm.h>
-#include <netinet/in_var.h>
-#include <netinet/ip.h>
-#include <netinet/if_ether.h>
-#endif
-#include <net/if_wp.h>
-#include <test/vars.h>
+#include <kern/log.h>
+#include <libkern/libkern.h>
 
 //timeout test stub
 #if 0
@@ -35,11 +22,10 @@ void main()
 
 #if 1
 // a udp pkt with ethernet header 
-//eth_header: 0x00, 0x50, 0x56, 0x87, 0x60, 0x02, 0x94, 0xde, 0x80, 0x70, 0x65, 0xdf, 0x08, 0x00,
-//used for testing purpose, length = 0xb4(180)
+//used for testing purpose, length = 
 char audp_pkt[] = 
 {
-    0x45, 0x00,
+    0x00, 0x50, 0x56, 0x87, 0x60, 0x02, 0x94, 0xde, 0x80, 0x70, 0x65, 0xdf, 0x08, 0x00, 0x45, 0x00,
     0x00, 0xb4, 0x71, 0xdf, 0x00, 0x00, 0x80, 0x11, 0x00, 0x00, 0xc0, 0xa8, 0x01, 0x99, 0x68, 0xee,
     0x2b, 0x31, 0xe0, 0xec, 0xb1, 0x07, 0x00, 0xa0, 0x57, 0x12, 0x17, 0x01, 0x02, 0x03, 0x04, 0x05,
     0x06, 0x07, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15,
@@ -56,8 +42,7 @@ char audp_pkt[] =
 
 #define false 0
 #define true 1
-struct mbuf*
-mbuf_copyin(char *buf, unsigned blen)
+void mbuf_copyin(char *buf, unsigned blen)
 {
 	struct mbuf *m = NULL, *fm = NULL;
 	struct mbuf **mp = NULL;
@@ -91,19 +76,13 @@ mbuf_copyin(char *buf, unsigned blen)
 	
 	fm->m_pkthdr.len = blen;
 	fm->m_pkthdr.rcvif = NULL;
-    return fm;
 }
 
 void main()
 {
-	struct mbuf *m;
-
     main1(); 
-    m = mbuf_copyin(audp_pkt, sizeof(audp_pkt));
-    wpif->if_ioctl(wpif, SIOCSIFADDR, &tifaddr);
-    tifaddr.ia_addr.sin_addr.s_addr = 0x9901a8c0;
-    wpif->if_output(wpif, m, &hcdst, 0);
+    mbuf_copyin(audp_pkt, sizeof(audp_pkt));
+    wpif->ioctl(wpif, SIOCSIFADDR, inifaddr);
     return;
 }
 #endif
-

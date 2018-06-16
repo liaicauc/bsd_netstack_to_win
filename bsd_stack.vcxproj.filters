@@ -72,6 +72,9 @@
     <ClCompile Include="test\vars.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="libkern\min_max.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="netinet\cc\cc.h">
@@ -1407,6 +1410,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="net\if_wp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="libkern\libkern.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

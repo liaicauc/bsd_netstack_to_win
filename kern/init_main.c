@@ -72,13 +72,15 @@ void *liai_malloc(u_long size)
 void main1()
 {
     struct pdevinit *pdev;
-    
+
+    init_timer();
 	mbinit();
    
   	for (pdev = pdevinit; pdev->pdev_attach != NULL; pdev++)
 		(*pdev->pdev_attach)(pdev->pdev_count);
     
     ifinit();
+    
 	//domaininit();
 
     //winpacap_intf int & start the loop

@@ -24,8 +24,8 @@ int wpcreate()
         fprintf(stderr,"\nUnable to open the adapter. %s is not supported by WinPcap\n", wpintf_name);
         return -1;
     }
-    pcap_loop(adhandle, 0, packet_handler, NULL);
-    
+	//liai todo start the loop later =
+    //pcap_loop(adhandle, 0, packet_handler, NULL);
     return 0;
 }
 

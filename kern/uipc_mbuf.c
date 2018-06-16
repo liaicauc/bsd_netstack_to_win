@@ -52,17 +52,6 @@
 #include <kern/log.h>
 #include <libkern/libkern.h>
 
-u_int max(u_int a, u_int b)
-{
-	return (a < b) ? a : b;
-}
-
-u_int min(u_int a, u_int b) 
-{
-    return (a < b) ? a : b;
-}
-
-
 struct	mbuf *mbutl;
 char	*mclrefcnt;
     
@@ -148,13 +137,6 @@ m_retryhdr(i, t)
 	MGETHDR(m, i, t);
 #undef m_retryhdr
 	return (m);
-}
-
-//liai todo
-// clear #if 0 after domain was added
-void m_reclaim()
-{
-	
 }
 #if 0
 void

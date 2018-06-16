@@ -126,6 +126,7 @@
     <ClCompile Include="kern\log.c" />
     <ClCompile Include="kern\uipc_domain.c" />
     <ClCompile Include="kern\uipc_mbuf.c" />
+    <ClCompile Include="libkern\min_max.c" />
     <ClCompile Include="libkern\timeout.c" />
     <ClCompile Include="netinet\in_proto.c" />
     <ClCompile Include="netinet\ip_input.c" />
@@ -173,6 +174,7 @@
     <ClInclude Include="i386\include\vmparam.h" />
     <ClInclude Include="kern\interfaces.h" />
     <ClInclude Include="kern\log.h" />
+    <ClInclude Include="libkern\libkern.h" />
     <ClInclude Include="netinet\cc\cc.h" />
     <ClInclude Include="netinet\cc\cc_cubic.h" />
     <ClInclude Include="netinet\cc\cc_module.h" />

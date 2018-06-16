@@ -141,7 +141,7 @@ ether_output(ifp, m0, dst, rt0)
 		/* If broadcasting on a simplex interface, loopback a copy */
 		if ((m->m_flags & M_BCAST) && (ifp->if_flags & IFF_SIMPLEX))
 			mcopy = m_copy(m, 0, (int)M_COPYALL);
-		off = m->m_pkthdr.len - m->m_len;
+		//off = m->m_pkthdr.len - m->m_len;
 		type = ETHERTYPE_IP;
 		break;
 #endif
