@@ -9,11 +9,10 @@
 
 extern void *malloc(unsigned int size);
 extern void free(void *);
-
 extern unsigned int max(unsigned int, unsigned int);
 extern unsigned int min(unsigned int, unsigned int);
-
 extern void log(int level, char *fmt, ...);
 extern void panic(char *msg);
+extern void scheduler();
 
 #endif

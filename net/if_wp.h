@@ -10,5 +10,6 @@ struct wp_softc
 #define	sc_addr	sc_ac.ac_enaddr	/* hardware Ethernet address */
     unsigned int reserved;
 };
+#define WPI_RUNNING 1
 
 #endif

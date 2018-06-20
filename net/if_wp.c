@@ -3,6 +3,7 @@
 #include <sys/mbuf.h>
 #include <sys/socket.h>
 #include <sys/sockio.h>
+#include <sys/syslog.h>
 
 #include <net/if.h>
 #include <net/netisr.h>
@@ -16,6 +17,7 @@
 #include <netinet/if_ether.h>
 #endif
 #include <net/if_wp.h>
+#include <test/vars.h>
 
 //liai todo this is the my workstation's ip, change it to a proper one
 // after this project is done
@@ -29,7 +31,14 @@ int wpinit()
 {
 	register struct ifnet *ifp = &wp_softc.sc_if;
 
-    ifp->if_flags |= IFF_RUNNING;
+	if ((ifp->if_flags & IFF_RUNNING) == 0) {
+        //liai todo implement those later
+		//s = splimp();
+		ifp->if_flags |= IFF_RUNNING;
+		//wpreset(unit);
+	    //(void) wpstart(ifp);
+		//splx(s);
+	}
 	return 0;
 }
 
@@ -61,7 +70,7 @@ wpput(wpbuf, m)
 	}
 	return(tlen);
 }
-
+    
 /*
  * startting transmit a packet
  * get the ongoing packet from Ifnet queue
@@ -99,15 +108,29 @@ int wpioctl(ifp, cmd, data)
 	caddr_t data;
 {   
     register struct ifaddr *ifa = (struct ifaddr *)data;
+    struct wp_softc *wp = &wp_softc;
     
     switch (cmd) {
+        case SIOCSIFFLAGS:
+            if ((ifp->if_flags & IFF_UP) == 0 &&
+                ifp->if_flags & IFF_RUNNING) {
+                wpdown();
+                ifp->if_flags &= ~IFF_RUNNING;
+            } else if (ifp->if_flags & IFF_UP &&
+                (ifp->if_flags & IFF_RUNNING) == 0) {
+                wpinit();
+                wpup();
+            }
+            break;
+
         case SIOCSIFADDR:
             ifp->if_flags |= IFF_UP;
-
-            wpinit(ifp->if_unit);	
+            wpup();
+            wpinit();   
             ((struct arpcom *)ifp)->ac_ipaddr = IA_SIN(ifa)->sin_addr;
             //liai todo 
             //arpwhohas((struct arpcom *)ifp, &IA_SIN(ifa)->sin_addr);
+            //
             break;
         default:
             printf("wpioctl(): option not support yet\n");
@@ -121,9 +144,7 @@ int wpattach()
 	struct wp_softc *wp = &wp_softc;
 	struct ifnet *ifp = &wp->sc_if;
     int i;
-
-   wpcreate();
-   
+  
     for(i = 0; i < MAC_ADDRESS_LEN; i++) 
         wp->sc_addr[i] = lh_mac_address[i];  
         
@@ -138,7 +159,42 @@ int wpattach()
 	ifp->if_flags = IFF_BROADCAST | IFF_SIMPLEX | IFF_MULTICAST;
 
 	if_attach(ifp);
-    //wpcreate();
 	return (1);
 }
+
+void
+wpread(char *buf, int len)
+{
+    register struct wp_softc *wp = &wp_softc;
+    register struct ether_header *et;
+    struct mbuf *m;
+    int flags;
+
+    wp->sc_if.if_ipackets++;
+    et = (struct ether_header *)buf;
+    et->ether_type = ntohs((u_short)et->ether_type);
+    len = len - sizeof(struct ether_header);
+    if (len <= 0) {
+        if (dbg_swc)
+            log(LOG_WARNING,
+                "wp: ierror(runt packet): from %s: len=%d\n",
+                ether_sprintf(et->ether_shost), len);
+        wp->sc_if.if_ierrors++;
+        return;
+    }
+    
+    flags = 0;
+    if (bcmp((caddr_t)etherbroadcastaddr,
+        (caddr_t)et->ether_dhost, sizeof(etherbroadcastaddr)) == 0)
+        flags |= M_BCAST;
+    if (et->ether_dhost[0] & 1)
+        flags |= M_MCAST;
+
+    m = m_devget((char *)(et + 1), len, 0, &wp->sc_if, 0);
+    if (m == 0)
+        return;
+    m->m_flags |= flags;
+    ether_input(&wp->sc_if, et, m);
+}
+
 

@@ -126,7 +126,9 @@
     <ClCompile Include="kern\log.c" />
     <ClCompile Include="kern\uipc_domain.c" />
     <ClCompile Include="kern\uipc_mbuf.c" />
+    <ClCompile Include="libkern\event.c" />
     <ClCompile Include="libkern\min_max.c" />
+    <ClCompile Include="libkern\thread.c" />
     <ClCompile Include="libkern\timeout.c" />
     <ClCompile Include="netinet\in_proto.c" />
     <ClCompile Include="netinet\ip_input.c" />
@@ -138,6 +140,7 @@
     <ClCompile Include="net\rtsock.c" />
     <ClCompile Include="test\main.c" />
     <ClCompile Include="test\stubs.c" />
+    <ClCompile Include="test\ut.c" />
     <ClCompile Include="test\vars.c" />
   </ItemGroup>
   <ItemGroup>
@@ -174,6 +177,7 @@
     <ClInclude Include="i386\include\vmparam.h" />
     <ClInclude Include="kern\interfaces.h" />
     <ClInclude Include="kern\log.h" />
+    <ClInclude Include="libkern\event.h" />
     <ClInclude Include="libkern\libkern.h" />
     <ClInclude Include="netinet\cc\cc.h" />
     <ClInclude Include="netinet\cc\cc_cubic.h" />
@@ -587,9 +591,11 @@
     <ClInclude Include="sys\_uio.h" />
     <ClInclude Include="sys\_umtx.h" />
     <ClInclude Include="sys\_unrhdr.h" />
+    <ClInclude Include="test\vars.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
+    <None Include="test\main.c~" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

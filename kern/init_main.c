@@ -73,18 +73,24 @@ void main1()
 {
     struct pdevinit *pdev;
 
+    //liai todo collet those to init_win();
     init_timer();
+    init_event();
+    
 	mbinit();
    
   	for (pdev = pdevinit; pdev->pdev_attach != NULL; pdev++)
 		(*pdev->pdev_attach)(pdev->pdev_count);
-    
-    ifinit();
-    
-	//domaininit();
 
-    //winpacap_intf int & start the loop
-    //wpstartup();
+    //s = splimp();
+    //liai todo
+    ifinit();
+    //domaininit();
+    //splx(s);
+
+    /* The start_recv is an infinite loop to recv packets from winpcap. */
+    //start_recv();
+    //scheduler();
 	return;
 }
 

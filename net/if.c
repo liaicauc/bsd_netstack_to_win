@@ -327,9 +327,10 @@ if_down(ifp)
 	register struct ifaddr *ifa;
 
 	ifp->if_flags &= ~IFF_UP;
-
+#if 0
 	for (ifa = ifp->if_addrlist; ifa; ifa = ifa->ifa_next)
 		pfctlinput(PRC_IFDOWN, ifa->ifa_addr);
+#endif
 	if_qflush(&ifp->if_snd);
 	rt_ifmsg(ifp);
 }
@@ -346,10 +347,12 @@ if_up(ifp)
 	register struct ifaddr *ifa;
 
 	ifp->if_flags |= IFF_UP;
+#if 0    
 #ifdef notyet
 	/* this has no effect on IP, and will kill all iso connections XXX */
 	for (ifa = ifp->if_addrlist; ifa; ifa = ifa->ifa_next)
 		pfctlinput(PRC_IFUP, ifa->ifa_addr);
+#endif
 #endif
 	rt_ifmsg(ifp);
 }
@@ -509,41 +512,41 @@ ifioctl(so, cmd, data, p)
 			cmd, data, ifp));
 #else
 	    {
-		int ocmd = cmd;
+    		int ocmd = cmd;
 
-		switch (cmd) {
+    		switch (cmd) {
 
-		case SIOCSIFDSTADDR:
-		case SIOCSIFADDR:
-		case SIOCSIFBRDADDR:
-		case SIOCSIFNETMASK:
+    		case SIOCSIFDSTADDR:
+    		case SIOCSIFADDR:
+    		case SIOCSIFBRDADDR:
+    		case SIOCSIFNETMASK:
 #if BYTE_ORDER != BIG_ENDIAN
-			if (ifr->ifr_addr.sa_family == 0 &&
-			    ifr->ifr_addr.sa_len < 16) {
-				ifr->ifr_addr.sa_family = ifr->ifr_addr.sa_len;
-				ifr->ifr_addr.sa_len = 16;
-			}
+    			if (ifr->ifr_addr.sa_family == 0 &&
+    			    ifr->ifr_addr.sa_len < 16) {
+    				ifr->ifr_addr.sa_family = ifr->ifr_addr.sa_len;
+    				ifr->ifr_addr.sa_len = 16;
+    			}
 #else
-			if (ifr->ifr_addr.sa_len == 0)
-				ifr->ifr_addr.sa_len = 16;
+    			if (ifr->ifr_addr.sa_len == 0)
+    				ifr->ifr_addr.sa_len = 16;
 #endif
-			break;
+    			break;
 
-		case OSIOCGIFADDR:
-			cmd = SIOCGIFADDR;
-			break;
+    		case OSIOCGIFADDR:
+    			cmd = SIOCGIFADDR;
+    			break;
 
-		case OSIOCGIFDSTADDR:
-			cmd = SIOCGIFDSTADDR;
-			break;
+    		case OSIOCGIFDSTADDR:
+    			cmd = SIOCGIFDSTADDR;
+    			break;
 
-		case OSIOCGIFBRDADDR:
-			cmd = SIOCGIFBRDADDR;
-			break;
+    		case OSIOCGIFBRDADDR:
+    			cmd = SIOCGIFBRDADDR;
+    			break;
 
-		case OSIOCGIFNETMASK:
-			cmd = SIOCGIFNETMASK;
-		}
+    		case OSIOCGIFNETMASK:
+    			cmd = SIOCGIFNETMASK;
+    		}
 		error =  ((*so->so_proto->pr_usrreq)(so, PRU_CONTROL,
 							    cmd, data, ifp));
 		switch (ocmd) {

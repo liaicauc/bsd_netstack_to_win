@@ -1,15 +1,37 @@
-﻿Build started 6/16/2018 9:10:15 PM.
+﻿Build started 6/20/2018 6:36:54 PM.
      1>Project "D:\BSD_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\bsd_stack.vcxproj" on node 2 (Build target(s)).
      1>InitializeBuildStatus:
          Creating "x64\Debug\bsd_stack.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
        ClCompile:
-         All outputs are up-to-date.
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\CL.exe /c /I./ /Idev/winpcap/ /ZI /nologo /W1 /WX- /sdl /Od /D INET /D KERNEL /D __LP64__ /D _MBCS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"x64\Debug\\" /Fd"x64\Debug\vc140.pdb" /FR"x64\Debug\\" /Gd /TC /errorReport:prompt dev\winpcap_intf.c
+         winpcap_intf.c
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\dev\winpcap_intf.c(110): warning C4142: benign redefinition of type
        Link:
-         All outputs are up-to-date.
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"D:\BSD_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\x64\Debug\bsd_stack.exe" /INCREMENTAL /NOLOGO D:\BSD_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\dev\winpcap\Lib\x64\wpcap.lib ws2_32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG:FASTLINK /PDB:"D:\BSD_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\x64\Debug\bsd_stack.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\BSD_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\x64\Debug\bsd_stack.lib" /MACHINE:X64 x64\Debug\winpcap_intf.obj
+         x64\Debug\init_main.obj
+         x64\Debug\log.obj
+         x64\Debug\uipc_domain.obj
+         x64\Debug\uipc_mbuf.obj
+         x64\Debug\event.obj
+         x64\Debug\min_max.obj
+         x64\Debug\thread.obj
+         x64\Debug\timeout.obj
+         x64\Debug\in_proto.obj
+         x64\Debug\ip_input.obj
+         x64\Debug\if.obj
+         x64\Debug\if_ethersubr.obj
+         x64\Debug\if_wp.obj
+         x64\Debug\radix.obj
+         x64\Debug\route.obj
+         x64\Debug\rtsock.obj
+         x64\Debug\main.obj
+         x64\Debug\stubs.obj
+         x64\Debug\ut.obj
+         x64\Debug\vars.obj
          bsd_stack.vcxproj -> D:\BSD_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\x64\Debug\bsd_stack.exe
          bsd_stack.vcxproj -> D:\BSD_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\x64\Debug\bsd_stack.pdb (Partial PDB)
        BscMake:
-         All outputs are up-to-date.
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\bscmake.exe /nologo /o"D:\BSD_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\x64\Debug\bsd_stack.bsc" /n x64\Debug\winpcap_intf.sbr x64\Debug\init_main.sbr x64\Debug\log.sbr x64\Debug\uipc_domain.sbr x64\Debug\uipc_mbuf.sbr x64\Debug\event.sbr x64\Debug\min_max.sbr x64\Debug\thread.sbr x64\Debug\timeout.sbr x64\Debug\in_proto.sbr x64\Debug\ip_input.sbr x64\Debug\if.sbr x64\Debug\if_ethersubr.sbr x64\Debug\if_wp.sbr x64\Debug\radix.sbr x64\Debug\route.sbr x64\Debug\rtsock.sbr x64\Debug\main.sbr x64\Debug\stubs.sbr x64\Debug\ut.sbr x64\Debug\vars.sbr
        FinalizeBuildStatus:
          Deleting file "x64\Debug\bsd_stack.tlog\unsuccessfulbuild".
          Touching "x64\Debug\bsd_stack.tlog\bsd_stack.lastbuildstate".
@@ -17,4 +39,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:00.08
+Time Elapsed 00:00:04.30

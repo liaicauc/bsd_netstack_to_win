@@ -75,6 +75,15 @@
     <ClCompile Include="libkern\min_max.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="libkern\event.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test\ut.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="libkern\thread.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="netinet\cc\cc.h">
@@ -1415,8 +1424,15 @@
     <ClInclude Include="libkern\libkern.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="libkern\event.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="test\vars.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
+    <None Include="test\main.c~" />
   </ItemGroup>
 </Project>

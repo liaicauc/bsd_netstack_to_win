@@ -5,4 +5,6 @@ extern struct wp_softc wp_softc;
 extern struct ifnet *wpif;
 extern struct sockaddr_in hcdst;
 extern struct in_ifaddr tifaddr;
+extern unsigned int wpstate_reg;
+extern int dbg_swc;
 
