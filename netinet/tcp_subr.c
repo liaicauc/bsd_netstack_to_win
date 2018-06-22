@@ -208,7 +208,7 @@ tcp_newtcpcb(inp)
 {
 	register struct tcpcb *tp;
 
-	tp = malloc(sizeof(*tp), M_PCB, M_NOWAIT);
+	tp = malloc(sizeof(*tp));
 	if (tp == NULL)
 		return ((struct tcpcb *)0);
 	bzero((char *) tp, sizeof(struct tcpcb));
@@ -353,7 +353,7 @@ tcp_close(tp)
 	}
 	if (tp->t_template)
 		(void) m_free(dtom(tp->t_template));
-	free(tp, M_PCB);
+	free(tp);
 	inp->inp_ppcb = 0;
 	soisdisconnected(so);
 	/* clobber input pcb cache if we're closing the cached connection */

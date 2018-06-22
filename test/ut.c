@@ -1,5 +1,5 @@
 #include "windows.h"
-#include "libkern\event.h"
+#include "libkern\sync.h"
 
 HANDLE ghThreads[2];
 

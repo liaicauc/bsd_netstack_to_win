@@ -23,7 +23,6 @@
 //liai todo open it when working on IP layer
 struct	ifqueue ipintrq;
 
-#if 0
 #ifndef	IPFORWARDING
 #ifdef GATEWAY
 #define	IPFORWARDING	1	/* forward IP packets not for us */
@@ -107,28 +106,16 @@ struct	route ipforward_rt;
  * try to reassemble.  Process options.  Pass to next level.
  */
 void
-ipintr()
+ipintr(register struct mbuf *m)
 {
 	register struct ip *ip;
-	register struct mbuf *m;
 	register struct ipq *fp;
 	register struct in_ifaddr *ia;
-	int hlen, s;
-
-next:
-	/*
-	 * Get next datagram off input queue and get IP header
-	 * in first mbuf.
-	 */
-	s = splimp();
-	IF_DEQUEUE(&ipintrq, m);
-	splx(s);
-	if (m == 0)
-		return;
-#ifdef	DIAGNOSTIC
+	int hlen, s; 
+    
 	if ((m->m_flags & M_PKTHDR) == 0)
 		panic("ipintr no HDR");
-#endif
+
 	/*
 	 * If no IP addresses have been set yet but the interfaces
 	 * are receiving, can't do anything with incoming packets yet.
@@ -139,7 +126,7 @@ next:
 	if (m->m_len < sizeof (struct ip) &&
 	    (m = m_pullup(m, sizeof (struct ip))) == 0) {
 		ipstat.ips_toosmall++;
-		goto next;
+		return;
 	}
 	ip = mtod(m, struct ip *);
 	if (ip->ip_v != IPVERSION) {
@@ -154,7 +141,7 @@ next:
 	if (hlen > m->m_len) {
 		if ((m = m_pullup(m, hlen)) == 0) {
 			ipstat.ips_badhlen++;
-			goto next;
+			return;
 		}
 		ip = mtod(m, struct ip *);
 	}
@@ -200,7 +187,7 @@ next:
 	 */
 	ip_nhops = 0;		/* for source routed packets */
 	if (hlen > sizeof (struct ip) && ip_dooptions(m))
-		goto next;
+		return;
 
 	/*
 	 * Check our list of addresses, to see if the packet is for us.
@@ -255,7 +242,7 @@ next:
 			if (ip_mforward(m, m->m_pkthdr.rcvif) != 0) {
 				ipstat.ips_cantforward++;
 				m_freem(m);
-				goto next;
+				return;
 			}
 			ip->ip_id = ntohs(ip->ip_id);
 
@@ -277,7 +264,7 @@ next:
 		if (inm == NULL) {
 			ipstat.ips_cantforward++;
 			m_freem(m);
-			goto next;
+			return;
 		}
 		goto ours;
 	}
@@ -286,6 +273,13 @@ next:
 	if (ip->ip_dst.s_addr == INADDR_ANY)
 		goto ours;
 
+    /* liai:
+     * this is the heart of this project
+     * as a transparent gateway, we deliver up all ip packets
+     * then rewrite its source and destination IP address 
+     */
+     ipstat.ips_gamegateway++;
+    #if 0
 	/*
 	 * Not for us; forward if possible and desirable.
 	 */
@@ -294,8 +288,9 @@ next:
 		m_freem(m);
 	} else
 		ip_forward(m, 0);
-	goto next;
-
+	return;
+    #endif
+    
 ours:
 	/*
 	 * If offset or IP_MF are set, must reassemble.
@@ -308,7 +303,7 @@ ours:
 		if (m->m_flags & M_EXT) {		/* XXX */
 			if ((m = m_pullup(m, sizeof (struct ip))) == 0) {
 				ipstat.ips_toosmall++;
-				goto next;
+				return;
 			}
 			ip = mtod(m, struct ip *);
 		}
@@ -345,7 +340,7 @@ found:
 			ipstat.ips_fragments++;
 			ip = ip_reass((struct ipasfrag *)ip, fp);
 			if (ip == 0)
-				goto next;
+				return;
 			ipstat.ips_reassembled++;
 			m = dtom(ip);
 		} else
@@ -359,10 +354,10 @@ found:
 	 */
 	ipstat.ips_delivered++;
 	(*inetsw[ip_protox[ip->ip_p]].pr_input)(m, hlen);
-	goto next;
+	return;
 bad:
 	m_freem(m);
-	goto next;
+	return;
 }
 
 /*
@@ -1117,6 +1112,7 @@ ip_sysctl(name, namelen, oldp, oldlenp, newp, newlen)
 		return (ENOTDIR);
 
 	switch (name[0]) {
+#if  0 //not_support_yet        
 	case IPCTL_FORWARDING:
 		return (sysctl_int(oldp, oldlenp, newp, newlen, &ipforwarding));
 	case IPCTL_SENDREDIRECTS:
@@ -1124,13 +1120,13 @@ ip_sysctl(name, namelen, oldp, oldlenp, newp, newlen)
 			&ipsendredirects));
 	case IPCTL_DEFTTL:
 		return (sysctl_int(oldp, oldlenp, newp, newlen, &ip_defttl));
-#ifdef notyet
+  #ifdef notyet
 	case IPCTL_DEFMTU:
 		return (sysctl_int(oldp, oldlenp, newp, newlen, &ip_mtu));
-#endif
+  #endif
 	default:
+#endif	
 		return (EOPNOTSUPP);
 	}
 	/* NOTREACHED */
 }
-#endif

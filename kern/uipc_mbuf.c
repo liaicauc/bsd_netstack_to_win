@@ -1,54 +1,10 @@
-/*
- * Copyright (c) 1982, 1986, 1988, 1991, 1993
- *	The Regents of the University of California.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgement:
- *	This product includes software developed by the University of
- *	California, Berkeley and its contributors.
- * 4. Neither the name of the University nor the names of its contributors
- *    may be used to endorse or promote products derived from this software
- *    without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- *
- *	@(#)uipc_mbuf.c	8.4 (Berkeley) 2/14/95
- */
-
-//	#include <sys/param.h>
-//	#include <sys/systm.h>
-//	#include <sys/proc.h>
-//	#define MBTYPES
-//	#include <sys/mbuf.h>
-//	#include <sys/kernel.h>
-//	#include <sys/syslog.h>
-//	#include <sys/domain.h>
-//	#include <sys/protosw.h>
-//	//#include <vm/vm.h>
-//	//extern	vm_map_t mb_map;
-
-#include "stdio.h"
+//#include "stdio.h"
 #include "sys/param.h"
 #include "sys/types.h"
+#include "sys/domain.h"
 #include <sys/mbuf.h>
+#include <sys/protosw.h>
+
 #include <kern/log.h>
 #include <libkern/libkern.h>
 
@@ -59,6 +15,12 @@ void
 mbinit()
 {
 	int s;
+
+    //liai todo handle malloc failure sometimes later
+    /* init the mbuf memory pool*/
+    mclrefcnt = (char *)malloc(NMBCLUSTERS + CLBYTES / MCLBYTES);
+	bzero(mclrefcnt, NMBCLUSTERS + CLBYTES / MCLBYTES);
+    mbutl = malloc(VM_MBUF_SIZE);
 
 	if (m_clalloc(1, 0) == 0)
 		goto bad;
@@ -85,7 +47,7 @@ m_clalloc(ncl, nowait)
 
 	npg = ncl * CLSIZE;
     //p = (caddr_t)kmem_malloc(mb_map, ctob(npg), !nowait);
-	p = malloc(4096);
+	p = malloc(ctob(npg));
 	if (p == NULL) {
 		if (logged == 0) {
 			logged++;
@@ -138,22 +100,22 @@ m_retryhdr(i, t)
 #undef m_retryhdr
 	return (m);
 }
-#if 0
+
 void
 m_reclaim()
 {
 	register struct domain *dp;
 	register struct protosw *pr;
-	//int s = splimp();
+	int s = splimp();
 
 	for (dp = domains; dp; dp = dp->dom_next)
 		for (pr = dp->dom_protosw; pr < dp->dom_protoswNPROTOSW; pr++)
 			if (pr->pr_drain)
 				(*pr->pr_drain)();
-	//splx(s);
+	splx(s);
 	mbstat.m_drain++;
 }
-#endif
+
 /*
  * Space allocation routines.
  * These are also available as macros

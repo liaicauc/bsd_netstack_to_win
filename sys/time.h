@@ -51,7 +51,7 @@ struct timeval {
  * Structure defined by POSIX.4 to be like a timeval.
  */
 struct timespec {
-	unsigned int	ts_sec;		/* seconds */
+	unsigned int ts_sec;		/* seconds */
 	long	ts_nsec;	/* and nanoseconds */
 };
 

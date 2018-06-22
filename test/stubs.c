@@ -21,24 +21,20 @@
 #include <netinet/if_ether.h>
 #include <test/vars.h>
 
-//liai todo
-void m_reclaim()
+void *
+pfind(pid)
+	register int pid;
 {
-	
+    return NULL;
 }
 
-int
-arpresolve(
-    register struct arpcom *ac,
-    register struct rtentry *rt,
-    struct mbuf *m,
-    register struct sockaddr *dst,
-    register unsigned char *desten)
+void
+selwakeup(sip)
+	register struct selinfo *sip;
 {
-    char dhost[6] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05};
-    bcopy(dhost, desten, 6);   
-	return 1;
+
 }
+
 
 void
 rt_ifmsg(ifp)
@@ -64,4 +60,18 @@ register struct rtentry *rt;
     
 }
 
+void
+gsignal(pgid, signum)
+	int pgid, signum;
+{
+    
+}
 
+void
+psignal(p, signum)
+	register void *p;
+	register int signum;
+{
+
+}
+    

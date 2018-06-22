@@ -1,6 +1,6 @@
 #include <windows.h>
 #include <stdio.h>
-#include <libkern/event.h>
+#include <libkern/sync.h>
 #include <test/vars.h>
 
 static struct evtmap{
@@ -78,5 +78,33 @@ wait_event(unsigned int evt)
     if(dbg_swc)
         printf("Thread %d exiting\n", GetCurrentThreadId());
     return ret;
+}
+
+CRITICAL_SECTION CriticalSection;
+
+void
+init_csect()
+{
+	if (!InitializeCriticalSectionAndSpinCount(
+		&CriticalSection, 0x00000400))
+		panic("\ncritical section initilization failed!");
+}
+
+void
+splimp()
+{
+	EnterCriticalSection(&CriticalSection);
+}
+
+void
+splnet()
+{
+	splimp();
+}
+
+void
+splx()
+{
+	LeaveCriticalSection(&CriticalSection);
 }
 

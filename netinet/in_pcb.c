@@ -82,7 +82,7 @@ in_pcbbind(inp, nam)
 	register struct socket *so = inp->inp_socket;
 	register struct inpcb *head = inp->inp_head;
 	register struct sockaddr_in *sin;
-	struct proc *p = curproc;		/* XXX */
+	//struct proc *p = curproc;		/* XXX */
 	u_short lport = 0;
 	int wild = 0, reuseport = (so->so_options & SO_REUSEPORT);
 	int error;
@@ -126,10 +126,11 @@ in_pcbbind(inp, nam)
 		if (lport) {
 			struct inpcb *t;
 
-			/* GROSS */
-			if (ntohs(lport) < IPPORT_RESERVED &&
-			    (error = suser(p->p_ucred, &p->p_acflag)))
+			#if 0
+			if (ntohs(lport) < IPPORT_RESERVED 
+                && (error = suser(p->p_ucred, &p->p_acflag)))
 				return (EACCES);
+            #endif
 			t = in_pcblookup(head, zeroin_addr, 0,
 			    sin->sin_addr, lport, wild);
 			if (t && (reuseport & t->inp_socket->so_options) == 0)

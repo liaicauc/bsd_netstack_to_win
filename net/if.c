@@ -572,7 +572,7 @@ ifioctl(so, cmd, data, p)
  * other information.
  */
 /*ARGSUSED*/
-#define copyout(src, dst, len) memcpy((dst), (src), (len));
+
 int
 ifconf(cmd, data)
 	int cmd;

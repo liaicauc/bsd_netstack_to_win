@@ -190,7 +190,13 @@ wpread(char *buf, int len)
     if (et->ether_dhost[0] & 1)
         flags |= M_MCAST;
 
-    m = m_devget((char *)(et + 1), len, 0, &wp->sc_if, 0);
+    if((flags & (M_BCAST | M_MCAST)) == 0 &&
+        bcmp(et->ether_dhost, wp->sc_addr, 
+             sizeof(et->ether_dhost)) != 0)
+		return;
+
+    m = m_devget((char *)(et + 1), len, 0, &wp->sc_if, 
+        (void (*)())0);
     if (m == 0)
         return;
     m->m_flags |= flags;

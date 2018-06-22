@@ -39,9 +39,13 @@
 #endif
 #endif
 
+#ifdef MCLBYTES
+#undef MCLBYTES
+   // #error "MCLBYTES should be defined as larger as maximal ethnet Frame"
+#endif
 /*the adaptation for OS*/
 #define	MSIZE		128		/* size of an mbuf */
-#define	MCLBYTES	1024
+#define	MCLBYTES	(2*1024)
 #define	MCLSHIFT	10
 #define	MCLOFSET	(MCLBYTES - 1)
 
@@ -58,6 +62,14 @@
 
 #define	MINCLSIZE	(MHLEN + MLEN)	/* smallest amount to put in cluster */
 #define	M_MAXCOMPRESS	(MHLEN / 2)	/* max amount to copy for compression */
+
+/* numbers of mbuf clusters pre-allocated for mbuf pool */
+#ifdef VM_MBUF_SIZE
+#pragma message ("LiAi: "
+    "I configure the VM MBUF as below, Do not include other virtual memory header")
+#undef VM_MBUF_SIZE
+#endif
+#define	VM_MBUF_SIZE		(NMBCLUSTERS*MCLBYTES)
 
 /*
  * Macros for type conversion
@@ -169,13 +181,14 @@ struct mbuf {
 	}
 #endif
 
+//liai todo implement the critical section protection
 #define	MBUFLOCK(code) \
     { \
 	  { code } \
 	}
-//liai 
-//MALLOC((m), struct mbuf *, MSIZE, mbtypes[type], (how));
 
+//MALLOC((m), struct mbuf *, MSIZE, mbtypes[type], (how));
+//liai todo move the malloc to libkern folder
 extern void *liai_malloc(u_long size);
 #define	MALLOC(space, cast, size, type, flags) (space) = (cast)liai_malloc((u_long)(size))
 #define FREE(m, mtype) (void)free((m))

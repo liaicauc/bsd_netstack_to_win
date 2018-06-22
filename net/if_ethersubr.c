@@ -231,128 +231,23 @@ ether_input(ifp, eh, m)
 		ifp->if_imcasts++;
 
 	switch (eh->ether_type) {
-#ifdef INET
 	case ETHERTYPE_IP:
-		schednetisr(NETISR_IP);
-		inq = &ipintrq;
+        //ipintr();
+		//schednetisr(NETISR_IP);
+		//inq = &ipintrq;
 		break;
 
 	case ETHERTYPE_ARP:
-		schednetisr(NETISR_ARP);
-		inq = &arpintrq;
+        //liai todo arp_input()
+		//schednetisr(NETISR_ARP);
+		//inq = &arpintrq;
 		break;
-#endif
-#ifdef NS
-	case ETHERTYPE_NS:
-		schednetisr(NETISR_NS);
-		inq = &nsintrq;
-		break;
-
-#endif
 	default:
-#if defined (ISO) || defined (LLC)
-		if (eh->ether_type > ETHERMTU)
-			goto dropanyway;
-		l = mtod(m, struct llc *);
-		switch (l->llc_dsap) {
-#ifdef	ISO
-		case LLC_ISO_LSAP: 
-			switch (l->llc_control) {
-			case LLC_UI:
-				/* LLC_UI_P forbidden in class 1 service */
-				if ((l->llc_dsap == LLC_ISO_LSAP) &&
-				    (l->llc_ssap == LLC_ISO_LSAP)) {
-					/* LSAP for ISO */
-					if (m->m_pkthdr.len > eh->ether_type)
-						m_adj(m, eh->ether_type - m->m_pkthdr.len);
-					m->m_data += 3;		/* XXX */
-					m->m_len -= 3;		/* XXX */
-					m->m_pkthdr.len -= 3;	/* XXX */
-					M_PREPEND(m, sizeof *eh, M_DONTWAIT);
-					if (m == 0)
-						return;
-					*mtod(m, struct ether_header *) = *eh;
-					IFDEBUG(D_ETHER)
-						printf("clnp packet");
-					ENDDEBUG
-					schednetisr(NETISR_ISO);
-					inq = &clnlintrq;
-					break;
-				}
-				goto dropanyway;
-				
-			case LLC_XID:
-			case LLC_XID_P:
-				if(m->m_len < 6)
-					goto dropanyway;
-				l->llc_window = 0;
-				l->llc_fid = 9;
-				l->llc_class = 1;
-				l->llc_dsap = l->llc_ssap = 0;
-				/* Fall through to */
-			case LLC_TEST:
-			case LLC_TEST_P:
-			{
-				struct sockaddr sa;
-				register struct ether_header *eh2;
-				int i;
-				u_char c = l->llc_dsap;
-
-				l->llc_dsap = l->llc_ssap;
-				l->llc_ssap = c;
-				if (m->m_flags & (M_BCAST | M_MCAST))
-					bcopy((caddr_t)ac->ac_enaddr,
-					      (caddr_t)eh->ether_dhost, 6);
-				sa.sa_family = AF_UNSPEC;
-				sa.sa_len = sizeof(sa);
-				eh2 = (struct ether_header *)sa.sa_data;
-				for (i = 0; i < 6; i++) {
-					eh2->ether_shost[i] = c = eh->ether_dhost[i];
-					eh2->ether_dhost[i] = 
-						eh->ether_dhost[i] = eh->ether_shost[i];
-					eh->ether_shost[i] = c;
-				}
-				ifp->if_output(ifp, m, &sa, NULL);
-				return;
-			}
-			default:
-				m_freem(m);
-				return;
-			}
-			break;
-#endif /* ISO */
-#ifdef LLC
-		case LLC_X25_LSAP:
-		{
-			if (m->m_pkthdr.len > eh->ether_type)
-				m_adj(m, eh->ether_type - m->m_pkthdr.len);
-			M_PREPEND(m, sizeof(struct sdl_hdr) , M_DONTWAIT);
-			if (m == 0)
-				return;
-			if ( !sdl_sethdrif(ifp, eh->ether_shost, LLC_X25_LSAP,
-					    eh->ether_dhost, LLC_X25_LSAP, 6, 
-					    mtod(m, struct sdl_hdr *)))
-				panic("ETHER cons addr failure");
-			mtod(m, struct sdl_hdr *)->sdlhdr_len = eh->ether_type;
-#ifdef LLC_DEBUG
-				printf("llc packet\n");
-#endif /* LLC_DEBUG */
-			schednetisr(NETISR_CCITT);
-			inq = &llcintrq;
-			break;
-		}
-#endif /* LLC */
-		dropanyway:
-		default:
-			m_freem(m);
-			return;
-		}
-#else /* ISO || LLC */
 	    m_freem(m);
 	    return;
-#endif /* ISO || LLC */
 	}
 
+    #if 0
 	//s = splimp();
 	if (IF_QFULL(inq)) {
 		IF_DROP(inq);
@@ -360,6 +255,7 @@ ether_input(ifp, eh, m)
 	} else
 		IF_ENQUEUE(inq, m);
 	//splx(s);
+    #endif
 }
 
 /*

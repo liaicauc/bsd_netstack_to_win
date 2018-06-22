@@ -1,7 +1,9 @@
 #include <windows.h>
 #include <stdio.h>
 
-int hz = 1000;
+unsigned int hz = 1000;
+unsigned int tick = 1000;
+
 HANDLE hTimerQueue;
 
 init_timer()

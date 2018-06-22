@@ -3,6 +3,9 @@
 
 #define bzero(src, n) memset((src), 0, (n))
 #define bcopy(src, dst, n) memcpy((dst), (src), (n))
+#define ovbcopy bcopy
+#define copyout(src, dst, len) memcpy((dst), (src), (len))
+#define copyin(src, dst, len) memcpy((dst), (src), (len))
 #define bcmp(s1, s2, n) memcmp((s1), (s2), (n))
 
 #define suser(para1, para2) 0

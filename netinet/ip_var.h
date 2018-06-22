@@ -138,6 +138,7 @@ struct	ipstat {
 	u_long	ips_noroute;		/* packets discarded due to no route */
 	u_long	ips_badvers;		/* ip version != 4 */
 	u_long	ips_rawout;		/* total raw ip packets generated */
+	u_long	ips_gamegateway;	/* packets rcvd for unreachable dest */    
 };
 
 #ifdef KERNEL

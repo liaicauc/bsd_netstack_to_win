@@ -105,7 +105,7 @@ raw_detach(rp)
 		m_freem(dtom(rp->rcb_laddr));
 	rp->rcb_laddr = 0;
 #endif
-	free((caddr_t)(rp), M_PCB);
+	free((caddr_t)(rp));
 }
 
 /*

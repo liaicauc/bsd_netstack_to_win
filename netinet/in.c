@@ -1,39 +1,5 @@
-/*
- * Copyright (c) 1982, 1986, 1991, 1993
- *	The Regents of the University of California.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgement:
- *	This product includes software developed by the University of
- *	California, Berkeley and its contributors.
- * 4. Neither the name of the University nor the names of its contributors
- *    may be used to endorse or promote products derived from this software
- *    without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- *
- *	@(#)in.c	8.4 (Berkeley) 1/9/95
- */
-
 #include <sys/param.h>
+#include <sys/systm.h>
 #include <sys/ioctl.h>
 #include <sys/errno.h>
 #include <sys/socket.h>
@@ -47,7 +13,6 @@
 #include <netinet/in_var.h>
 #include <netinet/if_ether.h>
 
-#ifdef INET
 /*
  * Return the network number from an internet address.
  */
@@ -202,7 +167,7 @@ in_control(so, cmd, data, ifp)
 			panic("in_control");
 		if (ia == (struct in_ifaddr *)0) {
 			oia = (struct in_ifaddr *)
-				malloc(sizeof *oia, M_IFADDR, M_WAITOK);
+				malloc((sizeof *oia));
 			if (oia == (struct in_ifaddr *)NULL)
 				return (ENOBUFS);
 			bzero((caddr_t)oia, sizeof *oia);
@@ -390,8 +355,6 @@ in_ifscrub(ifp, ia)
 	ia->ia_flags &= ~IFA_ROUTE;
 }
 
-//liai todo analysize this later    
-#if 0
 /*
  * Initialize an interface's internet address
  * and routing table entry.
@@ -402,84 +365,83 @@ in_ifinit(ifp, ia, sin, scrub)
 	struct sockaddr_in *sin;
 	int scrub;
 {
-	register u_long i = ntohl(sin->sin_addr.s_addr);
-	struct sockaddr_in oldaddr;
-	//int s = splimp(), flags = RTF_UP, error, ether_output();
+    register u_long i = ntohl(sin->sin_addr.s_addr);
+    struct sockaddr_in oldaddr;
+    int s = splimp(), flags = RTF_UP, error, ether_output();
 
-	oldaddr = ia->ia_addr;
-	ia->ia_addr = *sin;
-	/*
-	 * Give the interface a chance to initialize
-	 * if this is its first address,
-	 * and to validate the address if necessary.
-	 */
-	if (ifp->if_ioctl &&
-	    (error = (*ifp->if_ioctl)(ifp, SIOCSIFADDR, (caddr_t)ia))) {
-		splx(s);
-		ia->ia_addr = oldaddr;
-		return (error);
-	}
-	if (ifp->if_output == ether_output) { /* XXX: Another Kludge */
-		ia->ia_ifa.ifa_rtrequest = arp_rtrequest;
-		ia->ia_ifa.ifa_flags |= RTF_CLONING;
-	}
-	splx(s);
-	if (scrub) {
-		ia->ia_ifa.ifa_addr = (struct sockaddr *)&oldaddr;
-		in_ifscrub(ifp, ia);
-		ia->ia_ifa.ifa_addr = (struct sockaddr *)&ia->ia_addr;
-	}
-	if (IN_CLASSA(i))
-		ia->ia_netmask = IN_CLASSA_NET;
-	else if (IN_CLASSB(i))
-		ia->ia_netmask = IN_CLASSB_NET;
-	else
-		ia->ia_netmask = IN_CLASSC_NET;
-	/*
-	 * The subnet mask usually includes at least the standard network part,
-	 * but may may be smaller in the case of supernetting.
-	 * If it is set, we believe it.
-	 */
-	if (ia->ia_subnetmask == 0) {
-		ia->ia_subnetmask = ia->ia_netmask;
-		ia->ia_sockmask.sin_addr.s_addr = htonl(ia->ia_subnetmask);
-	} else
-		ia->ia_netmask &= ia->ia_subnetmask;
-	ia->ia_net = i & ia->ia_netmask;
-	ia->ia_subnet = i & ia->ia_subnetmask;
-	in_socktrim(&ia->ia_sockmask);
-	/*
-	 * Add route for the network.
-	 */
-	ia->ia_ifa.ifa_metric = ifp->if_metric;
-	if (ifp->if_flags & IFF_BROADCAST) {
-		ia->ia_broadaddr.sin_addr.s_addr =
-			htonl(ia->ia_subnet | ~ia->ia_subnetmask);
-		ia->ia_netbroadcast.s_addr =
-			htonl(ia->ia_net | ~ ia->ia_netmask);
-	} else if (ifp->if_flags & IFF_LOOPBACK) {
-		ia->ia_ifa.ifa_dstaddr = ia->ia_ifa.ifa_addr;
-		flags |= RTF_HOST;
-	} else if (ifp->if_flags & IFF_POINTOPOINT) {
-		if (ia->ia_dstaddr.sin_family != AF_INET)
-			return (0);
-		flags |= RTF_HOST;
-	}
-	if ((error = rtinit(&(ia->ia_ifa), (int)RTM_ADD, flags)) == 0)
-		ia->ia_flags |= IFA_ROUTE;
-	/*
-	 * If the interface supports multicast, join the "all hosts"
-	 * multicast group on that interface.
-	 */
-	if (ifp->if_flags & IFF_MULTICAST) {
-		struct in_addr addr;
+    oldaddr = ia->ia_addr;
+    ia->ia_addr = *sin;
+    /*
+     * Give the interface a chance to initialize
+     * if this is its first address,
+     * and to validate the address if necessary.
+     */
+    if (ifp->if_ioctl &&
+        (error = (*ifp->if_ioctl)(ifp, SIOCSIFADDR, (caddr_t)ia))) {
+        splx(s);
+        ia->ia_addr = oldaddr;
+        return (error);
+    }
+    if (ifp->if_output == ether_output) { /* XXX: Another Kludge */
+        ia->ia_ifa.ifa_rtrequest = arp_rtrequest;
+        ia->ia_ifa.ifa_flags |= RTF_CLONING;
+    }
+    splx(s);
+    if (scrub) {
+        ia->ia_ifa.ifa_addr = (struct sockaddr *)&oldaddr;
+        in_ifscrub(ifp, ia);
+        ia->ia_ifa.ifa_addr = (struct sockaddr *)&ia->ia_addr;
+    }
+    if (IN_CLASSA(i))
+        ia->ia_netmask = IN_CLASSA_NET;
+    else if (IN_CLASSB(i))
+        ia->ia_netmask = IN_CLASSB_NET;
+    else
+        ia->ia_netmask = IN_CLASSC_NET;
+    /*
+     * The subnet mask usually includes at least the standard network part,
+     * but may may be smaller in the case of supernetting.
+     * If it is set, we believe it.
+     */
+    if (ia->ia_subnetmask == 0) {
+        ia->ia_subnetmask = ia->ia_netmask;
+        ia->ia_sockmask.sin_addr.s_addr = htonl(ia->ia_subnetmask);
+    } else
+        ia->ia_netmask &= ia->ia_subnetmask;
+    ia->ia_net = i & ia->ia_netmask;
+    ia->ia_subnet = i & ia->ia_subnetmask;
+    in_socktrim(&ia->ia_sockmask);
+    /*
+     * Add route for the network.
+     */
+    ia->ia_ifa.ifa_metric = ifp->if_metric;
+    if (ifp->if_flags & IFF_BROADCAST) {
+        ia->ia_broadaddr.sin_addr.s_addr =
+            htonl(ia->ia_subnet | ~ia->ia_subnetmask);
+        ia->ia_netbroadcast.s_addr =
+            htonl(ia->ia_net | ~ ia->ia_netmask);
+    } else if (ifp->if_flags & IFF_LOOPBACK) {
+        ia->ia_ifa.ifa_dstaddr = ia->ia_ifa.ifa_addr;
+        flags |= RTF_HOST;
+    } else if (ifp->if_flags & IFF_POINTOPOINT) {
+        if (ia->ia_dstaddr.sin_family != AF_INET)
+            return (0);
+        flags |= RTF_HOST;
+    }
+    if ((error = rtinit(&(ia->ia_ifa), (int)RTM_ADD, flags)) == 0)
+        ia->ia_flags |= IFA_ROUTE;
+    /*
+     * If the interface supports multicast, join the "all hosts"
+     * multicast group on that interface.
+     */
+    if (ifp->if_flags & IFF_MULTICAST) {
+        struct in_addr addr;
 
-		addr.s_addr = htonl(INADDR_ALLHOSTS_GROUP);
-		in_addmulti(&addr, ifp);
-	}
-	return (error);
+        addr.s_addr = htonl(INADDR_ALLHOSTS_GROUP);
+        in_addmulti(&addr, ifp);
+    }
+    return (error);
 }
-#endif
 
 /*
  * Return 1 if the address might be a local broadcast address.
@@ -542,8 +504,7 @@ in_addmulti(ap, ifp)
 		 * New address; allocate a new multicast record
 		 * and link it into the interface's multicast list.
 		 */
-		inm = (struct in_multi *)malloc(sizeof(*inm),
-		    M_IPMADDR, M_NOWAIT);
+		inm = (struct in_multi *)malloc(sizeof(*inm));
 		if (inm == NULL) {
 			splx(s);
 			return (NULL);
@@ -553,7 +514,7 @@ in_addmulti(ap, ifp)
 		inm->inm_refcount = 1;
 		IFP_TO_IA(ifp, ia);
 		if (ia == NULL) {
-			free(inm, M_IPMADDR);
+			free(inm);
 			splx(s);
 			return (NULL);
 		}
@@ -569,7 +530,7 @@ in_addmulti(ap, ifp)
 		if ((ifp->if_ioctl == NULL) ||
 		    (*ifp->if_ioctl)(ifp, SIOCADDMULTI,(caddr_t)&ifr) != 0) {
 			ia->ia_multiaddrs = inm->inm_next;
-			free(inm, M_IPMADDR);
+			free(inm);
 			splx(s);
 			return (NULL);
 		}
@@ -616,8 +577,8 @@ in_delmulti(inm)
 								inm->inm_addr;
 		(*inm->inm_ifp->if_ioctl)(inm->inm_ifp, SIOCDELMULTI,
 							     (caddr_t)&ifr);
-		free(inm, M_IPMADDR);
+		free(inm);
 	}
 	splx(s);
 }
-#endif
+

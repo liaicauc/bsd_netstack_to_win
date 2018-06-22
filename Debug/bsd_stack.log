@@ -1,0 +1,311 @@
+﻿Build started 6/21/2018 9:44:02 AM.
+     1>Project "D:\BSD_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\bsd_stack.vcxproj" on node 2 (Build target(s)).
+     1>InitializeBuildStatus:
+         Touching "Debug\bsd_stack.tlog\unsuccessfulbuild".
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /I./ /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _CRT_NO_TIME_T /D _USE_32BIT_TIME_T /D _MBCS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TC /analyze- /errorReport:prompt dev\winpcap_intf.c kern\init_main.c kern\uipc_domain.c kern\uipc_mbuf.c net\if.c net\if_ethersubr.c net\if_wp.c net\route.c net\rtsock.c netinet\in_proto.c netinet\ip_input.c test\main.c test\stubs.c test\vars.c
+         vars.c
+     1>c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\time.h(23): warning C4142: benign redefinition of type
+     1>c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\time.h(590): warning C4005: 'CLK_TCK': macro redefinition
+         d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\machine\limits.h(40): note: see previous definition of 'CLK_TCK'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.h(8): error C2079: 'sc_ac' uses undefined struct 'arpcom'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\test\vars.c(27): error C2224: left of '.ac_if' must have struct/union type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\test\vars.c(28): error C2079: 'hcdst' uses undefined struct 'sockaddr_in'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\test\vars.c(28): error C2371: 'hcdst': redefinition; different basic types
+         d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\test\vars.h(6): note: see declaration of 'hcdst'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\test\vars.c(29): error C2027: use of undefined type 'sockaddr_in'
+         d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\test\vars.h(6): note: see declaration of 'sockaddr_in'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\test\vars.c(34): error C2078: too many initializers
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\test\vars.c(28): error C2078: too many initializers
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\test\vars.c(36): error C2079: 'tifaddr' uses undefined struct 'in_ifaddr'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\test\vars.c(36): error C2371: 'tifaddr': redefinition; different basic types
+         d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\test\vars.h(7): note: see declaration of 'tifaddr'
+         stubs.c
+     1>c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\time.h(23): warning C4142: benign redefinition of type
+     1>c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\time.h(590): warning C4005: 'CLK_TCK': macro redefinition
+         d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\machine\limits.h(40): note: see previous definition of 'CLK_TCK'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\test\stubs.c(39): warning C4013: 'memcpy' undefined; assuming extern returning int
+         main.c
+     1>c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\time.h(23): warning C4142: benign redefinition of type
+     1>c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\time.h(590): warning C4005: 'CLK_TCK': macro redefinition
+         d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\machine\limits.h(40): note: see previous definition of 'CLK_TCK'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.h(8): error C2079: 'sc_ac' uses undefined struct 'arpcom'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\test\main.c(75): error C2065: 'mbstat': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\test\main.c(75): error C2224: left of '.m_mtypes' must have struct/union type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\test\main.c(75): warning C4013: 'm_retryhdr' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\test\main.c(75): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\test\main.c(82): error C2065: 'mbstat': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\test\main.c(82): error C2224: left of '.m_mtypes' must have struct/union type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\test\main.c(82): warning C4013: 'm_retry' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\test\main.c(82): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\test\main.c(90): warning C4013: 'memcpy' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\test\main.c(107): error C2037: left of 'ia_addr' specifies undefined struct/union 'in_ifaddr'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\test\main.c(130): error C2037: left of 'ia_addr' specifies undefined struct/union 'in_ifaddr'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\test\main.c(143): warning C4013: 'ifioctl' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\test\main.c(161): warning C4013: 'main1' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\test\main.c(163): warning C4013: 'start_recv' undefined; assuming extern returning int
+         ip_input.c
+     1>c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\time.h(23): warning C4142: benign redefinition of type
+     1>c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\time.h(590): warning C4005: 'CLK_TCK': macro redefinition
+         d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\machine\limits.h(40): note: see previous definition of 'CLK_TCK'
+         in_proto.c
+     1>c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\time.h(23): warning C4142: benign redefinition of type
+     1>c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\time.h(590): warning C4005: 'CLK_TCK': macro redefinition
+         d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\machine\limits.h(40): note: see previous definition of 'CLK_TCK'
+         rtsock.c
+     1>c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\time.h(23): warning C4142: benign redefinition of type
+     1>c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\time.h(590): warning C4005: 'CLK_TCK': macro redefinition
+         d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\machine\limits.h(40): note: see previous definition of 'CLK_TCK'
+         route.c
+     1>c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\time.h(23): warning C4142: benign redefinition of type
+     1>c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\time.h(590): warning C4005: 'CLK_TCK': macro redefinition
+         d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\machine\limits.h(40): note: see previous definition of 'CLK_TCK'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(67): error C2065: 'domains': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(67): warning C4047: '=': 'domain *' differs in levels of indirection from 'int'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(77): error C2065: 'rt_tables': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(89): warning C4013: 'rtalloc1' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(89): warning C4047: '=': 'rtentry *' differs in levels of indirection from 'int'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(94): error C2040: 'rtalloc1': 'rtentry *()' differs in levels of indirection from 'int ()'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(97): error C2065: 'rt_tables': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(97): error C2109: subscript requires array or pointer type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(109): warning C4013: 'rtrequest' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(123): error C2065: 'rtstat': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(123): error C2224: left of '.rts_unreach' must have struct/union type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(125): warning C4013: 'memset' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(127): warning C4013: 'rt_missmsg' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(152): warning C4013: 'IFAFREE' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(193): warning C4013: 'ifa_ifwithnet' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(193): warning C4047: '=': 'ifaddr *' differs in levels of indirection from 'int'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(194): error C2065: 'ENETUNREACH': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(197): warning C4047: '=': 'rtentry *' differs in levels of indirection from 'int'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(206): warning C4013: 'memcmp' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(207): error C2065: 'EINVAL': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(208): warning C4013: 'ifa_ifwithaddr' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(209): error C2065: 'EHOSTUNREACH': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(235): error C2065: 'rtstat': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(235): error C2224: left of '.rts_dynamic' must have struct/union type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(243): error C2065: 'rtstat': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(243): error C2224: left of '.rts_newgateway' must have struct/union type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(244): warning C4013: 'rt_setgate' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(247): error C2065: 'EHOSTUNREACH': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(257): error C2065: 'rtstat': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(257): error C2224: left of '.rts_badredirect' must have struct/union type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(278): error C2065: 'EOPNOTSUPP': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(297): warning C4013: 'ifa_ifwithdstaddr' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(297): warning C4047: '=': 'ifaddr *' differs in levels of indirection from 'int'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(299): warning C4047: '=': 'ifaddr *' differs in levels of indirection from 'int'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(306): warning C4047: '=': 'ifaddr *' differs in levels of indirection from 'int'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(309): warning C4047: '=': 'ifaddr *' differs in levels of indirection from 'int'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(320): warning C4013: 'ifaof_ifpforaddr' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(320): warning C4047: '=': 'ifaddr *' differs in levels of indirection from 'int'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(311): warning C4047: 'initializing': 'rtentry *' differs in levels of indirection from 'int'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(344): error C2065: 'rt_tables': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(344): error C2109: subscript requires array or pointer type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(345): error C2065: 'ESRCH': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(351): error C2065: 'ESRCH': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(357): warning C4013: 'RTFREE' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(373): error C2065: 'EINVAL': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(383): error C2065: 'ENETUNREACH': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(387): error C2065: 'ENOBUFS': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(392): error C2065: 'ENOBUFS': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(396): warning C4013: 'rt_maskedcopy' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(398): warning C4013: 'memcpy' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(406): error C2065: 'EEXIST': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(435): warning C4018: '>': signed/unsigned mismatch
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(455): warning C4047: '=': 'rtentry *' differs in levels of indirection from 'int'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(462): error C2371: 'rt_maskedcopy': redefinition; different basic types
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(499): warning C4013: 'm_get' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(499): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(504): warning C4047: '=': 'rtentry *' differs in levels of indirection from 'int'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(508): warning C4013: 'm_free' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(510): error C2065: 'EHOSTUNREACH': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(510): error C2065: 'ENETUNREACH': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\route.c(519): warning C4013: 'rt_newaddrmsg' undefined; assuming extern returning int
+         if_wp.c
+     1>c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\time.h(23): warning C4142: benign redefinition of type
+     1>c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\time.h(590): warning C4005: 'CLK_TCK': macro redefinition
+         d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\machine\limits.h(40): note: see previous definition of 'CLK_TCK'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.h(8): error C2079: 'sc_ac' uses undefined struct 'arpcom'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(32): error C2224: left of '.ac_if' must have struct/union type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(63): warning C4013: 'memcpy' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(66): warning C4013: 'm_freem' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(68): warning C4013: 'memset' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(87): error C2224: left of '.ac_if' must have struct/union type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(90): error C2224: left of '.ac_if' must have struct/union type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(94): warning C4013: 'wpout' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(95): error C2224: left of '.ac_if' must have struct/union type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(117): warning C4013: 'wpdown' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(122): warning C4013: 'wpup' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(130): error C2037: left of 'ac_ipaddr' specifies undefined struct/union 'arpcom'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(130): warning C4013: 'IA_SIN' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(130): error C2223: left of '->sin_addr' must point to struct/union
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(145): error C2224: left of '.ac_if' must have struct/union type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(148): error C2065: 'MAC_ADDRESS_LEN': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(149): error C2224: left of '.ac_enaddr' must have struct/union type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(153): error C2065: 'ETHERMTU': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(157): error C2065: 'ether_output': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(157): warning C4047: '=': 'int (__cdecl *)()' differs in levels of indirection from 'int'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(161): warning C4013: 'if_attach' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(173): error C2224: left of '.ac_if' must have struct/union type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(175): error C2037: left of 'ether_type' specifies undefined struct/union 'ether_header'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(176): error C2027: use of undefined type 'ether_header'
+         d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(169): note: see declaration of 'ether_header'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(181): warning C4013: 'ether_sprintf' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(181): error C2037: left of 'ether_shost' specifies undefined struct/union 'ether_header'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(182): error C2224: left of '.ac_if' must have struct/union type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(188): warning C4013: 'memcmp' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(188): error C2065: 'etherbroadcastaddr': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(188): error C2037: left of 'ether_dhost' specifies undefined struct/union 'ether_header'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(190): error C2037: left of 'ether_dhost' specifies undefined struct/union 'ether_header'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(193): warning C4013: 'm_devget' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(193): error C2036: 'ether_header *': unknown size
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(193): error C2224: left of '.ac_if' must have struct/union type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(193): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(197): warning C4013: 'ether_input' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_wp.c(197): error C2224: left of '.ac_if' must have struct/union type
+         if_ethersubr.c
+     1>c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\time.h(23): warning C4142: benign redefinition of type
+     1>c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\time.h(590): warning C4005: 'CLK_TCK': macro redefinition
+         d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\machine\limits.h(40): note: see previous definition of 'CLK_TCK'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\netinet\if_ether.h(112): error C2079: 'ac_ipaddr' uses undefined struct 'in_addr'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\netinet\if_ether.h(130): error C2079: 'sin_addr' uses undefined struct 'in_addr'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\netinet\if_ether.h(131): error C2079: 'sin_srcaddr' uses undefined struct 'in_addr'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_ethersubr.c(115): warning C4013: 'rtalloc1' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_ethersubr.c(115): warning C4047: '=': 'rtentry *' differs in levels of indirection from 'int'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_ethersubr.c(124): warning C4013: 'rtfree' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_ethersubr.c(125): warning C4047: '=': 'rtentry *' differs in levels of indirection from 'int'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_ethersubr.c(132): warning C4018: '<': signed/unsigned mismatch
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_ethersubr.c(151): warning C4013: 'memcpy' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_ethersubr.c(168): warning C4013: 'm_prepend' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_ethersubr.c(168): warning C4047: '=': 'mbuf *' differs in levels of indirection from 'int'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_ethersubr.c(199): warning C4013: 'm_freem' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_ethersubr.c(226): warning C4013: 'memcmp' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_ethersubr.c(469): warning C4013: 'ETHER_LOOKUP_MULTI' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_ethersubr.c(474): error C2037: left of 'enm_refcount' specifies undefined struct/union 'ether_multi'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_ethersubr.c(482): error C2027: use of undefined type 'ether_multi'
+         d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\netinet\if_ether.h(113): note: see declaration of 'ether_multi'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_ethersubr.c(487): error C2037: left of 'enm_addrlo' specifies undefined struct/union 'ether_multi'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_ethersubr.c(488): error C2037: left of 'enm_addrhi' specifies undefined struct/union 'ether_multi'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_ethersubr.c(489): error C2037: left of 'enm_ac' specifies undefined struct/union 'ether_multi'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_ethersubr.c(490): error C2037: left of 'enm_refcount' specifies undefined struct/union 'ether_multi'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_ethersubr.c(491): error C2037: left of 'enm_next' specifies undefined struct/union 'ether_multi'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_ethersubr.c(556): error C2037: left of 'enm_refcount' specifies undefined struct/union 'ether_multi'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_ethersubr.c(566): error C2037: left of 'enm_ac' specifies undefined struct/union 'ether_multi'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_ethersubr.c(568): error C2037: left of 'enm_next' specifies undefined struct/union 'ether_multi'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if_ethersubr.c(570): error C2037: left of 'enm_next' specifies undefined struct/union 'ether_multi'
+         if.c
+     1>c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\time.h(23): warning C4142: benign redefinition of type
+     1>c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\time.h(590): warning C4005: 'CLK_TCK': macro redefinition
+         d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\machine\limits.h(40): note: see previous definition of 'CLK_TCK'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if.c(29): error C2065: 'ifnet': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if.c(29): warning C4047: '=': 'ifnet *' differs in levels of indirection from 'int'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if.c(81): error C2065: 'ifnet': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if.c(96): warning C4013: 'memcpy' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if.c(105): warning C4013: 'strlen' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if.c(117): warning C4013: 'memset' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if.c(140): warning C4013: 'ether_ifattach' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if.c(81): warning C4047: 'initializing': 'ifnet **' differs in levels of indirection from 'int *'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if.c(156): error C2065: 'ifnet': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if.c(156): warning C4047: '=': 'ifnet *' differs in levels of indirection from 'int'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if.c(160): warning C4013: 'memcmp' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if.c(180): error C2065: 'ifnet': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if.c(180): warning C4047: '=': 'ifnet *' differs in levels of indirection from 'int'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if.c(211): error C2065: 'ifnet': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if.c(211): warning C4047: '=': 'ifnet *' differs in levels of indirection from 'int'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if.c(225): warning C4013: 'rn_refines' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if.c(242): error C2065: 'ifnet': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if.c(242): warning C4047: '=': 'ifnet *' differs in levels of indirection from 'int'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if.c(310): warning C4013: 'IFAFREE' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if.c(334): warning C4013: 'if_qflush' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if.c(335): warning C4013: 'rt_ifmsg' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if.c(365): error C2371: 'if_qflush': redefinition; different basic types
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if.c(372): warning C4013: 'm_freem' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if.c(390): error C2065: 'ifnet': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if.c(390): warning C4047: '=': 'ifnet *' differs in levels of indirection from 'int'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if.c(430): error C2065: 'ifnet': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if.c(430): warning C4047: '=': 'ifnet *' differs in levels of indirection from 'int'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if.c(458): warning C4013: 'ifconf' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if.c(463): error C2065: 'ENXIO': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if.c(504): error C2065: 'EOPNOTSUPP': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if.c(509): error C2065: 'EOPNOTSUPP': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if.c(582): error C2065: 'ifnet': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if.c(591): warning C4013: 'strncpy' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\net\if.c(582): warning C4047: 'initializing': 'ifnet *' differs in levels of indirection from 'int'
+         uipc_mbuf.c
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(63): warning C4013: 'm_clalloc' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(61): warning C4101: 's': unreferenced local variable
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(98): error C2065: 'mclfree': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(98): warning C4047: '=': 'mcluster *' differs in levels of indirection from 'int'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(99): error C2065: 'mclfree': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(99): warning C4047: '=': 'int' differs in levels of indirection from 'mcluster *'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(101): error C2065: 'mbstat': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(101): error C2224: left of '.m_clfree' must have struct/union type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(103): error C2065: 'mbstat': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(103): error C2224: left of '.m_clusters' must have struct/union type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(117): warning C4013: 'm_reclaim' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(119): error C2065: 'mbstat': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(119): error C2224: left of '.m_mtypes' must have struct/union type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(137): error C2065: 'mbstat': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(137): error C2224: left of '.m_mtypes' must have struct/union type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(168): error C2065: 'mbstat': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(168): error C2224: left of '.m_mtypes' must have struct/union type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(178): error C2065: 'mbstat': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(178): error C2224: left of '.m_mtypes' must have struct/union type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(188): error C2065: 'mbstat': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(188): error C2224: left of '.m_mtypes' must have struct/union type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(191): warning C4013: 'memset' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(201): error C2065: 'mbstat': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(201): error C2224: left of '.m_mtypes' must have struct/union type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(201): error C2065: 'mclfree': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(201): warning C4047: '=': 'mcluster *' differs in levels of indirection from 'int'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(201): warning C4047: '=': 'int' differs in levels of indirection from 'mcluster *'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(201): error C2224: left of '.m_clfree' must have struct/union type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(214): error C2065: 'mbstat': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(214): error C2224: left of '.m_mtypes' must have struct/union type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(214): error C2065: 'mclfree': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(214): warning C4047: '=': 'mcluster *' differs in levels of indirection from 'int'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(214): warning C4047: '=': 'int' differs in levels of indirection from 'mcluster *'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(214): error C2224: left of '.m_clfree' must have struct/union type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(234): error C2065: 'mbstat': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(234): error C2224: left of '.m_mtypes' must have struct/union type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(289): error C2065: 'mbstat': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(289): error C2224: left of '.m_mtypes' must have struct/union type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(309): warning C4013: 'memcpy' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(494): error C2065: 'mbstat': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(494): error C2224: left of '.m_mtypes' must have struct/union type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(505): error C2065: 'max_protohdr': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(542): warning C4018: '>': signed/unsigned mismatch
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(548): error C2065: 'mbstat': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(548): error C2224: left of '.m_mtypes' must have struct/union type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(572): error C2065: 'mbstat': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(572): error C2224: left of '.m_mtypes' must have struct/union type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(619): error C2065: 'mbstat': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(619): error C2224: left of '.m_mtypes' must have struct/union type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(628): error C2065: 'mbstat': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(628): error C2224: left of '.m_mtypes' must have struct/union type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(637): error C2065: 'mclfree': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(637): error C2065: 'mbstat': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(637): error C2224: left of '.m_clfree' must have struct/union type
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(637): warning C4047: '=': 'int' differs in levels of indirection from 'mcluster *'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(649): error C2065: 'max_linkhdr': undeclared identifier
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\uipc_mbuf.c(650): error C2065: 'max_linkhdr': undeclared identifier
+         uipc_domain.c
+     1>c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\time.h(23): warning C4142: benign redefinition of type
+     1>c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\time.h(590): warning C4005: 'CLK_TCK': macro redefinition
+         d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\machine\limits.h(40): note: see previous definition of 'CLK_TCK'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\sys\sysctl.h(49): fatal error C1083: Cannot open include file: 'vm/vm.h': No such file or directory
+         init_main.c
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\sys\device.h(110): error C2061: syntax error: identifier 'size_t'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\sys\device.h(113): error C2059: syntax error: '}'
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\init_main.c(77): warning C4013: 'init_timer' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\init_main.c(78): warning C4013: 'init_event' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\init_main.c(80): warning C4013: 'mbinit' undefined; assuming extern returning int
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\kern\init_main.c(87): warning C4013: 'ifinit' undefined; assuming extern returning int
+         winpcap_intf.c
+     1>d:\bsd_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\dev\winpcap_intf.c(1): fatal error C1083: Cannot open include file: 'pcap.h': No such file or directory
+         Generating Code...
+     1>Done Building Project "D:\BSD_netstack_to_win\4.4bsd\my_code\bsd_stack_4build_process\bsd_stack\bsd_stack.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:00.71

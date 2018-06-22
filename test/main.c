@@ -156,11 +156,18 @@ ut_ioctl_down()
 	
 }
 
+ut_iptime()
+{
+extern long __iptime();
+    _iptime();
+}
+
 void main()
 {
     main1();
-    ut_ioctl_up();
-    start_recv();
+    ut_iptime();
+    //ut_ioctl_up();
+    //start_recv();
 
     return;
 }

@@ -1,5 +1,5 @@
 #include "pcap.h"
-#include "libkern\event.h"
+#include "libkern\sync.h"
 //liai todo find a place for this guy
 #define WPI_RUNNING 1
 
@@ -60,7 +60,7 @@ wpintr(
 	if (wpsate() & WPI_RUNNING) {
         if(dbg_swc)
 		    showpkt(header, pkt_data);
-		//wpread(pkt_data, header->len);
+		wpread(pkt_data, header->len);
 		if (header->caplen != header->len)
 			log("\nheader->caplen != header->len");
 	}

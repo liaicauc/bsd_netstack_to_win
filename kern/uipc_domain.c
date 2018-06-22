@@ -21,12 +21,13 @@ void	pfslowtimo __P((void *));
 }
 #endif
 
+struct	domain *domains = NULL;
+
 #define	ADDDOMAIN(x)	{ \
 	extern struct domain (x##domain); \
 	(x##domain.dom_next) = domains; \
 	domains = &(x##domain); \
 }
-
 
 void
 domaininit()
@@ -34,28 +35,7 @@ domaininit()
 	register struct domain *dp;
 	register struct protosw *pr;
 
-#undef unix
-#ifndef lint
-//	ADDDOMAIN(unix);
-//	ADDDOMAIN(route);
-#ifdef INET
 	ADDDOMAIN(inet);
-#endif
-#ifdef NS
-	ADDDOMAIN(ns);
-#endif
-#ifdef ISO
-	ADDDOMAIN(iso);
-#endif
-#ifdef CCITT
-	ADDDOMAIN(ccitt);
-#endif
-//#include "imp.h"
-#if NIMP > 0
-	ADDDOMAIN(imp);
-#endif
-#endif
-
 	for (dp = domains; dp; dp = dp->dom_next) {
 		if (dp->dom_init)
 			(*dp->dom_init)();
@@ -64,8 +44,8 @@ domaininit()
 				(*pr->pr_init)();
 	}
 
-if (max_linkhdr < 16)		/* XXX */
-max_linkhdr = 16;
+    if (max_linkhdr < 16)		/* XXX */
+        max_linkhdr = 16;
 	max_hdr = max_linkhdr + max_protohdr;
 	max_datalen = MHLEN - max_hdr;
 	timeout(pffasttimo, NULL, 1);

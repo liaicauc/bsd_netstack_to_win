@@ -558,11 +558,8 @@ icmp_send(m, opts)
 n_time
 iptime()
 {
-	struct timeval atv;
-	u_long t;
+	u_long t = _iptime();
 
-	microtime(&atv);
-	t = (atv.tv_sec % (24*60*60)) * 1000 + atv.tv_usec / 1000;
 	return (htonl(t));
 }
 
@@ -582,8 +579,10 @@ icmp_sysctl(name, namelen, oldp, oldlenp, newp, newlen)
 
 	switch (name[0]) {
 	case ICMPCTL_MASKREPL:
+#if  0 //not_support_yet        
 		return (sysctl_int(oldp, oldlenp, newp, newlen, &icmpmaskrepl));
 	default:
+#endif        
 		return (ENOPROTOOPT);
 	}
 	/* NOTREACHED */

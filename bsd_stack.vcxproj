@@ -75,7 +75,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>./</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>__LP64__;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__LP64__;_USE_32BIT_TIME_T;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -122,20 +122,46 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="dev\winpcap_intf.c" />
+    <ClCompile Include="i386\i386\in_cksum.c" />
     <ClCompile Include="kern\init_main.c" />
     <ClCompile Include="kern\log.c" />
     <ClCompile Include="kern\uipc_domain.c" />
     <ClCompile Include="kern\uipc_mbuf.c" />
-    <ClCompile Include="libkern\event.c" />
+    <ClCompile Include="kern\uipc_socket.c" />
+    <ClCompile Include="kern\uipc_socket2.c" />
+    <ClCompile Include="libkern\sync.c" />
+    <ClCompile Include="libkern\malloc.c" />
     <ClCompile Include="libkern\min_max.c" />
+    <ClCompile Include="libkern\queue.c" />
+    <ClCompile Include="libkern\random.c" />
     <ClCompile Include="libkern\thread.c" />
+    <ClCompile Include="libkern\time.c" />
     <ClCompile Include="libkern\timeout.c" />
+    <ClCompile Include="libkern\uiomove.c" />
+    <ClCompile Include="netinet\if_ether.c" />
+    <ClCompile Include="netinet\igmp.c" />
+    <ClCompile Include="netinet\in.c" />
+    <ClCompile Include="netinet\in_cksum.c" />
+    <ClCompile Include="netinet\in_pcb.c" />
     <ClCompile Include="netinet\in_proto.c" />
+    <ClCompile Include="netinet\ip_icmp.c" />
     <ClCompile Include="netinet\ip_input.c" />
+    <ClCompile Include="netinet\ip_output.c" />
+    <ClCompile Include="netinet\raw_ip.c" />
+    <ClCompile Include="netinet\tcp_debug.c" />
+    <ClCompile Include="netinet\tcp_input.c" />
+    <ClCompile Include="netinet\tcp_output.c" />
+    <ClCompile Include="netinet\tcp_subr.c" />
+    <ClCompile Include="netinet\tcp_timer.c" />
+    <ClCompile Include="netinet\tcp_usrreq.c" />
+    <ClCompile Include="netinet\udp_usrreq.c" />
     <ClCompile Include="net\if.c" />
     <ClCompile Include="net\if_ethersubr.c" />
+    <ClCompile Include="net\if_loop.c" />
     <ClCompile Include="net\if_wp.c" />
     <ClCompile Include="net\radix.c" />
+    <ClCompile Include="net\raw_cb.c" />
+    <ClCompile Include="net\raw_usrreq.c" />
     <ClCompile Include="net\route.c" />
     <ClCompile Include="net\rtsock.c" />
     <ClCompile Include="test\main.c" />
@@ -177,7 +203,7 @@
     <ClInclude Include="i386\include\vmparam.h" />
     <ClInclude Include="kern\interfaces.h" />
     <ClInclude Include="kern\log.h" />
-    <ClInclude Include="libkern\event.h" />
+    <ClInclude Include="libkern\sync.h" />
     <ClInclude Include="libkern\libkern.h" />
     <ClInclude Include="netinet\cc\cc.h" />
     <ClInclude Include="netinet\cc\cc_cubic.h" />
